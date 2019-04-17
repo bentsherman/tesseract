@@ -17,14 +17,16 @@ GMY_FILES
 	.into {
 		GMY_FILES_FOR_BLOCKSIZE;
 		GMY_FILES_FOR_LATTICETYPE;
-		GMY_FILES_FOR_OVERSUBSCRIBE
+		GMY_FILES_FOR_OVERSUBSCRIBE;
+		GMY_FILES_FOR_SCALABILITY_CPU
 	}
 
 XML_FILES
 	.into {
 		XML_FILES_FOR_BLOCKSIZE;
 		XML_FILES_FOR_LATTICETYPE;
-		XML_FILES_FOR_OVERSUBSCRIBE
+		XML_FILES_FOR_OVERSUBSCRIBE;
+		XML_FILES_FOR_SCALABILITY_CPU
 	}
 
 
@@ -98,6 +100,33 @@ process oversubscribe {
 	script:
 		"""
 		export CUDA_VISIBLE_DEVICES=0
+
+		mpirun -np ${np} hemelb -in ${xml_file} -out results
+		"""
+}
+
+
+
+/**
+ * The scalability_cpu process performs a single run of HemelB with a
+ * specific number of CPU processes.
+ */
+process scalability_cpu {
+	tag "${geometry}/${latticetype}/${np}"
+	publishDir "${params.output_dir}/${geometry}"
+
+	input:
+		set val(geometry), file(gmy_file) from GMY_FILES_FOR_SCALABILITY_CPU
+		set val(geometry), file(xml_file) from XML_FILES_FOR_SCALABILITY_CPU
+		each(np) from Channel.from( params.scalability_cpu.values )
+		each(latticetype) from Channel.from( params.latticetype.values )
+
+	when:
+		params.scalability_cpu.enabled == true
+
+	script:
+		"""
+		module add hemelb/dev-${latticetype} || true
 
 		mpirun -np ${np} hemelb -in ${xml_file} -out results
 		"""
