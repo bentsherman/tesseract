@@ -18,7 +18,8 @@ GMY_FILES
 		GMY_FILES_FOR_BLOCKSIZE;
 		GMY_FILES_FOR_LATTICETYPE;
 		GMY_FILES_FOR_OVERSUBSCRIBE;
-		GMY_FILES_FOR_SCALABILITY_CPU
+		GMY_FILES_FOR_SCALABILITY_CPU;
+		GMY_FILES_FOR_SCALABILITY_GPU
 	}
 
 XML_FILES
@@ -26,7 +27,8 @@ XML_FILES
 		XML_FILES_FOR_BLOCKSIZE;
 		XML_FILES_FOR_LATTICETYPE;
 		XML_FILES_FOR_OVERSUBSCRIBE;
-		XML_FILES_FOR_SCALABILITY_CPU
+		XML_FILES_FOR_SCALABILITY_CPU;
+		XML_FILES_FOR_SCALABILITY_GPU
 	}
 
 
@@ -123,6 +125,33 @@ process scalability_cpu {
 
 	when:
 		params.scalability_cpu.enabled == true
+
+	script:
+		"""
+		module add hemelb/dev-${latticetype} || true
+
+		mpirun -np ${np} hemelb -in ${xml_file} -out results
+		"""
+}
+
+
+
+/**
+ * The scalability_gpu process performs a single run of HemelB with a
+ * specific number of GPU processes.
+ */
+process scalability_gpu {
+	tag "${geometry}/${latticetype}/${np}"
+	publishDir "${params.output_dir}/${geometry}"
+
+	input:
+		set val(geometry), file(gmy_file) from GMY_FILES_FOR_SCALABILITY_GPU
+		set val(geometry), file(xml_file) from XML_FILES_FOR_SCALABILITY_GPU
+		each(np) from Channel.from( params.scalability_gpu.values )
+		each(latticetype) from Channel.from( params.latticetype.values )
+
+	when:
+		params.scalability_gpu.enabled == true
 
 	script:
 		"""
