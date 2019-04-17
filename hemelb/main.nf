@@ -15,18 +15,21 @@ XML_FILES = Channel.fromFilePairs("${params.input_dir}/*.xml", size: 1, flat: tr
  */
 GMY_FILES
 	.into {
-		GMY_FILES_FOR_BLOCKSIZE
+		GMY_FILES_FOR_BLOCKSIZE;
+		GMY_FILES_FOR_LATTICETYPE
 	}
 
 XML_FILES
 	.into {
-		XML_FILES_FOR_BLOCKSIZE
+		XML_FILES_FOR_BLOCKSIZE;
+		XML_FILES_FOR_LATTICETYPE
 	}
 
 
 
 /**
- * The blocksize process performs a single run of HemelB with a set block size.
+ * The blocksize process performs a single run of HemelB with a
+ * specific block size.
  */
 process blocksize {
 	tag "${geometry}/blocksize/${blocksize}"
@@ -42,6 +45,32 @@ process blocksize {
 
 	script:
 		"""
+		mpirun -np 1 hemelb -in ${xml_file} -out results
+		"""
+}
+
+
+
+/**
+ * The latticetype process performs a single run of HemelB with a
+ * specific lattice type.
+ */
+process latticetype {
+	tag "${geometry}/latticetype/${latticetype}"
+	publishDir "${params.output_dir}/${geometry}"
+
+	input:
+		set val(geometry), file(gmy_file) from GMY_FILES_FOR_LATTICETYPE
+		set val(geometry), file(xml_file) from XML_FILES_FOR_LATTICETYPE
+		each(latticetype) from Channel.from( params.latticetype.values )
+
+	when:
+		params.latticetype.enabled == true
+
+	script:
+		"""
+		module add hemelb/dev-${latticetype} || true
+
 		mpirun -np 1 hemelb -in ${xml_file} -out results
 		"""
 }
