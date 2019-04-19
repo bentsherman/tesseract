@@ -38,12 +38,13 @@ XML_FILES
  * specific block size.
  */
 process blocksize {
-	tag "${geometry}/${blocksize}"
-	publishDir "${params.output_dir}/${geometry}"
+	tag "${geometry}/${gpu_model}/${blocksize}"
+	publishDir "${params.output_dir}/${geometry}/${gpu_model}"
 
 	input:
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_BLOCKSIZE
 		set val(geometry), file(xml_file) from XML_FILES_FOR_BLOCKSIZE
+		each(gpu_model) from Channel.from( params.gpu_models )
 		each(blocksize) from Channel.from( params.blocksize.values )
 
 	when:
@@ -62,12 +63,13 @@ process blocksize {
  * specific lattice type.
  */
 process latticetype {
-	tag "${geometry}/${latticetype}"
-	publishDir "${params.output_dir}/${geometry}"
+	tag "${geometry}/${gpu_model}/${latticetype}"
+	publishDir "${params.output_dir}/${geometry}/${gpu_model}"
 
 	input:
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_LATTICETYPE
 		set val(geometry), file(xml_file) from XML_FILES_FOR_LATTICETYPE
+		each(gpu_model) from Channel.from( params.gpu_models )
 		each(latticetype) from Channel.from( params.latticetype.values )
 
 	when:
@@ -75,8 +77,6 @@ process latticetype {
 
 	script:
 		"""
-		module add hemelb/dev-${latticetype} || true
-
 		mpirun -np 1 hemelb -in ${xml_file} -out results
 		"""
 }
@@ -88,12 +88,13 @@ process latticetype {
  * specific number of processes per GPU.
  */
 process oversubscribe {
-	tag "${geometry}/${np}"
-	publishDir "${params.output_dir}/${geometry}"
+	tag "${geometry}/${gpu_model}/${np}"
+	publishDir "${params.output_dir}/${geometry}/${gpu_model}"
 
 	input:
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_OVERSUBSCRIBE
 		set val(geometry), file(xml_file) from XML_FILES_FOR_OVERSUBSCRIBE
+		each(gpu_model) from Channel.from( params.gpu_models )
 		each(np) from Channel.from( params.oversubscribe.values )
 
 	when:
@@ -128,8 +129,6 @@ process scalability_cpu {
 
 	script:
 		"""
-		module add hemelb/dev-${latticetype} || true
-
 		mpirun -np ${np} hemelb -in ${xml_file} -out results
 		"""
 }
@@ -141,12 +140,13 @@ process scalability_cpu {
  * specific number of GPU processes.
  */
 process scalability_gpu {
-	tag "${geometry}/${latticetype}/${np}"
-	publishDir "${params.output_dir}/${geometry}"
+	tag "${geometry}/${gpu_model}/${latticetype}/${np}"
+	publishDir "${params.output_dir}/${geometry}/${gpu_model}"
 
 	input:
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_SCALABILITY_GPU
 		set val(geometry), file(xml_file) from XML_FILES_FOR_SCALABILITY_GPU
+		each(gpu_model) from Channel.from( params.gpu_models )
 		each(np) from Channel.from( params.scalability_gpu.values )
 		each(latticetype) from Channel.from( params.latticetype.values )
 
@@ -155,8 +155,6 @@ process scalability_gpu {
 
 	script:
 		"""
-		module add hemelb/dev-${latticetype} || true
-
 		mpirun -np ${np} hemelb -in ${xml_file} -out results
 		"""
 }
