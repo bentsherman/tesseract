@@ -14,10 +14,49 @@ EMX_FILES = Channel.fromFilePairs("${params.input_dir}/*.emx", size: 1, flat: tr
  */
 EMX_FILES
 	.into {
+		EMX_FILES_FOR_THREADS;
 		EMX_FILES_FOR_BSIZE;
 		EMX_FILES_FOR_GSIZE;
 		EMX_FILES_FOR_LSIZE
 	}
+
+
+
+/**
+ * The threads process performs a single run of KINC with a
+ * specific number of host threads.
+ */
+process threads {
+	tag "${dataset}/${threads}"
+	publishDir "${params.output_dir}/${dataset}"
+
+	input:
+		set val(dataset), file(emx_file) from EMX_FILES_FOR_THREADS
+		each(threads) from Channel.from( params.threads.values )
+
+	when:
+		params.threads.enabled == true
+
+	script:
+		"""
+		kinc settings set cuda 0
+		kinc settings set threads ${threads}
+		kinc settings set buffer 4
+		kinc settings set logging off
+
+		kinc run similarity \
+			--input ${emx_file} \
+			--ccm ${dataset}.ccm \
+			--cmx ${dataset}.cmx \
+			--clusmethod ${params.defaults.clusmethod} \
+			--corrmethod ${params.defaults.corrmethod} \
+			--preout true \
+			--postout true \
+			--bsize ${params.defaults.bsize} \
+			--gsize ${params.defaults.gsize} \
+			--lsize ${params.defaults.lsize}
+		"""
+}
 
 
 
