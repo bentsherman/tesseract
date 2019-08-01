@@ -9,20 +9,20 @@ import sys
 if __name__ == "__main__":
 	# parse command-line arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument(help="input dataset", dest="INPUT")
-	parser.add_argument(help="output plots", dest="OUTFILES")
-	parser.add_argument("--xaxis", type=int, default=0, help="column index of x-axis", dest="XAXIS")
-	parser.add_argument("--hue", type=int, default=-1, help="column index of hue axis", dest="HUE")
-	parser.add_argument("--col", type=int, default=-1, help="additional column index which will be used to create separate subplots", dest="EXTRA")
-	parser.add_argument("--color", default=None, help="color for all barplot elements", dest="COLOR")
-	parser.add_argument("--ratio", type=int, default=0, help="aspect ratio to control figure width", dest="RATIO")
+	parser.add_argument("input", help="input dataset")
+	parser.add_argument("outfiles", help="output plots")
+	parser.add_argument("--xaxis", help="column index of x-axis", type=int, default=0)
+	parser.add_argument("--hue", help="column index of hue axis", type=int, default=-1)
+	parser.add_argument("--col", help="additional column index which will be used to create separate subplots", type=int, default=-1)
+	parser.add_argument("--color", help="color for all barplot elements", default=None)
+	parser.add_argument("--ratio", help="aspect ratio to control figure width", type=int, default=0)
 
 	args = parser.parse_args()
 
-	outfiles = args.OUTFILES.split(",")
+	outfiles = args.outfiles.split(",")
 
 	# validate arguments
-	indices = [args.XAXIS, args.HUE, args.EXTRA]
+	indices = [args.xaxis, args.hue, args.col]
 	indices = [idx for idx in indices if idx != -1]
 
 	if len(indices) > len(set(indices)):
@@ -30,11 +30,11 @@ if __name__ == "__main__":
 		sys.exit(-1)
 
 	# load dataframe and map axes to column indices
-	data = pd.read_table(args.INPUT)
+	data = pd.read_csv(args.input, sep="\t")
 
-	x = data.columns[args.XAXIS]
-	hue = data.columns[args.HUE] if args.HUE != -1 else None
-	col = data.columns[args.EXTRA] if args.EXTRA != -1 else None
+	x = data.columns[args.xaxis]
+	hue = data.columns[args.hue] if args.hue != -1 else None
+	col = data.columns[args.col] if args.col != -1 else None
 
 	y_columns = list(set(data.columns) - set([x, hue, col]))
 
@@ -46,15 +46,16 @@ if __name__ == "__main__":
 	for outfile, y in zip(outfiles, y_columns):
 		data_clean = data[~data[y].isna()]
 
-		if args.RATIO != 0:
-			plt.figure(figsize=(5 * args.RATIO, 5))
+		if args.ratio != 0:
+			plt.figure(figsize=(5 * args.ratio, 5))
 
 		if hue == None and col == None:
-			sns.barplot(x=x, y=y, data=data_clean, color=args.COLOR)
+			sns.barplot(x=x, y=y, data=data_clean, color=args.color)
 		else:
-			sns.catplot(x=x, y=y, hue=hue, col=col, data=data_clean, kind="bar", color=args.COLOR)
+			sns.catplot(x=x, y=y, hue=hue, col=col, data=data_clean, kind="bar", color=args.color)
 
 		if len(set(data[x])) >= 100:
 			plt.xticks([])
 
 		plt.savefig(outfile)
+		plt.close()
