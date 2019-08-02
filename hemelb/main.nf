@@ -5,8 +5,8 @@
 /**
  * Create channel for input files.
  */
-GMY_FILES = Channel.fromFilePairs("${params.input_dir}/*.gmy", size: 1, flat: true)
-XML_FILES = Channel.fromFilePairs("${params.input_dir}/*.xml", size: 1, flat: true)
+GMY_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.gmy_files}", size: 1, flat: true)
+XML_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.xml_files}", size: 1, flat: true)
 
 
 
@@ -39,12 +39,12 @@ XML_FILES
  */
 process blocksize {
 	tag "${geometry}/${gpu_model}/${blocksize}"
-	publishDir "${params.output_dir}/${geometry}/${gpu_model}"
+	publishDir "${params.output.dir}/${geometry}/${gpu_model}"
 
 	input:
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_BLOCKSIZE
 		set val(geometry), file(xml_file) from XML_FILES_FOR_BLOCKSIZE
-		each(gpu_model) from Channel.from( params.gpu_models )
+		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(blocksize) from Channel.from( params.blocksize.values )
 
 	when:
@@ -64,12 +64,12 @@ process blocksize {
  */
 process latticetype {
 	tag "${geometry}/${gpu_model}/${latticetype}"
-	publishDir "${params.output_dir}/${geometry}/${gpu_model}"
+	publishDir "${params.output.dir}/${geometry}/${gpu_model}"
 
 	input:
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_LATTICETYPE
 		set val(geometry), file(xml_file) from XML_FILES_FOR_LATTICETYPE
-		each(gpu_model) from Channel.from( params.gpu_models )
+		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(latticetype) from Channel.from( params.latticetype.values )
 
 	when:
@@ -89,12 +89,12 @@ process latticetype {
  */
 process oversubscribe {
 	tag "${geometry}/${gpu_model}/${np}"
-	publishDir "${params.output_dir}/${geometry}/${gpu_model}"
+	publishDir "${params.output.dir}/${geometry}/${gpu_model}"
 
 	input:
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_OVERSUBSCRIBE
 		set val(geometry), file(xml_file) from XML_FILES_FOR_OVERSUBSCRIBE
-		each(gpu_model) from Channel.from( params.gpu_models )
+		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(np) from Channel.from( params.oversubscribe.values )
 
 	when:
@@ -116,7 +116,7 @@ process oversubscribe {
  */
 process scalability_cpu {
 	tag "${geometry}/${latticetype}/${np}"
-	publishDir "${params.output_dir}/${geometry}"
+	publishDir "${params.output.dir}/${geometry}"
 
 	input:
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_SCALABILITY_CPU
@@ -141,12 +141,12 @@ process scalability_cpu {
  */
 process scalability_gpu {
 	tag "${geometry}/${gpu_model}/${latticetype}/${np}"
-	publishDir "${params.output_dir}/${geometry}/${gpu_model}"
+	publishDir "${params.output.dir}/${geometry}/${gpu_model}"
 
 	input:
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_SCALABILITY_GPU
 		set val(geometry), file(xml_file) from XML_FILES_FOR_SCALABILITY_GPU
-		each(gpu_model) from Channel.from( params.gpu_models )
+		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(np) from Channel.from( params.scalability_gpu.values )
 		each(latticetype) from Channel.from( params.latticetype.values )
 
