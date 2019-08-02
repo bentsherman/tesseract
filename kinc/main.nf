@@ -5,7 +5,7 @@
 /**
  * Create channel for input files.
  */
-EMX_FILES = Channel.fromFilePairs("${params.input_dir}/*.emx", size: 1, flat: true)
+EMX_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.emx_files}", size: 1, flat: true)
 
 
 
@@ -31,11 +31,11 @@ EMX_FILES
  */
 process threads {
 	tag "${dataset}/${gpu_model}/${threads}"
-	publishDir "${params.output_dir}/${dataset}/${gpu_model}"
+	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
 
 	input:
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_THREADS
-		each(gpu_model) from Channel.from( params.gpu_models )
+		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(threads) from Channel.from( params.threads.values )
 
 	when:
@@ -70,11 +70,11 @@ process threads {
  */
 process bsize {
 	tag "${dataset}/${gpu_model}/${bsize}"
-	publishDir "${params.output_dir}/${dataset}/${gpu_model}"
+	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
 
 	input:
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_BSIZE
-		each(gpu_model) from Channel.from( params.gpu_models )
+		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(bsize) from Channel.from( params.bsize.values )
 
 	when:
@@ -109,11 +109,11 @@ process bsize {
  */
 process gsize {
 	tag "${dataset}/${gpu_model}/${gsize}"
-	publishDir "${params.output_dir}/${dataset}/${gpu_model}"
+	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
 
 	input:
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_GSIZE
-		each(gpu_model) from Channel.from( params.gpu_models )
+		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(gsize) from Channel.from( params.gsize.values )
 
 	when:
@@ -148,11 +148,11 @@ process gsize {
  */
 process lsize {
 	tag "${dataset}/${gpu_model}/${lsize}"
-	publishDir "${params.output_dir}/${dataset}/${gpu_model}"
+	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
 
 	input:
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_LSIZE
-		each(gpu_model) from Channel.from( params.gpu_models )
+		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(lsize) from Channel.from( params.lsize.values )
 
 	when:
@@ -187,7 +187,7 @@ process lsize {
  */
 process scalability_v1 {
 	tag "${dataset}/${np}"
-	publishDir "${params.output_dir}/${dataset}"
+	publishDir "${params.output.dir}/${dataset}"
 
 	input:
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_SCALABILITY_V1
@@ -229,7 +229,7 @@ process scalability_v1 {
  */
 process scalability_cpu {
 	tag "${dataset}/${np}"
-	publishDir "${params.output_dir}/${dataset}"
+	publishDir "${params.output.dir}/${dataset}"
 
 	input:
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_SCALABILITY_CPU
@@ -268,11 +268,11 @@ process scalability_cpu {
  */
 process scalability_gpu {
 	tag "${dataset}/${gpu_model}/${np}"
-	publishDir "${params.output_dir}/${dataset}/${gpu_model}"
+	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
 
 	input:
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_SCALABILITY_GPU
-		each(gpu_model) from Channel.from( params.gpu_models )
+		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(np) from Channel.from( params.scalability_gpu.values )
 
 	when:
