@@ -231,14 +231,14 @@ process scalability_cpu {
 	tag "${dataset}/${np}"
 	publishDir "${params.output.dir}/${dataset}"
 
+	beforeScript "mpirun sleep 10"
+
 	input:
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_SCALABILITY_CPU
 		each(np) from Channel.from( params.scalability_cpu.values )
 
 	when:
 		params.scalability_cpu.enabled == true
-
-	beforeScript "mpirun sleep 10"
 
 	script:
 		"""
@@ -270,6 +270,8 @@ process scalability_gpu {
 	tag "${dataset}/${gpu_model}/${np}"
 	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
 
+	beforeScript "mpirun sleep 10"
+
 	input:
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_SCALABILITY_GPU
 		each(gpu_model) from Channel.from( params.input.gpu_models )
@@ -277,8 +279,6 @@ process scalability_gpu {
 
 	when:
 		params.scalability_gpu.enabled == true
-
-	beforeScript "mpirun sleep 10"
 
 	script:
 		"""
