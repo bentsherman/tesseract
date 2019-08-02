@@ -14,6 +14,7 @@ EMX_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.emx_files}
  */
 EMX_FILES
 	.into {
+		EMX_FILES_FOR_REVISION;
 		EMX_FILES_FOR_THREADS;
 		EMX_FILES_FOR_BSIZE;
 		EMX_FILES_FOR_GSIZE;
@@ -22,6 +23,45 @@ EMX_FILES
 		EMX_FILES_FOR_SCALABILITY_CPU;
 		EMX_FILES_FOR_SCALABILITY_GPU
 	}
+
+
+
+/**
+ * The revision process performs a single run of a specific
+ * revision of KINC.
+ */
+process revision {
+	tag "${dataset}/${gpu_model}/${revision}"
+	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
+
+	input:
+		set val(dataset), file(emx_file) from EMX_FILES_FOR_REVISION
+		each(gpu_model) from Channel.from( params.input.gpu_models )
+		each(revision) from Channel.from( params.revision.values )
+
+	when:
+		params.revision.enabled == true
+
+	script:
+		"""
+		kinc settings set cuda 0
+		kinc settings set threads ${params.defaults.threads}
+		kinc settings set buffer 4
+		kinc settings set logging off
+
+		kinc run similarity \
+			--input ${emx_file} \
+			--ccm ${dataset}.ccm \
+			--cmx ${dataset}.cmx \
+			--clusmethod ${params.defaults.clusmethod} \
+			--corrmethod ${params.defaults.corrmethod} \
+			--preout ${params.defaults.preout} \
+			--postout ${params.defaults.postout} \
+			--bsize ${params.defaults.bsize} \
+			--gsize ${params.defaults.gsize} \
+			--lsize ${params.defaults.lsize}
+		"""
+}
 
 
 
