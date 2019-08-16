@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -12,10 +14,11 @@ if __name__ == "__main__":
 	parser.add_argument("input", help="input dataset")
 	parser.add_argument("outfiles", help="output plots")
 	parser.add_argument("--xaxis", help="column index of x-axis", type=int, default=0)
+	parser.add_argument("--yaxis", help="column indices of y-axis for each output plot", type=int, nargs="*")
 	parser.add_argument("--hue", help="column index of hue axis", type=int, default=-1)
 	parser.add_argument("--col", help="additional column index which will be used to create separate subplots", type=int, default=-1)
 	parser.add_argument("--color", help="color for all barplot elements", default=None)
-	parser.add_argument("--ratio", help="aspect ratio to control figure width", type=int, default=0)
+	parser.add_argument("--ratio", help="aspect ratio to control figure width", type=float, default=0)
 
 	args = parser.parse_args()
 
@@ -36,7 +39,10 @@ if __name__ == "__main__":
 	hue = data.columns[args.hue] if args.hue != -1 else None
 	col = data.columns[args.col] if args.col != -1 else None
 
-	y_columns = list(set(data.columns) - set([x, hue, col]))
+	if len(args.yaxis) > 0:
+		y_columns = [data.columns[idx] for idx in args.yaxis]
+	else:
+		y_columns = [c for c in data.columns if c not in [x, hue, col]]
 
 	if len(outfiles) != len(y_columns):
 		print("error: y columns do not match outfile names")
