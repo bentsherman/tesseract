@@ -31,17 +31,17 @@ EMX_FILES
  * revision of KINC.
  */
 process revision {
-	tag "${dataset}/${gpu_model}/${revision}/${trial}"
-	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
+	tag "${revision}/${dataset}/${gpu_model}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(revision) from Channel.from( params.revision.values )
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_REVISION
 		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(revision) from Channel.from( params.revision.values )
 		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	output:
-		file("revision.${revision}.${trial}.nvprof.txt")
+		file("*.nvprof.txt")
 
 	when:
 		params.revision.enabled == true
@@ -53,7 +53,15 @@ process revision {
 		kinc settings set buffer 4
 		kinc settings set logging off
 
-		nvprof --csv --log-file revision.${revision}.${trial}.nvprof.txt kinc run similarity \
+		NVPROF_FILE=\$(make-filename.sh revision "${revision}" "${dataset}" "${gpu_model}" "${trial}" nvprof txt)
+
+		nvprof \
+			--csv \
+			--log-file \${NVPROF_FILE} \
+			--normalized-time-unit ms \
+			--unified-memory-profiling off \
+		taskset -c 0-1 \
+		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
 			--cmx ${dataset}.cmx \
