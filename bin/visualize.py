@@ -12,56 +12,38 @@ if __name__ == "__main__":
 	# parse command-line arguments
 	parser = argparse.ArgumentParser()
 	parser.add_argument("input", help="input dataset")
-	parser.add_argument("outfiles", help="output plots")
-	parser.add_argument("--xaxis", help="column index of x-axis", type=int, default=0)
-	parser.add_argument("--yaxis", help="column indices of y-axis for each output plot", type=int, nargs="*")
-	parser.add_argument("--hue", help="column index of hue axis", type=int, default=-1)
-	parser.add_argument("--col", help="additional column index which will be used to create separate subplots", type=int, default=-1)
-	parser.add_argument("--color", help="color for all barplot elements", default=None)
+	parser.add_argument("outfile", help="output plot")
+	parser.add_argument("--xaxis", help="column name of x-axis", required=True)
+	parser.add_argument("--yaxis", help="column name of y-axis", required=True)
+	parser.add_argument("--hue1", help="column name of primary hue axis (splits data within subplot)", nargs="?")
+	parser.add_argument("--hue2", help="column name of secondary hue axis (splits data across subplots)", nargs="?")
+	parser.add_argument("--color", help="color for all barplot elements", nargs="?")
 	parser.add_argument("--ratio", help="aspect ratio to control figure width", type=float, default=0)
 
 	args = parser.parse_args()
 
-	outfiles = args.outfiles.split(",")
-
-	# validate arguments
-	indices = [args.xaxis, args.hue, args.col]
-	indices = [idx for idx in indices if idx != -1]
-
-	if len(indices) > len(set(indices)):
-		print("error: x-axis, hue, and col indices overlap")
-		sys.exit(-1)
-
-	# load dataframe and map axes to column indices
+	# load dataframe
 	data = pd.read_csv(args.input, sep="\t")
 
-	x = data.columns[args.xaxis]
-	hue = data.columns[args.hue] if args.hue != -1 else None
-	col = data.columns[args.col] if args.col != -1 else None
+	# exclude rows which have missing values on y-axis
+	data_clean = data[~data[args.yaxis].isna()]
 
-	if len(args.yaxis) > 0:
-		y_columns = [data.columns[idx] for idx in args.yaxis]
+	# apply aspect ratio if specified
+	if args.ratio != 0:
+		plt.figure(figsize=(5 * args.ratio, 5))
+
+	# create a categorical plot if either hue columns are specified
+	if args.hue1 != None or args.hue2 != None:
+		sns.catplot(x=args.xaxis, y=args.yaxis, hue=args.hue1, col=args.hue2, data=data_clean, kind="bar", color=args.color)
+
+	# otherwise create a bar plot
 	else:
-		y_columns = [c for c in data.columns if c not in [x, hue, col]]
+		sns.barplot(x=args.xaxis, y=args.yaxis, data=data_clean, color=args.color)
 
-	if len(outfiles) != len(y_columns):
-		print("error: y columns do not match outfile names")
-		sys.exit(-1)
+	# disable x-axis ticks if there are too many categories
+	if len(set(data[args.xaxis])) >= 100:
+		plt.xticks([])
 
-	# save plot of each y column
-	for outfile, y in zip(outfiles, y_columns):
-		data_clean = data[~data[y].isna()]
-
-		if args.ratio != 0:
-			plt.figure(figsize=(5 * args.ratio, 5))
-
-		if hue == None and col == None:
-			sns.barplot(x=x, y=y, data=data_clean, color=args.color)
-		else:
-			sns.catplot(x=x, y=y, hue=hue, col=col, data=data_clean, kind="bar", color=args.color)
-
-		if len(set(data[x])) >= 100:
-			plt.xticks([])
-
-		plt.savefig(outfile)
-		plt.close()
+	# save output figure
+	plt.savefig(args.outfile)
+	plt.close()
