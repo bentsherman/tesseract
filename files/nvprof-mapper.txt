@@ -1,0 +1,9 @@
+column_name	display_name
+type	Type
+time_percent	Time(%) (%)
+time_total	Time (ms)
+calls	Calls
+time_avg	Avg (ms)
+time_min	Min (ms)
+time_max	Max (ms)
+name	Name

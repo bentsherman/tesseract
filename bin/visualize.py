@@ -52,7 +52,7 @@ if __name__ == "__main__":
 		data = data[~data[column].isna()]
 
 		# filter rows by selected values in column
-		if values != None:
+		if values != None and len(values) > 0:
 			data = filter_by_values(data, column, values)
 
 		# sort dataframe by column

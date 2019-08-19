@@ -35,6 +35,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("infiles", help="list of input files", nargs="+")
 	parser.add_argument("outfile", help="output dataframe")
+	parser.add_argument("--mapping-file", help="mapping file for renaming column names")
 
 	args = parser.parse_args()
 
@@ -62,6 +63,13 @@ if __name__ == "__main__":
 
 		# append input dataframe rows to output dataframe
 		X = X.append(X_i, sort=False)
+
+	# rename column names if mapping file is specified
+	if args.mapping_file:
+		mapper = pd.read_csv(args.mapping_file, sep="\t")
+		mapper = {mapper.loc[i, "display_name"]: mapper.loc[i, "column_name"] for i in mapper.index}
+
+		X.rename(columns=mapper, copy=False, inplace=True)
 
 	# save output dataframe
 	X.to_csv(args.outfile, sep="\t", index=False)
