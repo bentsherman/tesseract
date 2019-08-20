@@ -1,9 +1,9 @@
 column_name	display_name
-type	Type
-time_percent	Time(%) (%)
-time_total	Time (ms)
-calls	Calls
-time_avg	Avg (ms)
-time_min	Min (ms)
-time_max	Max (ms)
-name	Name
+nvprof_type	Type
+nvprof_time_percent	Time(%) (%)
+nvprof_time_total	Time (ms)
+nvprof_calls	Calls
+nvprof_time_avg	Avg (ms)
+nvprof_time_min	Min (ms)
+nvprof_time_max	Max (ms)
+nvprof_name	Name
