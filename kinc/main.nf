@@ -82,13 +82,14 @@ process revision {
  * specific number of host threads.
  */
 process threads {
-	tag "${dataset}/${gpu_model}/${threads}"
-	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
+	tag "${threads}/${dataset}/${gpu_model}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(threads) from Channel.from( params.threads.values )
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_THREADS
 		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(threads) from Channel.from( params.threads.values )
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.threads.enabled == true
@@ -121,13 +122,14 @@ process threads {
  * specific work block size.
  */
 process bsize {
-	tag "${dataset}/${gpu_model}/${bsize}"
-	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
+	tag "${bsize}/${dataset}/${gpu_model}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(bsize) from Channel.from( params.bsize.values )
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_BSIZE
 		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(bsize) from Channel.from( params.bsize.values )
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.bsize.enabled == true
@@ -160,13 +162,14 @@ process bsize {
  * specific global work size.
  */
 process gsize {
-	tag "${dataset}/${gpu_model}/${gsize}"
-	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
+	tag "${gsize}/${dataset}/${gpu_model}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(gsize) from Channel.from( params.gsize.values )
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_GSIZE
 		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(gsize) from Channel.from( params.gsize.values )
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.gsize.enabled == true
@@ -199,13 +202,14 @@ process gsize {
  * specific local work size.
  */
 process lsize {
-	tag "${dataset}/${gpu_model}/${lsize}"
-	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
+	tag "${lsize}/${dataset}/${gpu_model}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(lsize) from Channel.from( params.lsize.values )
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_LSIZE
 		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(lsize) from Channel.from( params.lsize.values )
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.lsize.enabled == true
@@ -238,12 +242,13 @@ process lsize {
  * specific number of processes.
  */
 process scalability_v1 {
-	tag "${dataset}/${np}"
-	publishDir "${params.output.dir}/${dataset}"
+	tag "${np}/${dataset}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
-		set val(dataset), file(emx_file) from EMX_FILES_FOR_SCALABILITY_V1
 		each(np) from Channel.from( params.scalability_v1.values )
+		set val(dataset), file(emx_file) from EMX_FILES_FOR_SCALABILITY_V1
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.scalability_v1.enabled == true
@@ -280,14 +285,13 @@ process scalability_v1 {
  * specific number of CPU processes.
  */
 process scalability_cpu {
-	tag "${dataset}/${np}"
-	publishDir "${params.output.dir}/${dataset}"
-
-	beforeScript "mpirun sleep 10"
+	tag "${np}/${dataset}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
-		set val(dataset), file(emx_file) from EMX_FILES_FOR_SCALABILITY_CPU
 		each(np) from Channel.from( params.scalability_cpu.values )
+		set val(dataset), file(emx_file) from EMX_FILES_FOR_SCALABILITY_CPU
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.scalability_cpu.enabled == true
@@ -319,15 +323,14 @@ process scalability_cpu {
  * specific number of GPU processes.
  */
 process scalability_gpu {
-	tag "${dataset}/${gpu_model}/${np}"
-	publishDir "${params.output.dir}/${dataset}/${gpu_model}"
-
-	beforeScript "mpirun sleep 10"
+	tag "${np}/${dataset}/${gpu_model}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(np) from Channel.from( params.scalability_gpu.values )
 		set val(dataset), file(emx_file) from EMX_FILES_FOR_SCALABILITY_GPU
 		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(np) from Channel.from( params.scalability_gpu.values )
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.scalability_gpu.enabled == true
