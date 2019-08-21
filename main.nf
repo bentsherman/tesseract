@@ -66,12 +66,8 @@ process visualize {
 			${nvprof_file} \
 			${plot.xaxis}.${plot.yaxis}.${params.visualize.format} \
 			--xaxis ${plot.xaxis} \
-			--xaxis-values ${plot.xaxis_values.join(' ')} \
 			--yaxis ${plot.yaxis} \
-			--yaxis-values ${plot.yaxis_values.join(' ')} \
 			--hue1 ${plot.hue1} \
-			--hue1-values ${plot.hue1_values.join(' ')} \
-			--hue2 ${plot.hue2} \
-			--hue2-values ${plot.hue2_values.join(' ')}
+			--hue2 ${plot.hue2}
 		"""
 }

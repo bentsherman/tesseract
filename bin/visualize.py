@@ -20,13 +20,10 @@ if __name__ == "__main__":
 	parser.add_argument("input", help="input dataset")
 	parser.add_argument("outfile", help="output plot")
 	parser.add_argument("--xaxis", help="column name of x-axis", required=True)
-	parser.add_argument("--xaxis-values", help="values to include from x column", nargs="*")
 	parser.add_argument("--yaxis", help="column name of y-axis", required=True)
-	parser.add_argument("--yaxis-values", help="values to include from y column", nargs="*")
 	parser.add_argument("--hue1", help="column name of primary hue axis (splits data within subplot)", nargs="?")
-	parser.add_argument("--hue1-values", help="values to include from primary hue column", nargs="*")
 	parser.add_argument("--hue2", help="column name of secondary hue axis (splits data across subplots)", nargs="?")
-	parser.add_argument("--hue2-values", help="values to include from secondary hue column", nargs="*")
+	parser.add_argument("--filter", help="apply filter to a column", action="append", metavar="column=value,value,...")
 	parser.add_argument("--color", help="color for all barplot elements", nargs="?")
 	parser.add_argument("--ratio", help="aspect ratio to control figure width", type=float, default=0)
 
@@ -35,15 +32,15 @@ if __name__ == "__main__":
 	# load dataframe
 	data = pd.read_csv(args.input, sep="\t")
 
-	# apply filters to dataframe
+	# prepare axis columns in dataframe
 	axes = [
-		(args.xaxis, args.xaxis_values),
-		(args.yaxis, args.yaxis_values),
-		(args.hue1, args.hue1_values),
-		(args.hue2, args.hue2_values)
+		args.xaxis,
+		args.yaxis,
+		args.hue1,
+		args.hue2
 	]
 
-	for column, values in axes:
+	for column in axes:
 		# skip columns which were not specified
 		if column == None:
 			continue
@@ -51,12 +48,18 @@ if __name__ == "__main__":
 		# remove rows which have missing values in column
 		data = data[~data[column].isna()]
 
+		# sort dataframe by column
+		data.sort_values(by=column, inplace=True)
+
+	# apply filters to dataframe
+	for filter in args.filter:
+		# parse column and selected values
+		column, values = filter.split("=")
+		values = values.split(",")
+
 		# filter rows by selected values in column
 		if values != None and len(values) > 0:
 			data = filter_by_values(data, column, values)
-
-		# sort dataframe by column
-		data.sort_values(by=column, inplace=True)
 
 	# apply aspect ratio if specified
 	if args.ratio != 0:
