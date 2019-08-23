@@ -8,9 +8,8 @@ import sys
 
 
 
-def filter_by_values(df, column, values):
-	mask = [(v in values) for v in df[column]]
-	return df[mask]
+def select_rows_by_values(df, column, values):
+	return pd.DataFrame().append([df[df[column] == v] for v in values], sort=False)
 
 
 
@@ -23,7 +22,7 @@ if __name__ == "__main__":
 	parser.add_argument("--yaxis", help="column name of y-axis", required=True)
 	parser.add_argument("--hue1", help="column name of primary hue axis (splits data within subplot)", nargs="?")
 	parser.add_argument("--hue2", help="column name of secondary hue axis (splits data across subplots)", nargs="?")
-	parser.add_argument("--filter", help="apply filter to a column", action="append", metavar="column=value,value,...")
+	parser.add_argument("--select", help="select a set of values from a column", action="append", default=[], metavar="column=value,value,...")
 	parser.add_argument("--color", help="color for all barplot elements", nargs="?")
 	parser.add_argument("--ratio", help="aspect ratio to control figure width", type=float, default=0)
 
@@ -48,18 +47,15 @@ if __name__ == "__main__":
 		# remove rows which have missing values in column
 		data = data[~data[column].isna()]
 
-		# sort dataframe by column
-		data.sort_values(by=column, inplace=True)
-
-	# apply filters to dataframe
-	for filter in args.filter:
+	# apply selects to dataframe
+	for select in args.select:
 		# parse column and selected values
-		column, values = filter.split("=")
+		column, values = select.split("=")
 		values = values.split(",")
 
-		# filter rows by selected values in column
+		# select rows from dataframe
 		if values != None and len(values) > 0:
-			data = filter_by_values(data, column, values)
+			data = select_rows_by_values(data, column, values)
 
 	# apply aspect ratio if specified
 	if args.ratio != 0:
