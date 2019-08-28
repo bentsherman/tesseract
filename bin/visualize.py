@@ -75,11 +75,26 @@ if __name__ == "__main__":
 
 	# create a categorical plot if either hue columns are specified
 	if args.hue1 != None or args.hue2 != None:
-		sns.catplot(x=args.xaxis, y=args.yaxis, hue=args.hue1, col=args.hue2, data=data, kind="bar", color=args.color)
+		sns.catplot(
+			x=args.xaxis,
+			y=args.yaxis,
+			hue=args.hue1,
+			col=args.hue2,
+			data=data,
+			kind="bar",
+			ci=68,
+			color=args.color
+		)
 
 	# otherwise create a bar plot
 	else:
-		sns.barplot(x=args.xaxis, y=args.yaxis, data=data, color=args.color)
+		sns.barplot(
+			x=args.xaxis,
+			y=args.yaxis,
+			data=data,
+			ci=68,
+			color=args.color
+		)
 
 	# disable x-axis ticks if there are too many categories
 	if len(set(data[args.xaxis])) >= 100:
