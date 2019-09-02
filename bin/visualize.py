@@ -25,7 +25,9 @@ if __name__ == "__main__":
 	parser.add_argument("--select", help="select a set of values from a column", action="append", default=[], metavar="column=value,value,...")
 	parser.add_argument("--mapper", help="mappping file of display names for axis columns", nargs="?")
 	parser.add_argument("--color", help="color for all barplot elements", nargs="?")
+	parser.add_argument("--palette", help="palette for all barplot elements", nargs="?")
 	parser.add_argument("--ratio", help="aspect ratio to control figure width", type=float, default=0)
+	parser.add_argument("--sharey", help="whether to use uniform y-axis across subplots", action="store_true")
 
 	args = parser.parse_args()
 
@@ -83,7 +85,9 @@ if __name__ == "__main__":
 			data=data,
 			kind="bar",
 			ci=68,
-			color=args.color
+			color=args.color,
+			palette=args.palette,
+			sharey=args.sharey
 		)
 
 	# otherwise create a bar plot
@@ -93,7 +97,8 @@ if __name__ == "__main__":
 			y=args.yaxis,
 			data=data,
 			ci=68,
-			color=args.color
+			color=args.color,
+			palette=args.palette
 		)
 
 	# disable x-axis ticks if there are too many categories
