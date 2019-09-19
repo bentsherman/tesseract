@@ -15,7 +15,7 @@ def merge_name_unit(name, unit):
 
 
 def load_trace(filename):
-	return pd.read_csv(filename, sep="\t")
+	return pd.read_csv(filename, sep="\t", na_values="-")
 
 
 

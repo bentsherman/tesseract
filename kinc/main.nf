@@ -101,6 +101,7 @@ process threads {
 		kinc settings set buffer 4
 		kinc settings set logging off
 
+		taskset -c 0-1 \
 		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
@@ -141,6 +142,7 @@ process bsize {
 		kinc settings set buffer 4
 		kinc settings set logging off
 
+		taskset -c 0-1 \
 		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
@@ -181,6 +183,7 @@ process gsize {
 		kinc settings set buffer 4
 		kinc settings set logging off
 
+		taskset -c 0-1 \
 		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
@@ -221,6 +224,7 @@ process lsize {
 		kinc settings set buffer 4
 		kinc settings set logging off
 
+		taskset -c 0-1 \
 		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
@@ -242,7 +246,7 @@ process lsize {
  * specific number of processes.
  */
 process scalability_v1 {
-	tag "${np}/${dataset}/${trial}"
+	tag "${np}/${dataset}/v1/${trial}"
 	publishDir "${params.output.dir}"
 
 	input:
@@ -285,7 +289,7 @@ process scalability_v1 {
  * specific number of CPU processes.
  */
 process scalability_cpu {
-	tag "${np}/${dataset}/${trial}"
+	tag "${np}/${dataset}/cpu/${trial}"
 	publishDir "${params.output.dir}"
 
 	input:
@@ -302,7 +306,8 @@ process scalability_cpu {
 		kinc settings set opencl none
 		kinc settings set logging off
 
-		mpirun -np ${np} kinc run similarity \
+		mpirun -np ${np} \
+		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
 			--cmx ${dataset}.cmx \
@@ -315,6 +320,13 @@ process scalability_cpu {
 			--lsize ${params.defaults.lsize}
 		"""
 }
+
+
+
+DEFAULT_THREADS = [
+	"p100": 2,
+	"v100": 4
+]
 
 
 
@@ -338,11 +350,12 @@ process scalability_gpu {
 	script:
 		"""
 		kinc settings set cuda 0
-		kinc settings set threads ${params.defaults.threads}
+		kinc settings set threads ${DEFAULT_THREADS.containsKey(gpu_model) ? DEFAULT_THREADS[gpu_model] : 1}
 		kinc settings set buffer 4
 		kinc settings set logging off
 
-		mpirun -np ${np} kinc run similarity \
+		mpirun -np ${np} \
+		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
 			--cmx ${dataset}.cmx \

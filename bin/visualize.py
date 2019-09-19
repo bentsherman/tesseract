@@ -32,7 +32,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	# load dataframe
-	data = pd.read_csv(args.input, sep="\t")
+	data = pd.read_csv(args.input, sep="\t", na_values="-")
 
 	# prepare axis columns in dataframe
 	axes = [
