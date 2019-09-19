@@ -101,7 +101,7 @@ process threads {
 		kinc settings set buffer 4
 		kinc settings set logging off
 
-		taskset -c 0-1 \
+		taskset -c 0-${threads} \
 		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
@@ -142,7 +142,7 @@ process bsize {
 		kinc settings set buffer 4
 		kinc settings set logging off
 
-		taskset -c 0-1 \
+		taskset -c 0-${params.defaults.threads} \
 		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
@@ -183,7 +183,7 @@ process gsize {
 		kinc settings set buffer 4
 		kinc settings set logging off
 
-		taskset -c 0-1 \
+		taskset -c 0-${params.defaults.threads} \
 		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
@@ -224,7 +224,7 @@ process lsize {
 		kinc settings set buffer 4
 		kinc settings set logging off
 
-		taskset -c 0-1 \
+		taskset -c 0-${params.defaults.threads} \
 		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
