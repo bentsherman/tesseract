@@ -21,7 +21,7 @@ def load_trace(filename):
 
 def load_nvprof(filename):
 	# load dataframe
-	df = pd.read_csv(filename)
+	df = pd.read_csv(filename, skiprows=3)
 
 	# merge the two header rows
 	names = df.columns

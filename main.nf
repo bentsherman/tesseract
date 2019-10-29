@@ -29,10 +29,6 @@ process aggregate {
 
 	script:
 		"""
-		for f in ${nvprof_files}; do
-			grep -v "==" \$f > temp; mv temp \$f
-		done
-
 		aggregate.py \
 			--trace-input ${trace_files} \
 			--trace-output db.trace.txt \
