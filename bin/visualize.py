@@ -9,7 +9,7 @@ import sys
 
 
 def select_rows_by_values(df, column, values):
-	return pd.DataFrame().append([df[df[column] == v] for v in values], sort=False)
+	return pd.DataFrame().append([df[df[column].astype(str) == v] for v in values], sort=False)
 
 
 
@@ -24,6 +24,7 @@ if __name__ == "__main__":
 	parser.add_argument("--hue2", help="column name of secondary hue axis (splits data across subplots)", nargs="?")
 	parser.add_argument("--select", help="select a set of values from a column", action="append", default=[], metavar="column=value,value,...")
 	parser.add_argument("--mapper", help="mappping file of display names for axis columns", nargs="?")
+	parser.add_argument("--mapper-term", help="additional display name mapping (overwrites mapping file)", action="append", default=[], metavar="column_name=display_name")
 	parser.add_argument("--color", help="color for all barplot elements", nargs="?")
 	parser.add_argument("--palette", help="palette for all barplot elements", nargs="?")
 	parser.add_argument("--ratio", help="aspect ratio to control figure width", type=float, default=0)
@@ -60,16 +61,26 @@ if __name__ == "__main__":
 		if values != None and len(values) > 0:
 			data = select_rows_by_values(data, column, values)
 
+	if len(data.index) == 0:
+		print("error: no data to visualize")
+		sys.exit(-1)
+
 	# apply column name mapper to dataframe
 	if args.mapper != None:
 		mapper = pd.read_csv(args.mapper, sep="\t")
 		mapper = {mapper.loc[i, "column_name"]: mapper.loc[i, "display_name"] for i in mapper.index}
+	else:
+		mapper = {}
 
-		args.xaxis = mapper[args.xaxis] if args.xaxis in mapper else args.xaxis
-		args.yaxis = mapper[args.yaxis] if args.yaxis in mapper else args.yaxis
-		args.hue1 = mapper[args.hue1] if args.hue1 in mapper else args.hue1
-		args.hue2 = mapper[args.hue2] if args.hue2 in mapper else args.hue2
-		data.rename(columns=mapper, copy=False, inplace=True)
+	for mapper_term in args.mapper_term:
+		column_name, display_name = mapper_term.split("=")
+		mapper[column_name] = display_name
+
+	args.xaxis = mapper[args.xaxis] if args.xaxis in mapper else args.xaxis
+	args.yaxis = mapper[args.yaxis] if args.yaxis in mapper else args.yaxis
+	args.hue1 = mapper[args.hue1] if args.hue1 in mapper else args.hue1
+	args.hue2 = mapper[args.hue2] if args.hue2 in mapper else args.hue2
+	data.rename(columns=mapper, copy=False, inplace=True)
 
 	# apply aspect ratio if specified
 	if args.ratio != 0:
