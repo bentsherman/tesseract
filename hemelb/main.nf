@@ -38,14 +38,15 @@ XML_FILES
  * specific block size.
  */
 process blocksize {
-	tag "${geometry}/${gpu_model}/${blocksize}"
-	publishDir "${params.output.dir}/${geometry}/${gpu_model}"
+	tag "${blocksize}/${geometry}/${gpu_model}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(blocksize) from Channel.from( params.blocksize.values )
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_BLOCKSIZE
 		set val(geometry), file(xml_file) from XML_FILES_FOR_BLOCKSIZE
 		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(blocksize) from Channel.from( params.blocksize.values )
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.blocksize.enabled == true
@@ -63,14 +64,15 @@ process blocksize {
  * specific lattice type.
  */
 process latticetype {
-	tag "${geometry}/${gpu_model}/${latticetype}"
-	publishDir "${params.output.dir}/${geometry}/${gpu_model}"
+	tag "${latticetype}/${geometry}/${gpu_model}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(latticetype) from Channel.from( params.latticetype.values )
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_LATTICETYPE
 		set val(geometry), file(xml_file) from XML_FILES_FOR_LATTICETYPE
 		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(latticetype) from Channel.from( params.latticetype.values )
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.latticetype.enabled == true
@@ -88,14 +90,15 @@ process latticetype {
  * specific number of processes per GPU.
  */
 process oversubscribe {
-	tag "${geometry}/${gpu_model}/${np}"
-	publishDir "${params.output.dir}/${geometry}/${gpu_model}"
+	tag "${np}/${geometry}/${gpu_model}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(np) from Channel.from( params.oversubscribe.values )
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_OVERSUBSCRIBE
 		set val(geometry), file(xml_file) from XML_FILES_FOR_OVERSUBSCRIBE
 		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(np) from Channel.from( params.oversubscribe.values )
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.oversubscribe.enabled == true
@@ -115,14 +118,14 @@ process oversubscribe {
  * specific number of CPU processes.
  */
 process scalability_cpu {
-	tag "${geometry}/${latticetype}/${np}"
-	publishDir "${params.output.dir}/${geometry}"
+	tag "${np}/${geometry}/cpu/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(np) from Channel.from( params.scalability_cpu.values )
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_SCALABILITY_CPU
 		set val(geometry), file(xml_file) from XML_FILES_FOR_SCALABILITY_CPU
-		each(np) from Channel.from( params.scalability_cpu.values )
-		each(latticetype) from Channel.from( params.latticetype.values )
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.scalability_cpu.enabled == true
@@ -140,15 +143,15 @@ process scalability_cpu {
  * specific number of GPU processes.
  */
 process scalability_gpu {
-	tag "${geometry}/${gpu_model}/${latticetype}/${np}"
-	publishDir "${params.output.dir}/${geometry}/${gpu_model}"
+	tag "${np}/${geometry}/${gpu_model}/${trial}"
+	publishDir "${params.output.dir}"
 
 	input:
+		each(np) from Channel.from( params.scalability_gpu.values )
 		set val(geometry), file(gmy_file) from GMY_FILES_FOR_SCALABILITY_GPU
 		set val(geometry), file(xml_file) from XML_FILES_FOR_SCALABILITY_GPU
 		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(np) from Channel.from( params.scalability_gpu.values )
-		each(latticetype) from Channel.from( params.latticetype.values )
+		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	when:
 		params.scalability_gpu.enabled == true
