@@ -55,7 +55,7 @@ process blocksize {
 		"""
 		sed 's/blocksize="[0-9]*"/blocksize="${blocksize}"/' ${xml_file} > config.xml
 
-		mpirun -np 1 hemelb -in config.xml -out results
+		mpirun -np 1 hemelb -in config.xml -out \${TMPDIR}/results
 		"""
 }
 
@@ -81,7 +81,7 @@ process latticetype {
 
 	script:
 		"""
-		mpirun -np 1 hemelb -in ${xml_file} -out results
+		mpirun -np 1 hemelb -in ${xml_file} -out \${TMPDIR}/results
 		"""
 }
 
@@ -109,7 +109,7 @@ process oversubscribe {
 		"""
 		export CUDA_VISIBLE_DEVICES=0
 
-		mpirun -np ${np} hemelb -in ${xml_file} -out results
+		mpirun -np ${np} hemelb -in ${xml_file} -out \${TMPDIR}/results
 		"""
 }
 
@@ -136,7 +136,7 @@ process scalability_cpu {
 		"""
 		sed 's/use_gpu="1"/use_gpu="0"/' ${xml_file} > config.xml
 
-		mpirun -np ${np} hemelb -in config.xml -out results
+		mpirun -np ${np} hemelb -in config.xml -out \${TMPDIR}/results
 		"""
 }
 
@@ -162,6 +162,6 @@ process scalability_gpu {
 
 	script:
 		"""
-		mpirun -np ${np} hemelb -in ${xml_file} -out results
+		mpirun -np ${np} hemelb -in ${xml_file} -out \${TMPDIR}/results
 		"""
 }

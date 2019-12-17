@@ -104,8 +104,8 @@ process threads {
 		taskset -c 0-${threads} \
 		kinc run similarity \
 			--input ${emx_file} \
-			--ccm ${dataset}.ccm \
-			--cmx ${dataset}.cmx \
+			--ccm \${TMPDIR}/${dataset}.ccm \
+			--cmx \${TMPDIR}/${dataset}.cmx \
 			--clusmethod ${params.defaults.clusmethod} \
 			--corrmethod ${params.defaults.corrmethod} \
 			--preout ${params.defaults.preout} \
@@ -145,8 +145,8 @@ process bsize {
 		taskset -c 0-${params.defaults.threads} \
 		kinc run similarity \
 			--input ${emx_file} \
-			--ccm ${dataset}.ccm \
-			--cmx ${dataset}.cmx \
+			--ccm \${TMPDIR}/${dataset}.ccm \
+			--cmx \${TMPDIR}/${dataset}.cmx \
 			--clusmethod ${params.defaults.clusmethod} \
 			--corrmethod ${params.defaults.corrmethod} \
 			--preout ${params.defaults.preout} \
@@ -186,8 +186,8 @@ process gsize {
 		taskset -c 0-${params.defaults.threads} \
 		kinc run similarity \
 			--input ${emx_file} \
-			--ccm ${dataset}.ccm \
-			--cmx ${dataset}.cmx \
+			--ccm \${TMPDIR}/${dataset}.ccm \
+			--cmx \${TMPDIR}/${dataset}.cmx \
 			--clusmethod ${params.defaults.clusmethod} \
 			--corrmethod ${params.defaults.corrmethod} \
 			--preout ${params.defaults.preout} \
@@ -227,8 +227,8 @@ process lsize {
 		taskset -c 0-${params.defaults.threads} \
 		kinc run similarity \
 			--input ${emx_file} \
-			--ccm ${dataset}.ccm \
-			--cmx ${dataset}.cmx \
+			--ccm \${TMPDIR}/${dataset}.ccm \
+			--cmx \${TMPDIR}/${dataset}.cmx \
 			--clusmethod ${params.defaults.clusmethod} \
 			--corrmethod ${params.defaults.corrmethod} \
 			--preout ${params.defaults.preout} \
@@ -309,8 +309,8 @@ process scalability_cpu {
 		mpirun -np ${np} \
 		kinc run similarity \
 			--input ${emx_file} \
-			--ccm ${dataset}.ccm \
-			--cmx ${dataset}.cmx \
+			--ccm \${TMPDIR}/${dataset}.ccm \
+			--cmx \${TMPDIR}/${dataset}.cmx \
 			--clusmethod ${params.defaults.clusmethod} \
 			--corrmethod ${params.defaults.corrmethod} \
 			--preout ${params.defaults.preout} \
@@ -357,8 +357,8 @@ process scalability_gpu {
 		mpirun -np ${np} \
 		kinc run similarity \
 			--input ${emx_file} \
-			--ccm ${dataset}.ccm \
-			--cmx ${dataset}.cmx \
+			--ccm \${TMPDIR}/${dataset}.ccm \
+			--cmx \${TMPDIR}/${dataset}.cmx \
 			--clusmethod ${params.defaults.clusmethod} \
 			--corrmethod ${params.defaults.corrmethod} \
 			--preout ${params.defaults.preout} \
