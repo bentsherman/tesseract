@@ -53,7 +53,7 @@ process blocksize {
 
 	script:
 		"""
-		sed 's/blocksize="[0-9]*"/blocksize="${blocksize}"' ${xml_file} > config.xml
+		sed 's/blocksize="[0-9]*"/blocksize="${blocksize}"/' ${xml_file} > config.xml
 
 		mpirun -np 1 hemelb -in config.xml -out results
 		"""
@@ -134,7 +134,7 @@ process scalability_cpu {
 
 	script:
 		"""
-		sed 's/use_gpu="1"/use_gpu="0"' ${xml_file} > config.xml
+		sed 's/use_gpu="1"/use_gpu="0"/' ${xml_file} > config.xml
 
 		mpirun -np ${np} hemelb -in config.xml -out results
 		"""
