@@ -43,6 +43,9 @@ if __name__ == "__main__":
 	parser.add_argument("--nvprof-input", help="list of nvprof files", nargs="+")
 	parser.add_argument("--nvprof-output", help="output nvprof dataframe")
 	parser.add_argument("--nvprof-mapper", help="mapping file for renaming column names")
+	parser.add_argument("--fix-exit-na", help="impute missing exit codes", action="store_true")
+	parser.add_argument("--fix-runtime-sleep", help="adjust runtime metrics to account for running sleep beforehand", action="store_true")
+	parser.add_argument("--fix-runtime-ms", help="convert runtime metrics from ms to s", action="store_true")
 
 	args = parser.parse_args()
 
@@ -66,6 +69,21 @@ if __name__ == "__main__":
 		X_trace["trial"] = X_trace["tag"].apply(lambda tag: tag.split("/")[3])
 
 		X_trace.drop(columns=["process", "tag", "name"], inplace=True)
+
+		# impute missing exit codes
+		if args.fix_exit_na:
+			X_trace["exit"].fillna(143, inplace=True)
+			X_trace["exit"] = X_trace["exit"].astype(int)
+
+		# adjust runtime metrics to exclude sleep time
+		if args.fix_runtime_sleep:
+			X_trace["duration"] -= 10000
+			X_trace["realtime"] -= 10000
+
+		# convert runtime metrics from ms to s
+		if args.fix_runtime_ms:
+			X_trace["duration"] /= 1000
+			X_trace["realtime"] /= 1000
 
 		# save trace dataframe
 		X_trace.to_csv(args.trace_output, sep="\t", index=False)
