@@ -1,0 +1,13 @@
+column_name	display_name
+nvprof_type	Type
+nvprof_time_percent	Time (%)
+nvprof_time_total	Time (ms)
+nvprof_calls	Calls
+nvprof_time_avg	Kernel Time (ms)
+nvprof_time_min	Min Runtime (ms)
+nvprof_time_max	Max Runtime (ms)
+nvprof_name	Name
+experiment_value	Experiment Value
+dataset	Dataset
+gpu_model	GPU Model
+realtime	Runtime (s)

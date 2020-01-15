@@ -1,4 +1,7 @@
 .nextflow*
+data
 input
 output
 work
+
+*.pyc
