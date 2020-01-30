@@ -48,14 +48,30 @@ process blocksize {
 		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
+	output:
+		file("*.nvprof.txt")
+
 	when:
 		params.blocksize.enabled == true
 
 	script:
 		"""
-		sed 's/blocksize="[0-9]*"/blocksize="${blocksize}"/' ${xml_file} > config.xml
+		sed 's/blocksize="[0-9]+"/blocksize="${blocksize}"/' ${xml_file} > config.xml
 
-		mpirun -np 1 hemelb -in config.xml -out \${TMPDIR}/results
+		NVPROF_FILE=\$(make-filename.sh blocksize "${blocksize}" "${geometry}" "${gpu_model}" "${trial}" "%p" nvprof txt)
+
+		nvprof \
+			--csv \
+			--log-file \${NVPROF_FILE} \
+			--normalized-time-unit ms \
+			--profile-child-processes \
+			--unified-memory-profiling off \
+		mpirun -np 1 \
+		hemelb \
+			-in config.xml \
+			-out \${TMPDIR}/results
+
+		rename 's/\\.[0-9]+\\.nvprof\\.txt/.nvprof.txt/' *.nvprof.txt
 		"""
 }
 
