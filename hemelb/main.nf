@@ -70,8 +70,6 @@ process blocksize {
 		hemelb \
 			-in config.xml \
 			-out \${TMPDIR}/results
-
-		rename 's/\\.[0-9]+\\.nvprof\\.txt/.nvprof.txt/' *.nvprof.txt
 		"""
 }
 
@@ -92,12 +90,26 @@ process latticetype {
 		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
+	output:
+		file("*.nvprof.txt")
+
 	when:
 		params.latticetype.enabled == true
 
 	script:
 		"""
-		mpirun -np 1 hemelb -in ${xml_file} -out \${TMPDIR}/results
+		NVPROF_FILE=\$(make-filename.sh latticetype "${latticetype}" "${geometry}" "${gpu_model}" "${trial}" "%p" nvprof txt)
+
+		nvprof \
+			--csv \
+			--log-file \${NVPROF_FILE} \
+			--normalized-time-unit ms \
+			--profile-child-processes \
+			--unified-memory-profiling off \
+		mpirun -np 1 \
+		hemelb \
+			-in ${xml_file} \
+			-out \${TMPDIR}/results
 		"""
 }
 
@@ -118,6 +130,9 @@ process oversubscribe {
 		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
+	output:
+		file("*.nvprof.txt")
+
 	when:
 		params.oversubscribe.enabled == true
 
@@ -125,7 +140,18 @@ process oversubscribe {
 		"""
 		export CUDA_VISIBLE_DEVICES=0
 
-		mpirun -np ${np} hemelb -in ${xml_file} -out \${TMPDIR}/results
+		NVPROF_FILE=\$(make-filename.sh oversubscribe "${np}" "${geometry}" "${gpu_model}" "${trial}" "%p" nvprof txt)
+
+		nvprof \
+			--csv \
+			--log-file \${NVPROF_FILE} \
+			--normalized-time-unit ms \
+			--profile-child-processes \
+			--unified-memory-profiling off \
+		mpirun -np ${np} \
+		hemelb \
+			-in ${xml_file} \
+			-out \${TMPDIR}/results
 		"""
 }
 
@@ -173,11 +199,25 @@ process scalability_gpu {
 		each(gpu_model) from Channel.from( params.input.gpu_models )
 		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
+	output:
+		file("*.nvprof.txt")
+
 	when:
 		params.scalability_gpu.enabled == true
 
 	script:
 		"""
-		mpirun -np ${np} hemelb -in ${xml_file} -out \${TMPDIR}/results
+		NVPROF_FILE=\$(make-filename.sh scalability_gpu "${np}" "${geometry}" "${gpu_model}" "${trial}" "%p" nvprof txt)
+
+		nvprof \
+			--csv \
+			--log-file \${NVPROF_FILE} \
+			--normalized-time-unit ms \
+			--profile-child-processes \
+			--unified-memory-profiling off \
+		mpirun -np ${np} \
+		hemelb \
+			-in ${xml_file} \
+			-out \${TMPDIR}/results
 		"""
 }
