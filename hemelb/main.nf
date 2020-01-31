@@ -7,217 +7,70 @@
  */
 GMY_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.gmy_files}", size: 1, flat: true)
 XML_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.xml_files}", size: 1, flat: true)
+CONDITIONS_FILE = Channel.fromPath("${params.input.dir}/${params.input.conditions_file}")
 
 
 
 /**
- * Send input files to each process that uses them.
+ * Extract each set of input conditions from file.
  */
-GMY_FILES
-	.into {
-		GMY_FILES_FOR_BLOCKSIZE;
-		GMY_FILES_FOR_LATTICETYPE;
-		GMY_FILES_FOR_OVERSUBSCRIBE;
-		GMY_FILES_FOR_SCALABILITY_CPU;
-		GMY_FILES_FOR_SCALABILITY_GPU
-	}
-
-XML_FILES
-	.into {
-		XML_FILES_FOR_BLOCKSIZE;
-		XML_FILES_FOR_LATTICETYPE;
-		XML_FILES_FOR_OVERSUBSCRIBE;
-		XML_FILES_FOR_SCALABILITY_CPU;
-		XML_FILES_FOR_SCALABILITY_GPU
-	}
+CONDITIONS_FILE
+	.splitCsv(sep: "\t", header: true)
+	.set { CONDITIONS }
 
 
 
 /**
- * The blocksize process performs a single run of HemelB with a
- * specific block size.
+ * The run_experiment process performs a single run of the
+ * application under test for each set of input conditions.
  */
-process blocksize {
-	tag "${blocksize}/${geometry}/${gpu_model}/${trial}"
+process run_experiment {
+	tag "geometry=${geometry}/blocksize=${c.blocksize}/gpu_model=${c.gpu_model}/latticetype=${c.latticetype}/np=${c.np}/trial=${trial}"
 	publishDir "${params.output.dir}"
 
 	input:
-		each(blocksize) from Channel.from( params.blocksize.values )
-		set val(geometry), file(gmy_file) from GMY_FILES_FOR_BLOCKSIZE
-		set val(geometry), file(xml_file) from XML_FILES_FOR_BLOCKSIZE
-		each(gpu_model) from Channel.from( params.input.gpu_models )
+		set val(geometry), file(gmy_file) from GMY_FILES
+		set val(geometry), file(xml_file) from XML_FILES
+		each(c) from CONDITIONS
 		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	output:
 		file("*.nvprof.txt")
 
-	when:
-		params.blocksize.enabled == true
-
 	script:
 		"""
-		sed 's/blocksize="[0-9]+"/blocksize="${blocksize}"/' ${xml_file} > config.xml
+		# TODO: only use gpu 0 for oversubscribe experiment
+		# export CUDA_VISIBLE_DEVICES=0
 
-		NVPROF_FILE=\$(make-filename.sh blocksize "${blocksize}" "${geometry}" "${gpu_model}" "${trial}" "%p" nvprof txt)
+		# modify xml file
+		cp ${xml_file} config.xml
 
+		if [[ ${c.gpu_model} == "cpu" ]]; then
+			sed 's/use_gpu="1"/use_gpu="0"/' config.xml > tmp; mv tmp config.xml
+		fi
+
+		sed 's/blocksize="[0-9]+"/blocksize="${c.blocksize}"/' config.xml > tmp; mv tmp config.xml
+
+		# generate nvprof filename
+		NVPROF_FILE=\$(make-filename.sh \
+			"geometry=${geometry}" \
+			"blocksize=${c.blocksize}" \
+			"gpu_model=${c.gpu_model}" \
+			"latticetype=${c.latticetype}" \
+			"np=${c.np}" \
+			"trial=${trial}" \
+			"%p" nvprof txt)
+
+		# run application
 		nvprof \
 			--csv \
 			--log-file \${NVPROF_FILE} \
 			--normalized-time-unit ms \
 			--profile-child-processes \
 			--unified-memory-profiling off \
-		mpirun -np 1 \
+		mpirun -np ${c.np} \
 		hemelb \
 			-in config.xml \
-			-out \${TMPDIR}/results
-		"""
-}
-
-
-
-/**
- * The latticetype process performs a single run of HemelB with a
- * specific lattice type.
- */
-process latticetype {
-	tag "${latticetype}/${geometry}/${gpu_model}/${trial}"
-	publishDir "${params.output.dir}"
-
-	input:
-		each(latticetype) from Channel.from( params.latticetype.values )
-		set val(geometry), file(gmy_file) from GMY_FILES_FOR_LATTICETYPE
-		set val(geometry), file(xml_file) from XML_FILES_FOR_LATTICETYPE
-		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(trial) from Channel.from( 0 .. params.input.trials-1 )
-
-	output:
-		file("*.nvprof.txt")
-
-	when:
-		params.latticetype.enabled == true
-
-	script:
-		"""
-		NVPROF_FILE=\$(make-filename.sh latticetype "${latticetype}" "${geometry}" "${gpu_model}" "${trial}" "%p" nvprof txt)
-
-		nvprof \
-			--csv \
-			--log-file \${NVPROF_FILE} \
-			--normalized-time-unit ms \
-			--profile-child-processes \
-			--unified-memory-profiling off \
-		mpirun -np 1 \
-		hemelb \
-			-in ${xml_file} \
-			-out \${TMPDIR}/results
-		"""
-}
-
-
-
-/**
- * The oversubscribe process performs a single run of HemelB with a
- * specific number of processes per GPU.
- */
-process oversubscribe {
-	tag "${np}/${geometry}/${gpu_model}/${trial}"
-	publishDir "${params.output.dir}"
-
-	input:
-		each(np) from Channel.from( params.oversubscribe.values )
-		set val(geometry), file(gmy_file) from GMY_FILES_FOR_OVERSUBSCRIBE
-		set val(geometry), file(xml_file) from XML_FILES_FOR_OVERSUBSCRIBE
-		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(trial) from Channel.from( 0 .. params.input.trials-1 )
-
-	output:
-		file("*.nvprof.txt")
-
-	when:
-		params.oversubscribe.enabled == true
-
-	script:
-		"""
-		export CUDA_VISIBLE_DEVICES=0
-
-		NVPROF_FILE=\$(make-filename.sh oversubscribe "${np}" "${geometry}" "${gpu_model}" "${trial}" "%p" nvprof txt)
-
-		nvprof \
-			--csv \
-			--log-file \${NVPROF_FILE} \
-			--normalized-time-unit ms \
-			--profile-child-processes \
-			--unified-memory-profiling off \
-		mpirun -np ${np} \
-		hemelb \
-			-in ${xml_file} \
-			-out \${TMPDIR}/results
-		"""
-}
-
-
-
-/**
- * The scalability_cpu process performs a single run of HemelB with a
- * specific number of CPU processes.
- */
-process scalability_cpu {
-	tag "${np}/${geometry}/cpu/${trial}"
-	publishDir "${params.output.dir}"
-
-	input:
-		each(np) from Channel.from( params.scalability_cpu.values )
-		set val(geometry), file(gmy_file) from GMY_FILES_FOR_SCALABILITY_CPU
-		set val(geometry), file(xml_file) from XML_FILES_FOR_SCALABILITY_CPU
-		each(trial) from Channel.from( 0 .. params.input.trials-1 )
-
-	when:
-		params.scalability_cpu.enabled == true
-
-	script:
-		"""
-		sed 's/use_gpu="1"/use_gpu="0"/' ${xml_file} > config.xml
-
-		mpirun -np ${np} hemelb -in config.xml -out \${TMPDIR}/results
-		"""
-}
-
-
-
-/**
- * The scalability_gpu process performs a single run of HemelB with a
- * specific number of GPU processes.
- */
-process scalability_gpu {
-	tag "${np}/${geometry}/${gpu_model}/${trial}"
-	publishDir "${params.output.dir}"
-
-	input:
-		each(np) from Channel.from( params.scalability_gpu.values )
-		set val(geometry), file(gmy_file) from GMY_FILES_FOR_SCALABILITY_GPU
-		set val(geometry), file(xml_file) from XML_FILES_FOR_SCALABILITY_GPU
-		each(gpu_model) from Channel.from( params.input.gpu_models )
-		each(trial) from Channel.from( 0 .. params.input.trials-1 )
-
-	output:
-		file("*.nvprof.txt")
-
-	when:
-		params.scalability_gpu.enabled == true
-
-	script:
-		"""
-		NVPROF_FILE=\$(make-filename.sh scalability_gpu "${np}" "${geometry}" "${gpu_model}" "${trial}" "%p" nvprof txt)
-
-		nvprof \
-			--csv \
-			--log-file \${NVPROF_FILE} \
-			--normalized-time-unit ms \
-			--profile-child-processes \
-			--unified-memory-profiling off \
-		mpirun -np ${np} \
-		hemelb \
-			-in ${xml_file} \
 			-out \${TMPDIR}/results
 		"""
 }
