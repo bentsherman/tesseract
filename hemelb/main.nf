@@ -42,7 +42,7 @@ process run_experiment {
 		# TODO: only use gpu 0 for oversubscribe experiment
 		# export CUDA_VISIBLE_DEVICES=0
 
-		# modify xml file
+		# modify config file
 		cp ${xml_file} config.xml
 
 		if [[ ${c.gpu_model} == "cpu" ]]; then

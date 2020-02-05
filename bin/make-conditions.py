@@ -22,8 +22,6 @@ if __name__ == "__main__":
 		condition, value = d.split("=")
 		defaults[condition] = value
 
-	print(args)
-
 	# generate experiments
 	experiments = []
 
