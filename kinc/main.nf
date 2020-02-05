@@ -24,7 +24,7 @@ CONDITIONS_FILE
  * application under test for each set of input conditions.
  */
 process run_experiment {
-	// tag "${revision}/${dataset}/${gpu_model}/${trial}"
+	tag "${task.index}"
 	publishDir "${params.output.dir}"
 
 	input:
@@ -33,10 +33,17 @@ process run_experiment {
 		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	output:
+		val(c) into CONDITIONS_AUGMENTED
 		file("*.nvprof.txt")
 
 	script:
 		"""
+		# augment conditions with additional features
+		echo ${c = c.clone()}
+		echo ${c.task_id = task.index}
+		echo ${c.dataset = dataset}
+		echo ${c.trial = trial}
+
 		kinc settings set cuda ${c.gpu_model == "cpu" ? "none" : "0"}
 		kinc settings set opencl none
 		kinc settings set threads ${c.threads}
@@ -44,12 +51,7 @@ process run_experiment {
 		kinc settings set logging off
 
 		# generate nvprof filename
-		NVPROF_FILE=\$(make-filename.sh \
-			"revision=${c.revision}" \
-			"dataset=${dataset}" \
-			"gpu_model=${c.gpu_model}" \
-			"trial=${trial}" \
-			"%p" nvprof txt)
+		NVPROF_FILE="${task.index}.%p.nvprof.txt"
 
 		# run application
 		nvprof \
@@ -73,3 +75,18 @@ process run_experiment {
 			--lsize ${c.lsize}
 		"""
 }
+
+
+
+/**
+ * Collect augmented conditions into a csv file.
+ */
+CONDITIONS_AUGMENTED
+	.map {
+		it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
+	}
+	.collectFile(
+		keepHeader: true,
+		name: "conditions.txt",
+		storeDir: "${params.output.dir}"
+	)

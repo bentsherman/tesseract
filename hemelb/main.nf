@@ -25,7 +25,7 @@ CONDITIONS_FILE
  * application under test for each set of input conditions.
  */
 process run_experiment {
-	tag "geometry=${geometry}/blocksize=${c.blocksize}/gpu_model=${c.gpu_model}/latticetype=${c.latticetype}/np=${c.np}/trial=${trial}"
+	tag "${task.index}"
 	publishDir "${params.output.dir}"
 
 	input:
@@ -35,10 +35,17 @@ process run_experiment {
 		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	output:
+		val(c) into CONDITIONS_AUGMENTED
 		file("*.nvprof.txt")
 
 	script:
 		"""
+		# augment conditions with additional features
+		echo ${c = c.clone()}
+		echo ${c.task_id = task.index}
+		echo ${c.geometry = geometry}
+		echo ${c.trial = trial}
+
 		# TODO: only use gpu 0 for oversubscribe experiment
 		# export CUDA_VISIBLE_DEVICES=0
 
@@ -52,14 +59,7 @@ process run_experiment {
 		sed 's/blocksize="[0-9]+"/blocksize="${c.blocksize}"/' config.xml > tmp; mv tmp config.xml
 
 		# generate nvprof filename
-		NVPROF_FILE=\$(make-filename.sh \
-			"geometry=${geometry}" \
-			"blocksize=${c.blocksize}" \
-			"gpu_model=${c.gpu_model}" \
-			"latticetype=${c.latticetype}" \
-			"np=${c.np}" \
-			"trial=${trial}" \
-			"%p" nvprof txt)
+		NVPROF_FILE="${task.index}.%p.nvprof.txt"
 
 		# run application
 		nvprof \
@@ -74,3 +74,18 @@ process run_experiment {
 			-out \${TMPDIR}/results
 		"""
 }
+
+
+
+/**
+ * Collect augmented conditions into a csv file.
+ */
+CONDITIONS_AUGMENTED
+	.map {
+		it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
+	}
+	.collectFile(
+		keepHeader: true,
+		name: "conditions.txt",
+		storeDir: "${params.output.dir}"
+	)
