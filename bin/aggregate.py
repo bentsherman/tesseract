@@ -98,11 +98,12 @@ if __name__ == "__main__":
 		for filename, X_i in zip(args.nvprof_input, nvprof_files):
 			# parse conditions from filename
 			tokens = filename.replace(".", "/").split("/")
-			experiment_type = tokens[-7]
-			experiment_value = tokens[-6]
-			dataset = tokens[-5]
-			gpu_model = tokens[-4]
-			trial = tokens[-3]
+			experiment_type = tokens[-8]
+			experiment_value = tokens[-7]
+			dataset = tokens[-6]
+			gpu_model = tokens[-5]
+			trial = tokens[-4]
+			pid = tokens[-3]
 
 			# append condition columns to input dataframe
 			X_i["experiment_type"] = experiment_type
@@ -110,6 +111,7 @@ if __name__ == "__main__":
 			X_i["dataset"] = dataset
 			X_i["gpu_model"] = gpu_model
 			X_i["trial"] = trial
+			X_i["pid"] = pid
 
 			# append input dataframe rows to output dataframe
 			X_nvprof = X_nvprof.append(X_i, sort=False)
