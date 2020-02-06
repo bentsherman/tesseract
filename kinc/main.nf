@@ -24,7 +24,6 @@ CONDITIONS_FILE
  * application under test for each set of input conditions.
  */
 process run_experiment {
-	tag "${task.index}"
 	publishDir "${params.output.dir}"
 
 	input:

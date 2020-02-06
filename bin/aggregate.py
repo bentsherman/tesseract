@@ -14,8 +14,13 @@ def merge_name_unit(name, unit):
 
 
 
+def load_conditions(filename):
+	return pd.read_csv(filename, sep="\t", index_col="task_id")
+
+
+
 def load_trace(filename):
-	return pd.read_csv(filename, sep="\t", na_values="-")
+	return pd.read_csv(filename, sep="\t", index_col="task_id", na_values="-")
 
 
 
@@ -38,6 +43,7 @@ def load_nvprof(filename):
 if __name__ == "__main__":
 	# parse command-line arguments
 	parser = argparse.ArgumentParser()
+	parser.add_argument("--conditions", help="conditions file", required=True)
 	parser.add_argument("--trace-input", help="list of nextflow trace files", nargs="+")
 	parser.add_argument("--trace-output", help="output trace dataframe")
 	parser.add_argument("--nvprof-input", help="list of nvprof files", nargs="+")
@@ -49,6 +55,9 @@ if __name__ == "__main__":
 
 	args = parser.parse_args()
 
+	# load conditions file
+	X_conditions = load_conditions(args.conditions)
+
 	if args.trace_input:
 		# load nextflow trace files
 		trace_files = [load_trace(filename) for filename in args.trace_input]
@@ -59,15 +68,7 @@ if __name__ == "__main__":
 		for X_i in trace_files:
 			X_trace = X_trace.append(X_i, sort=False)
 
-		# append condition columns to trace dataframe
-		X_trace["tag"] = X_trace["tag"].apply(lambda tag: tag.replace(".", "-"))
-
-		X_trace["experiment_type"] = X_trace["process"]
-		X_trace["experiment_value"] = X_trace["tag"].apply(lambda tag: tag.split("/")[0])
-		X_trace["dataset"] = X_trace["tag"].apply(lambda tag: tag.split("/")[1])
-		X_trace["gpu_model"] = X_trace["tag"].apply(lambda tag: tag.split("/")[2])
-		X_trace["trial"] = X_trace["tag"].apply(lambda tag: tag.split("/")[3])
-
+		# remove unused columns
 		X_trace.drop(columns=["process", "tag", "name"], inplace=True)
 
 		# impute missing exit codes
@@ -85,8 +86,11 @@ if __name__ == "__main__":
 			X_trace["duration"] /= 1000
 			X_trace["realtime"] /= 1000
 
+		# merge with input conditions
+		X_trace = X_conditions.join(X_trace, on="task_id")
+
 		# save trace dataframe
-		X_trace.to_csv(args.trace_output, sep="\t", index=False)
+		X_trace.to_csv(args.trace_output, sep="\t", index="task_id")
 
 	if args.nvprof_input:
 		# load nvprof files
@@ -98,19 +102,11 @@ if __name__ == "__main__":
 		for filename, X_i in zip(args.nvprof_input, nvprof_files):
 			# parse conditions from filename
 			tokens = filename.replace(".", "/").split("/")
-			experiment_type = tokens[-8]
-			experiment_value = tokens[-7]
-			dataset = tokens[-6]
-			gpu_model = tokens[-5]
-			trial = tokens[-4]
+			task_id = tokens[-4]
 			pid = tokens[-3]
 
 			# append condition columns to input dataframe
-			X_i["experiment_type"] = experiment_type
-			X_i["experiment_value"] = experiment_value
-			X_i["dataset"] = dataset
-			X_i["gpu_model"] = gpu_model
-			X_i["trial"] = trial
+			X_i["task_id"] = task_id
 			X_i["pid"] = pid
 
 			# append input dataframe rows to output dataframe
@@ -122,6 +118,9 @@ if __name__ == "__main__":
 			mapper = {mapper.loc[i, "display_name"]: mapper.loc[i, "column_name"] for i in mapper.index}
 
 			X_nvprof.rename(columns=mapper, copy=False, inplace=True)
+
+		# merge with input conditions
+		X_nvprof = X_conditions.merge(X_nvprof, on="task_id")
 
 		# save nvprof dataframe
 		X_nvprof.to_csv(args.nvprof_output, sep="\t", index=False)
