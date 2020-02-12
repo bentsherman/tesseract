@@ -18,4 +18,5 @@ python bin/make-conditions.py \
 	--experiment bsize=1024,2048,4096,8192,16384,32768 \
 	--experiment gsize=1024,2048,4096,8192,16384,32768 \
 	--experiment lsize=16,32,64,128,256,512 \
-	--experiment gpu_model=cpu,1080ti np=1,2,4,8
+	--experiment gpu_model=cpu,1080ti np=1,2,4,8 \
+	--remove-duplicates

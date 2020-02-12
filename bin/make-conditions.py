@@ -12,6 +12,7 @@ if __name__ == "__main__":
 	parser.add_argument("--default", help="default condition value", action="append", default=[], metavar="condition=value")
 	parser.add_argument("--experiment", help="generate experiments on a single condition", action="append", default=[], nargs="+", metavar="condition=value,value,... [...]")
 	parser.add_argument("--output-file", help="output filename", default="conditions.txt")
+	parser.add_argument("--remove-duplicates", help="remove duplicate condition sets", action="store_true")
 
 	args = parser.parse_args()
 
@@ -44,5 +45,12 @@ if __name__ == "__main__":
 
 			experiments.append(experiment)
 
+	# create output dataframe
 	df = pd.DataFrame(experiments)
+
+	# remove duplicate rows if specified
+	if args.remove_duplicates:
+		df.drop_duplicates(inplace=True)
+
+	# save output dataframe
 	df.to_csv(args.output_file, sep="\t", index=False)
