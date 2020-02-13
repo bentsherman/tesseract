@@ -43,7 +43,7 @@ def load_nvprof(filename):
 if __name__ == "__main__":
 	# parse command-line arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--conditions", help="conditions file", required=True)
+	parser.add_argument("--conditions", help="augmented conditions file", required=True)
 	parser.add_argument("--trace-input", help="list of nextflow trace files", nargs="+")
 	parser.add_argument("--trace-output", help="output trace dataframe")
 	parser.add_argument("--nvprof-input", help="list of nvprof files", nargs="+")
@@ -102,8 +102,8 @@ if __name__ == "__main__":
 		for filename, X_i in zip(args.nvprof_input, nvprof_files):
 			# parse conditions from filename
 			tokens = filename.replace(".", "/").split("/")
-			task_id = tokens[-4]
-			pid = tokens[-3]
+			task_id = int(tokens[-4])
+			pid = int(tokens[-3])
 
 			# append condition columns to input dataframe
 			X_i["task_id"] = task_id
