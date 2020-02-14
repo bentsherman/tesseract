@@ -2,6 +2,7 @@
 
 import argparse
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 import sys
@@ -10,6 +11,38 @@ import sys
 
 def select_rows_by_values(df, column, values):
 	return pd.DataFrame().append([df[df[column].astype(str) == v] for v in values], sort=False)
+
+
+
+def is_continuous(df, column):
+	return column != None and df[column].dtype.kind in "fcmM"
+
+
+
+def is_discrete(df, column):
+	return column != None and df[column].dtype.kind in "biuOSUV"
+
+
+
+def contingency_table(x, y, data, **kwargs):
+	# compute indices for categorical variables
+	x_values = sorted(list(set(x)))
+	y_values = sorted(list(set(y)))
+	x_idx = [x_values.index(x_i) for x_i in x]
+	y_idx = [y_values.index(y_i) for y_i in y]
+
+	# create contingency table
+	ct = pd.DataFrame(
+		np.zeros((len(y_values), len(x_values))),
+		index=y_values,
+		columns=x_values,
+		dtype=np.int32)
+
+	for x_i, y_i in zip(x_idx, y_idx):
+		ct.iloc[y_i, x_i] += 1
+
+	# plot contingency table
+	sns.heatmap(ct, annot=True, fmt="d", cbar=False, square=True, **kwargs)
 
 
 
@@ -96,8 +129,45 @@ if __name__ == "__main__":
 		col=args.col,
 		sharey=args.sharey)
 
-	# use bar plots if y-axis is specified
-	if args.yaxis != None:
+	# if x is continuous, use histogram
+	if is_continuous(data, args.xaxis) and args.yaxis == None:
+		g.map(
+			sns.distplot,
+			args.xaxis,
+			color=args.color,
+			norm_hist=False)
+
+	# if x is discrete, use count plot
+	elif is_discrete(data, args.xaxis) and args.yaxis == None:
+		g.map(
+			sns.countplot,
+			args.xaxis,
+			hue=args.hue,
+			color=args.color,
+			palette=args.palette)
+
+	# if x and y are continuous, use scatter plot
+	elif is_continuous(data, args.xaxis) and is_continuous(data, args.yaxis):
+		g = g.map(
+			plt.scatter,
+			args.xaxis,
+			args.yaxis,
+			data=data,
+			color=args.color)
+		g.add_legend()
+
+	# if x and y are discrete, use contingency table
+	elif is_discrete(data, args.xaxis) and is_discrete(data, args.yaxis):
+		g = g.map(
+			contingency_table,
+			args.xaxis,
+			args.yaxis,
+			data=data,
+			color=args.color)
+
+	# if x is discrete and y is continuous, use bar plot
+	elif is_discrete(data, args.xaxis) and is_continuous(data, args.yaxis):
+		x_values = sorted(list(set(data[args.xaxis])))
 		g = g.map(
 			sns.barplot,
 			args.xaxis,
@@ -106,27 +176,14 @@ if __name__ == "__main__":
 			data=data,
 			ci=68,
 			color=args.color,
-			palette=args.palette)
+			palette=args.palette,
+			order=x_values)
 		g.add_legend()
 
-	# otherwise use distribution plots
+	# otherwise throw an error
 	else:
-		# use histograms for continuous data
-		if data[args.xaxis].dtype.kind in "fcmM":
-			g.map(
-				sns.distplot,
-				args.xaxis,
-				color=args.color,
-				norm_hist=False)
-
-		# use count plots for categorical data
-		else: # "biuOSUV"
-			g.map(
-				sns.countplot,
-				args.xaxis,
-				hue=args.hue,
-				color=args.color,
-				palette=args.palette)
+		print("error: could not find a plotting method for the given axes")
+		sys.exit(-1)
 
 	# disable x-axis ticks if there are too many categories
 	if len(set(data[args.xaxis])) >= 100:
