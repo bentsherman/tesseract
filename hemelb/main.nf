@@ -40,10 +40,10 @@ process run_experiment {
 	script:
 		"""
 		# augment conditions with additional features
-		echo ${c = c.clone()}
-		echo ${c.task_id = task.index}
-		echo ${c.geometry = geometry}
-		echo ${c.trial = trial}
+		# ${c = c.clone()}
+		# ${c.task_id = task.index}
+		# ${c.geometry = geometry}
+		# ${c.trial = trial}
 
 		# TODO: only use gpu 0 for oversubscribe experiment
 		# export CUDA_VISIBLE_DEVICES=0

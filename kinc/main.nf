@@ -38,10 +38,10 @@ process run_experiment {
 	script:
 		"""
 		# augment conditions with additional features
-		echo ${c = c.clone()}
-		echo ${c.task_id = task.index}
-		echo ${c.dataset = dataset}
-		echo ${c.trial = trial}
+		# ${c = c.clone()}
+		# ${c.task_id = task.index}
+		# ${c.dataset = dataset}
+		# ${c.trial = trial}
 
 		kinc settings set cuda ${c.gpu_model == "cpu" ? "none" : "0"}
 		kinc settings set opencl none
