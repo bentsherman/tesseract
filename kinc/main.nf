@@ -60,7 +60,6 @@ process run_experiment {
 			--profile-child-processes \
 			--unified-memory-profiling off \
 		mpirun -np ${c.np} \
-		taskset -c 0-${c.threads} \
 		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
