@@ -63,8 +63,8 @@ process run_experiment {
 		taskset -c 0-${c.threads} \
 		kinc run similarity \
 			--input ${emx_file} \
-			--ccm \${TMPDIR}/${dataset}.ccm \
-			--cmx \${TMPDIR}/${dataset}.cmx \
+			--ccm ${dataset}.ccm \
+			--cmx ${dataset}.cmx \
 			--clusmethod ${c.clusmethod} \
 			--corrmethod ${c.corrmethod} \
 			--preout ${c.preout} \

@@ -70,7 +70,7 @@ process run_experiment {
 		mpirun -np ${c.np} \
 		hemelb \
 			-in config.xml \
-			-out \${TMPDIR}/results
+			-out results
 		"""
 }
 
