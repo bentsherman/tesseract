@@ -149,12 +149,15 @@ if __name__ == "__main__":
 	# if x and y are continuous, use scatter plot
 	elif is_continuous(data, args.xaxis) and is_continuous(data, args.yaxis):
 		g = g.map(
-			plt.scatter,
+			sns.scatterplot,
 			args.xaxis,
 			args.yaxis,
+			hue=args.hue,
 			data=data,
 			color=args.color)
-		g.add_legend()
+
+		if args.hue != None:
+			g.add_legend()
 
 	# if x and y are discrete, use contingency table
 	elif is_discrete(data, args.xaxis) and is_discrete(data, args.yaxis):
@@ -178,7 +181,9 @@ if __name__ == "__main__":
 			color=args.color,
 			palette=args.palette,
 			order=x_values)
-		g.add_legend()
+
+		if args.hue != None:
+			g.add_legend()
 
 	# otherwise throw an error
 	else:
