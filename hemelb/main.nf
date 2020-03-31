@@ -3,17 +3,20 @@
 
 
 /**
- * Create channel for input files.
+ * Load gmy and xml file for each input dataset.
  */
 GMY_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.gmy_files}", size: 1, flat: true)
 XML_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.xml_files}", size: 1, flat: true)
-CONDITIONS_FILE = Channel.fromPath("${params.input.dir}/${params.input.conditions_file}")
+
+DATASETS = GMY_FILES.join(XML_FILES)
 
 
 
 /**
  * Extract each set of input conditions from file.
  */
+CONDITIONS_FILE = Channel.fromPath("${params.input.dir}/${params.input.conditions_file}")
+
 CONDITIONS_FILE
 	.splitCsv(sep: "\t", header: true)
 	.set { CONDITIONS }
@@ -28,14 +31,12 @@ process run_experiment {
 	publishDir "${params.output.dir}"
 
 	input:
-		set val(geometry), file(gmy_file) from GMY_FILES
-		set val(geometry), file(xml_file) from XML_FILES
+		set val(geometry), file(gmy_file), file(xml_file) from DATASETS
 		each(c) from CONDITIONS
 		each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
 	output:
 		val(c) into CONDITIONS_AUGMENTED
-		file("*.nvprof.txt")
 
 	script:
 		"""
@@ -44,6 +45,8 @@ process run_experiment {
 		# ${c.task_id = task.index}
 		# ${c.geometry = geometry}
 		# ${c.trial = trial}
+
+		module load hemelb/dev-${c.latticetype}
 
 		# TODO: only use gpu 0 for oversubscribe experiment
 		# export CUDA_VISIBLE_DEVICES=0
@@ -57,16 +60,7 @@ process run_experiment {
 
 		sed 's/blocksize="[0-9]+"/blocksize="${c.blocksize}"/' config.xml > tmp; mv tmp config.xml
 
-		# generate nvprof filename
-		NVPROF_FILE="${task.index}.%p.nvprof.txt"
-
 		# run application
-		nvprof \
-			--csv \
-			--log-file \${NVPROF_FILE} \
-			--normalized-time-unit ms \
-			--profile-child-processes \
-			--unified-memory-profiling off \
 		mpirun -np ${c.np} \
 		hemelb \
 			-in config.xml \
@@ -80,6 +74,18 @@ process run_experiment {
  * Collect augmented conditions into a csv file.
  */
 CONDITIONS_AUGMENTED
+	.into {
+		CONDITIONS_AUGMENTED_INDIVIDUAL;
+		CONDITIONS_AUGMENTED_MERGED
+	}
+
+CONDITIONS_AUGMENTED_INDIVIDUAL
+	.subscribe {
+		f = file("${params.output.dir}/${it.task_id}.txt")
+		f.text = it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
+	}
+
+CONDITIONS_AUGMENTED_MERGED
 	.map {
 		it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
 	}
