@@ -118,6 +118,13 @@ if __name__ == "__main__":
 	args.hue = mapper[args.hue] if args.hue in mapper else args.hue
 	data.rename(columns=mapper, copy=False, inplace=True)
 
+	# sort data by row and col values
+	if args.col != None:
+		data.sort_values(by=args.col, inplace=True)
+
+	if args.row != None:
+		data.sort_values(by=args.row, inplace=True)
+
 	# apply aspect ratio if specified
 	if args.aspect != 0:
 		plt.figure(figsize=(5 * args.aspect, 5))
@@ -127,7 +134,8 @@ if __name__ == "__main__":
 		data,
 		row=args.row,
 		col=args.col,
-		sharey=args.sharey)
+		sharey=args.sharey,
+		margin_titles=True)
 
 	# if x is continuous, use histogram
 	if is_continuous(data, args.xaxis) and args.yaxis == None:

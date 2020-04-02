@@ -88,9 +88,10 @@ if __name__ == "__main__":
 
 		# merge with input conditions
 		X_trace = X_conditions.join(X_trace, on="task_id")
+		X_trace.sort_index(inplace=True)
 
 		# save trace dataframe
-		X_trace.to_csv(args.trace_output, sep="\t", index="task_id")
+		X_trace.to_csv(args.trace_output, sep="\t")
 
 	if args.nvprof_input:
 		# load nvprof files
