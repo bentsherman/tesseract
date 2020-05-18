@@ -51,6 +51,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("input", help="input dataset")
 	parser.add_argument("outfile", help="output plot")
+	parser.add_argument("--plot-type", help="plot type (automatically determined by default)", choices=["hist", "count", "scatter", "ct", "bar"])
 	parser.add_argument("--xaxis", help="column name of x-axis", required=True)
 	parser.add_argument("--yaxis", help="column name of y-axis", nargs="?")
 	parser.add_argument("--row", help="column name of row-wise category", nargs="?")
@@ -137,16 +138,42 @@ if __name__ == "__main__":
 		sharey=args.sharey,
 		margin_titles=True)
 
-	# if x is continuous, use histogram
-	if is_continuous(data, args.xaxis) and args.yaxis == None:
+	# determine plot type if not specified
+	if args.plot_type == None:
+		# if x is continuous, use histogram
+		if is_continuous(data, args.xaxis) and args.yaxis == None:
+			args.plot_type = "hist"
+
+		# if x is discrete, use count plot
+		elif is_discrete(data, args.xaxis) and args.yaxis == None:
+			args.plot_type = "count"
+
+		# if x and y are continuous, use scatter plot
+		elif is_continuous(data, args.xaxis) and is_continuous(data, args.yaxis):
+			args.plot_type = "scatter"
+
+		# if x and y are discrete, use contingency table
+		elif is_discrete(data, args.xaxis) and is_discrete(data, args.yaxis):
+			args.plot_type = "ct"
+
+		# if x is discrete and y is continuous, use bar plot
+		elif is_discrete(data, args.xaxis) and is_continuous(data, args.yaxis):
+			args.plot_type = "bar"
+
+		# otherwise throw an error
+		else:
+			print("error: could not find a plotting method for the given axes")
+			sys.exit(-1)
+
+	# create plot
+	if args.plot_type == "hist":
 		g.map(
 			sns.distplot,
 			args.xaxis,
 			color=args.color,
 			norm_hist=False)
 
-	# if x is discrete, use count plot
-	elif is_discrete(data, args.xaxis) and args.yaxis == None:
+	elif args.plot_type == "count":
 		g.map(
 			sns.countplot,
 			args.xaxis,
@@ -154,8 +181,7 @@ if __name__ == "__main__":
 			color=args.color,
 			palette=args.palette)
 
-	# if x and y are continuous, use scatter plot
-	elif is_continuous(data, args.xaxis) and is_continuous(data, args.yaxis):
+	elif args.plot_type == "scatter":
 		g = g.map(
 			sns.scatterplot,
 			args.xaxis,
@@ -167,8 +193,7 @@ if __name__ == "__main__":
 		if args.hue != None:
 			g.add_legend()
 
-	# if x and y are discrete, use contingency table
-	elif is_discrete(data, args.xaxis) and is_discrete(data, args.yaxis):
+	elif args.plot_type == "ct":
 		g = g.map(
 			contingency_table,
 			args.xaxis,
@@ -176,8 +201,7 @@ if __name__ == "__main__":
 			data=data,
 			color=args.color)
 
-	# if x is discrete and y is continuous, use bar plot
-	elif is_discrete(data, args.xaxis) and is_continuous(data, args.yaxis):
+	elif args.plot_type == "bar":
 		x_values = sorted(list(set(data[args.xaxis])))
 		g = g.map(
 			sns.barplot,
@@ -192,11 +216,6 @@ if __name__ == "__main__":
 
 		if args.hue != None:
 			g.add_legend()
-
-	# otherwise throw an error
-	else:
-		print("error: could not find a plotting method for the given axes")
-		sys.exit(-1)
 
 	# disable x-axis ticks if there are too many categories
 	if len(set(data[args.xaxis])) >= 100:
