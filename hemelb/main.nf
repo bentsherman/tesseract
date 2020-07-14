@@ -55,7 +55,9 @@ process run_experiment {
 		cp ${xml_file} config.xml
 
 		if [[ ${c.gpu_model} == "cpu" ]]; then
-			sed 's/use_gpu="1"/use_gpu="0"/' config.xml > tmp; mv tmp config.xml
+			sed 's/use_gpu value="1"/use_gpu value="0"/' config.xml > tmp; mv tmp config.xml
+		else
+			sed 's/use_gpu value="0"/use_gpu value="1"/' config.xml > tmp; mv tmp config.xml
 		fi
 
 		sed 's/blocksize="[0-9]+"/blocksize="${c.blocksize}"/' config.xml > tmp; mv tmp config.xml

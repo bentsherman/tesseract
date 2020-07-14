@@ -46,6 +46,13 @@ def contingency_table(x, y, data, **kwargs):
 
 
 
+def rotate_xticklabels(angle):
+	for tick in plt.gca().get_xticklabels():
+		tick.set_horizontalalignment("right")
+		tick.set_rotation(angle)
+
+
+
 if __name__ == "__main__":
 	# parse command-line arguments
 	parser = argparse.ArgumentParser()
@@ -120,11 +127,15 @@ if __name__ == "__main__":
 	data.rename(columns=mapper, copy=False, inplace=True)
 
 	# sort data by row and col values
+	if args.row != None:
+		data.sort_values(by=args.row, inplace=True)
+
 	if args.col != None:
 		data.sort_values(by=args.col, inplace=True)
 
-	if args.row != None:
-		data.sort_values(by=args.row, inplace=True)
+	# sort data by y-axis if specified
+	if False:
+		data.sort_values(by=args.yaxis, inplace=True)
 
 	# apply aspect ratio if specified
 	if args.aspect != 0:
@@ -211,11 +222,15 @@ if __name__ == "__main__":
 			data=data,
 			ci=68,
 			color=args.color,
-			palette=args.palette,
-			order=x_values)
+			palette=args.palette) #,
+			# order=x_values)
 
 		if args.hue != None:
 			g.add_legend()
+
+	# rotate x-axis ticks if specified
+	if False:
+		rotate_xticklabels(45)
 
 	# disable x-axis ticks if there are too many categories
 	if len(set(data[args.xaxis])) >= 100:
