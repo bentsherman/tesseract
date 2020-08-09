@@ -70,7 +70,9 @@ if __name__ == "__main__":
 	parser.add_argument("--color", help="color for all barplot elements", nargs="?")
 	parser.add_argument("--palette", help="palette for all barplot elements", nargs="?")
 	parser.add_argument("--aspect", help="aspect ratio to control figure width", type=float, default=0)
+	parser.add_argument("--rotate-xticklabels", help="rotate x-axis tick labels", action="store_true")
 	parser.add_argument("--sharey", help="whether to use uniform y-axis across subplots", action="store_true")
+	parser.add_argument("--sort-yaxis", help="sort data by y-axis value", action="store_true")
 
 	args = parser.parse_args()
 
@@ -128,13 +130,13 @@ if __name__ == "__main__":
 
 	# sort data by row and col values
 	if args.row != None:
-		data.sort_values(by=args.row, inplace=True)
+		data.sort_values(by=args.row, inplace=True, kind='mergesort')
 
 	if args.col != None:
-		data.sort_values(by=args.col, inplace=True)
+		data.sort_values(by=args.col, inplace=True, kind='mergesort')
 
 	# sort data by y-axis if specified
-	if False:
+	if args.sort_yaxis:
 		data.sort_values(by=args.yaxis, inplace=True)
 
 	# apply aspect ratio if specified
@@ -222,14 +224,14 @@ if __name__ == "__main__":
 			data=data,
 			ci=68,
 			color=args.color,
-			palette=args.palette) #,
-			# order=x_values)
+			palette=args.palette,
+			order=x_values)
 
 		if args.hue != None:
 			g.add_legend()
 
-	# rotate x-axis ticks if specified
-	if False:
+	# rotate x-axis tick labels if specified
+	if args.rotate_xticklabels:
 		rotate_xticklabels(45)
 
 	# disable x-axis ticks if there are too many categories

@@ -132,8 +132,7 @@ python bin/visualize.py \
     --row geometry \
     --select status=CACHED,COMPLETED \
     --select gpu_model=cpu,p100,v100 \
-    --select latticetype=D3Q15 \
-    --sharey
+    --select latticetype=D3Q15
 
 # python bin/visualize.py \
 #     ${TRACE_FILE} \
