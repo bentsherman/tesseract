@@ -116,6 +116,7 @@ python bin/visualize.py \
     --select gpu_model=cpu,p100,v100 \
     --select latticetype=D3Q15 \
     --sharey \
+    --aspect 1.5 \
     --yscale log \
     --palette muted
 
@@ -130,6 +131,7 @@ python bin/visualize.py \
     --hue gpu_model \
     --row geometry \
     --sharey \
+    --aspect 1.5 \
     --yscale log \
     --palette muted
 
@@ -143,6 +145,7 @@ python bin/visualize.py \
     --yaxis efficiency \
     --hue gpu_model \
     --row geometry \
+    --aspect 1.5 \
     --palette muted
 
 echo "hemelb-speedup-np"
@@ -156,6 +159,7 @@ python bin/visualize.py \
     --hue gpu_model \
     --row geometry \
     --sharey \
+    --aspect 1.5 \
     --yscale log \
     --palette muted
 
@@ -169,6 +173,7 @@ python bin/visualize.py \
     --yaxis efficiency_np \
     --hue gpu_model \
     --row geometry \
+    --aspect 1.5 \
     --palette muted
 
 echo "hemelb-speedup-gpu"
@@ -182,4 +187,5 @@ python bin/visualize.py \
     --row geometry \
     --select gpu_model=p100,v100 \
     --sharey \
+    --aspect 1.5 \
     --color steelblue

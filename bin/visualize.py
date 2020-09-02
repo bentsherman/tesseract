@@ -67,15 +67,16 @@ if __name__ == '__main__':
     parser.add_argument('--select', help='select a set of values from a column', action='append', default=[], metavar='column=value,value,...')
     parser.add_argument('--mapper', help='mappping file of display names for axis columns', nargs='?')
     parser.add_argument('--mapper-term', help='additional display name mapping (overwrites mapping file)', action='append', default=[], metavar='column_name=display_name')
+    parser.add_argument('--sharex', help='whether to use uniform x-axis across subplots', action='store_true')
+    parser.add_argument('--sharey', help='whether to use uniform y-axis across subplots', action='store_true')
+    parser.add_argument('--height', help='figure height', type=float, default=3)
+    parser.add_argument('--aspect', help='figure aspect', type=float, default=1)
     parser.add_argument('--color', help='color for all barplot elements', nargs='?')
     parser.add_argument('--palette', help='palette for all barplot elements', nargs='?')
-    parser.add_argument('--aspect', help='aspect ratio to control figure width', type=float, default=0)
     parser.add_argument('--xscale', help='set x-axis scale')
     parser.add_argument('--yscale', help='set y-axis scale')
     parser.add_argument('--rotate-xticklabels', help='rotate x-axis tick labels', action='store_true')
     parser.add_argument('--rotate-yticklabels', help='rotate y-axis tick labels', action='store_true')
-    parser.add_argument('--sharex', help='whether to use uniform x-axis across subplots', action='store_true')
-    parser.add_argument('--sharey', help='whether to use uniform y-axis across subplots', action='store_true')
     parser.add_argument('--sort-yaxis', help='sort data by y-axis value', action='store_true')
 
     args = parser.parse_args()
@@ -146,10 +147,6 @@ if __name__ == '__main__':
     if args.sort_yaxis:
         data.sort_values(by=args.yaxis, inplace=True, kind='mergesort')
 
-    # apply aspect ratio if specified
-    if args.aspect != 0:
-        plt.figure(figsize=(5 * args.aspect, 5))
-
     # create a facet grid for plotting
     g = sns.FacetGrid(
         data,
@@ -157,6 +154,8 @@ if __name__ == '__main__':
         col=args.col,
         sharex=args.sharex,
         sharey=args.sharey,
+        height=args.height,
+        aspect=args.aspect,
         margin_titles=True)
 
     # determine plot type if not specified
