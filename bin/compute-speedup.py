@@ -12,15 +12,15 @@ def select_rows_by_values(df, column, values):
 def main():
     # parse command-line arguments
     if len(sys.argv) != 4:
-        print('usage: ./compute-speedup.py <input-file> <sizes-file> <output-file>')
+        print('usage: ./compute-speedup.py <trace-file> <sizes-file> <output-file>')
         sys.exit(1)
 
-    args_input = sys.argv[1]
+    args_trace = sys.argv[1]
     args_sizes = sys.argv[2]
     args_output = sys.argv[3]
 
     # load input data
-    df = pd.read_csv(args_input, sep='\t')
+    df = pd.read_csv(args_trace, sep='\t')
     df_sizes = pd.read_csv(args_sizes, sep='\t')
 
     # remove unused rows
@@ -39,10 +39,12 @@ def main():
     # remove second column level
     df.columns = df.columns.map('|'.join).str.strip('|')
 
+    # append site counts to trace data
+    df = df.merge(df_sizes, on='geometry', how='left', copy=False)
+
     # compute throughput
     n_iters = 50000
-
-    df['throughput'] = df_sizes['n_sites'] * n_iters  / df['realtime|mean']
+    df['throughput'] = df['n_sites'] * n_iters / df['realtime|mean']
 
     # compute efficiency
     df['efficiency'] = df['throughput'] / df['np']

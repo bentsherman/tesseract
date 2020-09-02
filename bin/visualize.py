@@ -46,8 +46,8 @@ def contingency_table(x, y, data, **kwargs):
 
 
 
-def rotate_xticklabels(angle):
-	for tick in plt.gca().get_xticklabels():
+def rotate_ticklabels(ticklabels, angle=45):
+	for tick in ticklabels:
 		tick.set_horizontalalignment("right")
 		tick.set_rotation(angle)
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("input", help="input dataset")
 	parser.add_argument("outfile", help="output plot")
-	parser.add_argument("--plot-type", help="plot type (automatically determined by default)", choices=["hist", "count", "scatter", "ct", "bar"])
+	parser.add_argument("--plot-type", help="plot type (automatically determined by default)", choices=["hist", "count", "scatter", "ct", "bar", "point"])
 	parser.add_argument("--xaxis", help="column name of x-axis", required=True)
 	parser.add_argument("--yaxis", help="column name of y-axis", nargs="?")
 	parser.add_argument("--row", help="column name of row-wise category", nargs="?")
@@ -70,7 +70,11 @@ if __name__ == "__main__":
 	parser.add_argument("--color", help="color for all barplot elements", nargs="?")
 	parser.add_argument("--palette", help="palette for all barplot elements", nargs="?")
 	parser.add_argument("--aspect", help="aspect ratio to control figure width", type=float, default=0)
+	parser.add_argument("--xscale", help="set x-axis scale")
+	parser.add_argument("--yscale", help="set y-axis scale")
 	parser.add_argument("--rotate-xticklabels", help="rotate x-axis tick labels", action="store_true")
+	parser.add_argument("--rotate-yticklabels", help="rotate y-axis tick labels", action="store_true")
+	parser.add_argument("--sharex", help="whether to use uniform x-axis across subplots", action="store_true")
 	parser.add_argument("--sharey", help="whether to use uniform y-axis across subplots", action="store_true")
 	parser.add_argument("--sort-yaxis", help="sort data by y-axis value", action="store_true")
 
@@ -128,16 +132,19 @@ if __name__ == "__main__":
 	args.hue = mapper[args.hue] if args.hue in mapper else args.hue
 	data.rename(columns=mapper, copy=False, inplace=True)
 
-	# sort data by row and col values
+	# sort data by row, col, and hue values
 	if args.row != None:
 		data.sort_values(by=args.row, inplace=True, kind='mergesort')
 
 	if args.col != None:
 		data.sort_values(by=args.col, inplace=True, kind='mergesort')
 
+	if args.hue != None:
+		data.sort_values(by=args.hue, inplace=True, kind='mergesort')
+
 	# sort data by y-axis if specified
 	if args.sort_yaxis:
-		data.sort_values(by=args.yaxis, inplace=True)
+		data.sort_values(by=args.yaxis, inplace=True, kind='mergesort')
 
 	# apply aspect ratio if specified
 	if args.aspect != 0:
@@ -148,6 +155,7 @@ if __name__ == "__main__":
 		data,
 		row=args.row,
 		col=args.col,
+		sharex=args.sharex,
 		sharey=args.sharey,
 		margin_titles=True)
 
@@ -177,6 +185,13 @@ if __name__ == "__main__":
 		else:
 			print("error: could not find a plotting method for the given axes")
 			sys.exit(-1)
+
+	# create order of x values for discrete plots
+	# unless y-axis sorting is enabled (so as not to override it)
+	if is_discrete(data, args.xaxis) and not args.sort_yaxis:
+		x_values = sorted(list(set(data[args.xaxis])))
+	else:
+		x_values = None
 
 	# create plot
 	if args.plot_type == "hist":
@@ -215,7 +230,6 @@ if __name__ == "__main__":
 			color=args.color)
 
 	elif args.plot_type == "bar":
-		x_values = sorted(list(set(data[args.xaxis])))
 		g = g.map(
 			sns.barplot,
 			args.xaxis,
@@ -230,12 +244,42 @@ if __name__ == "__main__":
 		if args.hue != None:
 			g.add_legend()
 
+	elif args.plot_type == "point":
+		g = g.map(
+			sns.pointplot,
+			args.xaxis,
+			args.yaxis,
+			hue=args.hue,
+			data=data,
+			ci=68,
+			capsize=0.1,
+			color=args.color,
+			palette=args.palette,
+			markers='x',
+			linestyles='--',
+			order=x_values)
+
+		if args.hue != None:
+			g.add_legend()
+
+	# set x-axis scale if specified
+	if args.xscale != None:
+		plt.gca().set_xscale(args.xscale)
+
+	# set y-axis scale if specified
+	if args.yscale != None:
+		plt.gca().set_yscale(args.yscale)
+
 	# rotate x-axis tick labels if specified
 	if args.rotate_xticklabels:
-		rotate_xticklabels(45)
+		rotate_ticklabels(plt.gca().get_xticklabels())
+
+	# rotate y-axis tick labels if specified
+	if args.rotate_yticklabels:
+		rotate_ticklabels(plt.gca().get_yticklabels())
 
 	# disable x-axis ticks if there are too many categories
-	if len(set(data[args.xaxis])) >= 100:
+	if is_discrete(data, args.xaxis) and len(set(data[args.xaxis])) >= 100:
 		plt.xticks([])
 
 	# save output figure
