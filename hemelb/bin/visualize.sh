@@ -16,6 +16,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-site-counts.${FORMAT} \
     --plot-type bar \
     --mapper files/visualize-mapper.txt \
+    --mapper-term "n_sites=Number of Sites" \
     --xaxis geometry \
     --yaxis n_sites \
     --select geometry=C0003,C0004,C0005,C0009,C0010,Cylinder \
@@ -28,6 +29,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-sparsity.txt \
     ${OUTPUT_DIR}/hemelb-sparsity.${FORMAT} \
     --mapper files/visualize-mapper.txt \
+    --mapper-term "fluid_fraction_percent=Fluid Fraction (%)" \
     --xaxis geometry \
     --yaxis fluid_fraction_percent \
     --select geometry=C0003,C0004,C0005,C0009,C0010,Cylinder \
@@ -41,6 +43,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-cut-edges.${FORMAT} \
     --plot-type bar \
     --mapper files/visualize-mapper.txt \
+    --mapper-term "edges=Number of Cut Edges" \
     --xaxis np \
     --yaxis edges \
     --col geometry \
@@ -75,6 +78,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.txt \
     ${OUTPUT_DIR}/hemelb-blocksize.${FORMAT} \
     --mapper files/visualize-mapper.txt \
+    --mapper-term "blocksize=CUDA Block Size" \
     --xaxis blocksize \
     --yaxis realtime \
     --row geometry \
@@ -90,6 +94,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.txt \
     ${OUTPUT_DIR}/hemelb-latticetype.${FORMAT} \
     --mapper files/visualize-mapper.txt \
+    --mapper-term "latticetype=Lattice Type" \
     --xaxis latticetype \
     --yaxis realtime \
     --row geometry \
@@ -126,6 +131,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-throughput.${FORMAT} \
     --plot-type point \
     --mapper files/visualize-mapper.txt \
+    --mapper-term "throughput=Throughput (LUPS)" \
     --xaxis np \
     --yaxis throughput \
     --hue gpu_model \
