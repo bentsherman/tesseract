@@ -9,5 +9,5 @@ source activate mlbd
 
 python bin/compute-speedup.py \
     ${OUTPUT_DIR}/trace.txt \
-    hemelb/output-prelim/hemelb-site-counts.txt
+    hemelb/output-prelim/hemelb-site-counts.txt \
     ${OUTPUT_DIR}/speedup.txt

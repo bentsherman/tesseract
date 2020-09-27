@@ -46,6 +46,9 @@ def main():
     n_iters = 50000
     df['throughput'] = df['n_sites'] * n_iters / df['realtime|mean']
 
+    # compute per-core throughput
+    df['throughput_per_core'] = df['throughput'] / df['np']
+
     # compute efficiency
     df['efficiency'] = df['throughput'] / df['np']
 

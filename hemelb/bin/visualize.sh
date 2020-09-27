@@ -87,6 +87,7 @@ python bin/visualize.py \
     --select gpu_model=p100,v100 \
     --select latticetype=D3Q15 \
     --select np=1 \
+    --select ngpus=0 \
     --color steelblue
 
 echo "hemelb-latticetype"
@@ -100,12 +101,37 @@ python bin/visualize.py \
     --row geometry \
     --col gpu_model \
     --select status=CACHED,COMPLETED \
-    --select gpu_model=p100,v100 \
+    --select gpu_model=cpu,p100,v100 \
     --select np=1 \
+    --select ngpus=0 \
     --color steelblue
 
-# PART 2: STRONG SCALING STUDY
+echo "hemelb-oversubscribe"
+python bin/visualize.py \
+    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/hemelb-oversubscribe.${FORMAT} \
+    --mapper files/visualize-mapper.txt \
+    --xaxis np \
+    --yaxis realtime \
+    --row geometry \
+    --col gpu_model \
+    --select status=CACHED,COMPLETED \
+    --select gpu_model=p100,v100 \
+    --select ngpus=1 \
+    --color steelblue
+
+# PART 3: STRONG SCALING STUDY
 OUTPUT_DIR="hemelb/output-large"
+
+echo "hemelb-exitcode"
+python bin/visualize.py \
+    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/hemelb-exitcode.${FORMAT} \
+    --mapper files/visualize-mapper.txt \
+    --xaxis np \
+    --yaxis exit \
+    --col gpu_model \
+    --palette muted
 
 echo "hemelb-realtime"
 python bin/visualize.py \
@@ -117,10 +143,8 @@ python bin/visualize.py \
     --yaxis realtime \
     --hue gpu_model \
     --row geometry \
-    --select status=CACHED,COMPLETED \
-    --select gpu_model=cpu,p100,v100 \
-    --select latticetype=D3Q15 \
     --sharey \
+    --height 2 \
     --aspect 1.5 \
     --yscale log \
     --palette muted
@@ -131,13 +155,40 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-throughput.${FORMAT} \
     --plot-type point \
     --mapper files/visualize-mapper.txt \
-    --mapper-term "throughput=Throughput (LUPS)" \
+    --mapper-term "throughput=Throughput (SUPS)" \
     --xaxis np \
     --yaxis throughput \
     --hue gpu_model \
     --row geometry \
     --sharey \
+    --height 2 \
     --aspect 1.5 \
+    --yscale log \
+    --palette muted
+
+echo "hemelb-throughput-aggregate"
+python bin/visualize.py \
+    ${OUTPUT_DIR}/speedup.txt \
+    ${OUTPUT_DIR}/hemelb-throughput-aggregate.${FORMAT} \
+    --plot-type point \
+    --mapper files/visualize-mapper.txt \
+    --mapper-term "throughput=Throughput (SUPS)" \
+    --xaxis np \
+    --yaxis throughput \
+    --hue gpu_model \
+    --yscale log \
+    --palette muted
+
+echo "hemelb-throughput-per-core"
+python bin/visualize.py \
+    ${OUTPUT_DIR}/speedup.txt \
+    ${OUTPUT_DIR}/hemelb-throughput-per-core.${FORMAT} \
+    --plot-type point \
+    --mapper files/visualize-mapper.txt \
+    --mapper-term "throughput_per_core=Per-core Throughput (SUPS)" \
+    --xaxis np \
+    --yaxis throughput_per_core \
+    --hue gpu_model \
     --yscale log \
     --palette muted
 
@@ -151,6 +202,7 @@ python bin/visualize.py \
     --yaxis efficiency \
     --hue gpu_model \
     --row geometry \
+    --height 2 \
     --aspect 1.5 \
     --palette muted
 
@@ -165,8 +217,8 @@ python bin/visualize.py \
     --hue gpu_model \
     --row geometry \
     --sharey \
+    --height 2 \
     --aspect 1.5 \
-    --yscale log \
     --palette muted
 
 echo "hemelb-efficiency-np"
@@ -179,6 +231,7 @@ python bin/visualize.py \
     --yaxis efficiency_np \
     --hue gpu_model \
     --row geometry \
+    --height 2 \
     --aspect 1.5 \
     --palette muted
 
@@ -193,5 +246,6 @@ python bin/visualize.py \
     --row geometry \
     --select gpu_model=p100,v100 \
     --sharey \
+    --height 2 \
     --aspect 1.5 \
     --color steelblue

@@ -46,10 +46,14 @@ process run_experiment {
 		# ${c.geometry = geometry}
 		# ${c.trial = trial}
 
-		module load hemelb/dev-${c.latticetype}
+		# temporary workaround for .bashrc issue
+		module use \${HOME}/modules
 
-		# TODO: only use gpu 0 for oversubscribe experiment
-		# export CUDA_VISIBLE_DEVICES=0
+		if [[ ${c.gpu_model} == "cpu" ]]; then
+			module load hemelb/${c.latticetype}-p100
+		else
+			module load hemelb/${c.latticetype}-${c.gpu_model}
+		fi
 
 		# modify config file
 		cp ${xml_file} config.xml
@@ -61,6 +65,11 @@ process run_experiment {
 		fi
 
 		sed 's/blocksize="[0-9]+"/blocksize="${c.blocksize}"/' config.xml > tmp; mv tmp config.xml
+
+		# use only gpu 0 if ngpus is 1
+		if [[ ${c.ngpus} == 1 ]]; then
+			export CUDA_VISIBLE_DEVICES=0
+		fi
 
 		# run application
 		mpirun -np ${c.np} \

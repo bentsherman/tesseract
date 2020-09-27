@@ -11,4 +11,5 @@ python bin/aggregate.py \
     --conditions ${OUTPUT_DIR}/conditions.txt \
     --trace-input ${OUTPUT_DIR}/reports/trace.txt \
     --trace-output ${OUTPUT_DIR}/trace.txt \
+    --fix-exit-na -1 \
     --fix-runtime-ms
