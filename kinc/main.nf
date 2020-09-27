@@ -6,13 +6,14 @@
  * Create channel for input files.
  */
 EMX_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.emx_files}", size: 1, flat: true)
-CONDITIONS_FILE = Channel.fromPath("${params.input.dir}/${params.input.conditions_file}")
 
 
 
 /**
  * Extract each set of input conditions from file.
  */
+CONDITIONS_FILE = Channel.fromPath("${params.input.dir}/${params.input.conditions_file}")
+
 CONDITIONS_FILE
 	.splitCsv(sep: "\t", header: true)
 	.set { CONDITIONS }
@@ -33,7 +34,6 @@ process run_experiment {
 
 	output:
 		val(c) into CONDITIONS_AUGMENTED
-		file("*.nvprof.txt")
 
 	script:
 		"""
@@ -43,23 +43,20 @@ process run_experiment {
 		# ${c.dataset = dataset}
 		# ${c.trial = trial}
 
+		# temporary workaround for .bashrc issue
+		module use \${HOME}/modules
+
+		module load kinc/${c.revision}
+
+		# apply runtime settings
 		kinc settings set cuda ${c.gpu_model == "cpu" ? "none" : "0"}
 		kinc settings set opencl none
 		kinc settings set threads ${c.threads}
 		kinc settings set buffer 4
 		kinc settings set logging off
 
-		# generate nvprof filename
-		NVPROF_FILE="${task.index}.%p.nvprof.txt"
-
 		# run application
-		nvprof \
-			--csv \
-			--log-file \${NVPROF_FILE} \
-			--normalized-time-unit ms \
-			--profile-child-processes \
-			--unified-memory-profiling off \
-		mpirun -np ${c.np} \
+		mpirun -np ${c.np + 1} \
 		kinc run similarity \
 			--input ${emx_file} \
 			--ccm ${dataset}.ccm \
@@ -80,6 +77,18 @@ process run_experiment {
  * Collect augmented conditions into a csv file.
  */
 CONDITIONS_AUGMENTED
+	.into {
+		CONDITIONS_AUGMENTED_INDIVIDUAL;
+		CONDITIONS_AUGMENTED_MERGED
+	}
+
+CONDITIONS_AUGMENTED_INDIVIDUAL
+	.subscribe {
+		f = file("${params.output.dir}/${it.task_id}.txt")
+		f.text = it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
+	}
+
+CONDITIONS_AUGMENTED_MERGED
 	.map {
 		it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
 	}

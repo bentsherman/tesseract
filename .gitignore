@@ -1,8 +1,7 @@
 .ipynb_checkpoints
 .nextflow*
 data
-input
-output
-work
+input*
+output*
 
 *.pyc

@@ -1,10 +1,17 @@
 #!/bin/bash
 # Generate conditions file for some basic kinc experiments.
 
+OUTPUT_DIR="kinc/input"
+
+module purge
+module add anaconda3/5.1.0-gcc/8.3.1
+
+source activate mlbd
+
 python bin/make-conditions.py \
-	--default gpu_model=1080ti \
-	--default revision=master \
-	--default threads=1 \
+	--default gpu_model=p100 \
+	--default revision=v3.4.2 \
+	--default threads=2 \
 	--default clusmethod=gmm \
 	--default corrmethod=spearman \
 	--default preout=true \
@@ -13,10 +20,6 @@ python bin/make-conditions.py \
 	--default gsize=4096 \
 	--default lsize=32 \
 	--default np=1 \
-	--experiment revision=v3.3.0,master \
-	--experiment threads=1,2,3,4,5,6,7,8 \
-	--experiment bsize=1024,2048,4096,8192,16384,32768 \
-	--experiment gsize=1024,2048,4096,8192,16384,32768 \
-	--experiment lsize=16,32,64,128,256,512 \
-	--experiment gpu_model=cpu,1080ti np=1,2,4,8 \
-	--remove-duplicates
+	--experiment gpu_model=cpu,p100,v100 np=1,2,4,8 \
+	--remove-duplicates \
+	--output-file "${OUTPUT_DIR}/conditions.txt"

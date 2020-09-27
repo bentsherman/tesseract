@@ -49,7 +49,7 @@ if __name__ == '__main__':
     parser.add_argument('--nvprof-input', help='list of nvprof files', nargs='+')
     parser.add_argument('--nvprof-output', help='output nvprof dataframe')
     parser.add_argument('--nvprof-mapper', help='mapping file for renaming column names')
-    parser.add_argument('--fix-exit-na', help='impute missing exit codes', action='store_true')
+    parser.add_argument('--fix-exit-na', help='impute missing exit codes', type=int)
     parser.add_argument('--fix-runtime-sleep', help='adjust runtime metrics to account for running sleep beforehand', action='store_true')
     parser.add_argument('--fix-runtime-ms', help='convert runtime metrics from ms to s', action='store_true')
 
@@ -72,8 +72,8 @@ if __name__ == '__main__':
         X_trace.drop(columns=['process', 'tag', 'name'], inplace=True)
 
         # impute missing exit codes
-        if args.fix_exit_na:
-            X_trace['exit'].fillna(143, inplace=True)
+        if args.fix_exit_na != None:
+            X_trace['exit'].fillna(args.fix_exit_na, inplace=True)
             X_trace['exit'] = X_trace['exit'].astype(int)
 
         # adjust runtime metrics to exclude sleep time
