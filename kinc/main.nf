@@ -15,8 +15,8 @@ EMX_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.emx_files}
 CONDITIONS_FILE = Channel.fromPath("${params.input.dir}/${params.input.conditions_file}")
 
 CONDITIONS_FILE
-	.splitCsv(sep: "\t", header: true)
-	.set { CONDITIONS }
+    .splitCsv(sep: "\t", header: true)
+    .set { CONDITIONS }
 
 
 
@@ -25,50 +25,50 @@ CONDITIONS_FILE
  * application under test for each set of input conditions.
  */
 process run_experiment {
-	publishDir "${params.output.dir}"
+    publishDir "${params.output.dir}"
 
-	input:
-		set val(dataset), file(emx_file) from EMX_FILES
-		each(c) from CONDITIONS
-		each(trial) from Channel.from( 0 .. params.input.trials-1 )
+    input:
+        set val(dataset), file(emx_file) from EMX_FILES
+        each(c) from CONDITIONS
+        each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
-	output:
-		val(c) into CONDITIONS_AUGMENTED
+    output:
+        val(c) into CONDITIONS_AUGMENTED
 
-	script:
-		"""
-		# augment conditions with additional features
-		# ${c = c.clone()}
-		# ${c.task_id = task.index}
-		# ${c.dataset = dataset}
-		# ${c.trial = trial}
+    script:
+        """
+        # augment conditions with additional features
+        # ${c = c.clone()}
+        # ${c.task_id = task.index}
+        # ${c.dataset = dataset}
+        # ${c.trial = trial}
 
-		# temporary workaround for .bashrc issue
-		module use \${HOME}/modules
+        # temporary workaround for .bashrc issue
+        module use \${HOME}/modules
 
-		module load kinc/${c.revision}
+        module load kinc/${c.revision}
 
-		# apply runtime settings
-		kinc settings set cuda ${c.gpu_model == "cpu" ? "none" : "0"}
-		kinc settings set opencl none
-		kinc settings set threads ${c.threads}
-		kinc settings set buffer 4
-		kinc settings set logging off
+        # apply runtime settings
+        kinc settings set cuda ${c.gpu_model == "cpu" ? "none" : "0"}
+        kinc settings set opencl none
+        kinc settings set threads ${c.threads}
+        kinc settings set buffer 4
+        kinc settings set logging off
 
-		# run application
-		mpirun -np ${c.np + 1} \
-		kinc run similarity \
-			--input ${emx_file} \
-			--ccm ${dataset}.ccm \
-			--cmx ${dataset}.cmx \
-			--clusmethod ${c.clusmethod} \
-			--corrmethod ${c.corrmethod} \
-			--preout ${c.preout} \
-			--postout ${c.postout} \
-			--bsize ${c.bsize} \
-			--gsize ${c.gsize} \
-			--lsize ${c.lsize}
-		"""
+        # run application
+        mpirun -np ${c.np + 1} \
+        kinc run similarity \
+            --input ${emx_file} \
+            --ccm ${dataset}.ccm \
+            --cmx ${dataset}.cmx \
+            --clusmethod ${c.clusmethod} \
+            --corrmethod ${c.corrmethod} \
+            --preout ${c.preout} \
+            --postout ${c.postout} \
+            --bsize ${c.bsize} \
+            --gsize ${c.gsize} \
+            --lsize ${c.lsize}
+        """
 }
 
 
@@ -77,23 +77,23 @@ process run_experiment {
  * Collect augmented conditions into a csv file.
  */
 CONDITIONS_AUGMENTED
-	.into {
-		CONDITIONS_AUGMENTED_INDIVIDUAL;
-		CONDITIONS_AUGMENTED_MERGED
-	}
+    .into {
+        CONDITIONS_AUGMENTED_INDIVIDUAL;
+        CONDITIONS_AUGMENTED_MERGED
+    }
 
 CONDITIONS_AUGMENTED_INDIVIDUAL
-	.subscribe {
-		f = file("${params.output.dir}/${it.task_id}.txt")
-		f.text = it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
-	}
+    .subscribe {
+        f = file("${params.output.dir}/${it.task_id}.txt")
+        f.text = it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
+    }
 
 CONDITIONS_AUGMENTED_MERGED
-	.map {
-		it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
-	}
-	.collectFile(
-		keepHeader: true,
-		name: "conditions.txt",
-		storeDir: "${params.output.dir}"
-	)
+    .map {
+        it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
+    }
+    .collectFile(
+        keepHeader: true,
+        name: "conditions.txt",
+        storeDir: "${params.output.dir}"
+    )
