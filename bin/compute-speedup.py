@@ -49,9 +49,6 @@ def main():
     # compute per-core throughput
     df['throughput_per_core'] = df['throughput'] / df['np']
 
-    # compute efficiency
-    df['efficiency'] = df['throughput'] / df['np']
-
     # compute parallel speedup
     df['speedup_np'] = 0.0
 
@@ -63,7 +60,7 @@ def main():
             df.loc[idx, 'speedup_np'] = realtime_single.values[0] / row['realtime|mean']
 
     # compute parallel efficiency
-    df['efficiency_np'] = df['speedup_np'] / df['np']
+    df['efficiency'] = df['speedup_np'] / df['np']
 
     # compute GPU speedup
     df['speedup_gpu'] = 0.0

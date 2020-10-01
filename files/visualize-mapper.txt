@@ -1,6 +1,6 @@
 column_name	display_name
 dataset	Dataset
-efficiency_np	Parallel Efficiency
+efficiency	Parallel Efficiency
 geometry	Geometry
 gpu_model	GPU Model
 np	MPI Ranks

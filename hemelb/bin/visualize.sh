@@ -192,20 +192,6 @@ python bin/visualize.py \
     --yscale log \
     --palette muted
 
-echo "hemelb-efficiency"
-python bin/visualize.py \
-    ${OUTPUT_DIR}/speedup.txt \
-    ${OUTPUT_DIR}/hemelb-efficiency.${FORMAT} \
-    --plot-type point \
-    --mapper files/visualize-mapper.txt \
-    --xaxis np \
-    --yaxis efficiency \
-    --hue gpu_model \
-    --row geometry \
-    --height 2 \
-    --aspect 1.5 \
-    --palette muted
-
 echo "hemelb-speedup-np"
 python bin/visualize.py \
     ${OUTPUT_DIR}/speedup.txt \
@@ -221,16 +207,17 @@ python bin/visualize.py \
     --aspect 1.5 \
     --palette muted
 
-echo "hemelb-efficiency-np"
+echo "hemelb-efficiency"
 python bin/visualize.py \
     ${OUTPUT_DIR}/speedup.txt \
-    ${OUTPUT_DIR}/hemelb-efficiency-np.${FORMAT} \
+    ${OUTPUT_DIR}/hemelb-efficiency.${FORMAT} \
     --plot-type point \
     --mapper files/visualize-mapper.txt \
     --xaxis np \
-    --yaxis efficiency_np \
+    --yaxis efficiency \
     --hue gpu_model \
     --row geometry \
+    --sharey \
     --height 2 \
     --aspect 1.5 \
     --palette muted
