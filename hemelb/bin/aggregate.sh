@@ -1,6 +1,11 @@
 #!/bin/bash
 
-OUTPUT_DIR="hemelb/output-large"
+if [[ $# != 1 ]]; then
+        echo "usage: $0 <output-dir>"
+        exit -1
+fi
+
+OUTPUT_DIR="$1"
 
 module purge
 module add anaconda3/5.1.0-gcc/8.3.1

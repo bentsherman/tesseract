@@ -83,7 +83,6 @@ python bin/visualize.py \
     --yaxis realtime \
     --row geometry \
     --col gpu_model \
-    --select status=CACHED,COMPLETED \
     --select gpu_model=p100,v100 \
     --select latticetype=D3Q15 \
     --select np=1 \
@@ -100,7 +99,6 @@ python bin/visualize.py \
     --yaxis realtime \
     --row geometry \
     --col gpu_model \
-    --select status=CACHED,COMPLETED \
     --select gpu_model=cpu,p100,v100 \
     --select np=1 \
     --select ngpus=0 \
@@ -115,7 +113,6 @@ python bin/visualize.py \
     --yaxis realtime \
     --row geometry \
     --col gpu_model \
-    --select status=CACHED,COMPLETED \
     --select gpu_model=p100,v100 \
     --select ngpus=1 \
     --color steelblue
@@ -155,7 +152,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-throughput.${FORMAT} \
     --plot-type point \
     --mapper files/visualize-mapper.txt \
-    --mapper-term "throughput=Throughput (SUPS)" \
+    --mapper-term "throughput=Throughput (SUP/s)" \
     --xaxis np \
     --yaxis throughput \
     --hue gpu_model \
@@ -172,7 +169,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-throughput-aggregate.${FORMAT} \
     --plot-type point \
     --mapper files/visualize-mapper.txt \
-    --mapper-term "throughput=Throughput (SUPS)" \
+    --mapper-term "throughput=Throughput (SUP/s)" \
     --xaxis np \
     --yaxis throughput \
     --hue gpu_model \
@@ -185,7 +182,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-throughput-per-core.${FORMAT} \
     --plot-type point \
     --mapper files/visualize-mapper.txt \
-    --mapper-term "throughput_per_core=Per-core Throughput (SUPS)" \
+    --mapper-term "throughput_per_core=Per-core Throughput (SUP/s)" \
     --xaxis np \
     --yaxis throughput_per_core \
     --hue gpu_model \

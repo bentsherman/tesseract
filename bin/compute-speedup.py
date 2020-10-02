@@ -24,12 +24,11 @@ def main():
     df_sizes = pd.read_csv(args_sizes, sep='\t')
 
     # remove unused rows
-    df = select_rows_by_values(df, 'status', ['CACHED', 'COMPLETED'])
+    df = df[df['blocksize'] == 32]
     df = select_rows_by_values(df, 'gpu_model', ['cpu', 'p100', 'v100'])
-    df = select_rows_by_values(df, 'latticetype', ['D3Q15'])
 
     # aggregate trials into averages
-    group_keys = ['gpu_model', 'geometry', 'np']
+    group_keys = ['latticetype', 'gpu_model', 'geometry', 'np']
     aggregate_keys = ['realtime']
 
     df = df[group_keys + aggregate_keys]
@@ -53,7 +52,13 @@ def main():
     df['speedup_np'] = 0.0
 
     for idx, row in df.iterrows():
-        row_single = df[(df['gpu_model'] == row['gpu_model']) & (df['geometry'] == row['geometry']) & (df['np'] == 1)]
+        mask = \
+            (df['latticetype'] == row['latticetype']) \
+            & (df['gpu_model'] == row['gpu_model']) \
+            & (df['geometry'] == row['geometry']) \
+            & (df['np'] == 1)
+
+        row_single = df[mask]
         realtime_single = row_single['realtime|mean']
 
         if not realtime_single.empty:
