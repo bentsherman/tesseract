@@ -24,7 +24,11 @@ if __name__ == '__main__':
     prefix = args.dataset.split('.')[0]
 
     # generate output datasets from input
-    for i in range(args.n_outputs):
+    for i in range(1, args.n_outputs + 1):
+        # generate filename
+        filename = '%s.%03d.emx.txt' % (prefix, i)
+        print(filename)
+
         # create sub dataset
         n_samples = df.shape[0] * i // args.n_outputs
         n_features = df.shape[1] * i // args.n_outputs
@@ -35,4 +39,4 @@ if __name__ == '__main__':
         x = df.loc[samples, features]
 
         # save dataset to file
-        utils.save_dataframe('%s.%03d.emx.txt' % (prefix, i), x)
+        utils.save_dataframe(filename, x)

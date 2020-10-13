@@ -28,8 +28,8 @@ process run_experiment {
     publishDir "${params.output.dir}"
 
     input:
-        set val(dataset), file(emx_file) from EMX_FILES
         each(c) from CONDITIONS
+        set val(dataset), file(emx_file) from EMX_FILES
         each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
     output:
@@ -43,9 +43,7 @@ process run_experiment {
         # ${c.dataset = dataset}
         # ${c.trial = trial}
 
-        # temporary workaround for .bashrc issue
         module use \${HOME}/modules
-
         module load kinc/${c.revision}
 
         # apply runtime settings
@@ -56,7 +54,7 @@ process run_experiment {
         kinc settings set logging off
 
         # run application
-        mpirun -np ${c.np + 1} \
+        mpirun -np ${c.np.toInteger() + 1} \
         kinc run similarity \
             --input ${emx_file} \
             --ccm ${dataset}.ccm \

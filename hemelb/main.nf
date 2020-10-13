@@ -46,7 +46,6 @@ process run_experiment {
         # ${c.geometry = geometry}
         # ${c.trial = trial}
 
-        # temporary workaround for .bashrc issue
         module use \${HOME}/modules
 
         if [[ ${c.gpu_model} == "cpu" ]]; then
