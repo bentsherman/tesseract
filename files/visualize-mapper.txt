@@ -4,14 +4,7 @@ efficiency	Parallel Efficiency
 geometry	Geometry
 gpu_model	GPU Model
 np	MPI Ranks
-nvprof_type	Type
-nvprof_time_percent	Time (%)
-nvprof_time_total	Time (ms)
-nvprof_calls	Calls
-nvprof_time_avg	Kernel Time (ms)
-nvprof_time_min	Min Runtime (ms)
-nvprof_time_max	Max Runtime (ms)
-nvprof_name	Name
 realtime	Runtime (s)
 speedup_gpu	GPU Speedup
 speedup_np	Parallel Speedup
+throughput	Throughput

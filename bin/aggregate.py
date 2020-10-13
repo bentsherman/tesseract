@@ -2,15 +2,8 @@
 
 import argparse
 import numpy as np
+import os
 import pandas as pd
-
-
-
-def merge_name_unit(name, unit):
-    if isinstance(unit, str):
-        return '%s (%s)' % (name, unit)
-    else:
-        return name
 
 
 
@@ -24,104 +17,87 @@ def load_trace(filename):
 
 
 
-def load_nvprof(filename):
-    # load dataframe
-    df = pd.read_csv(filename, skiprows=3)
-
-    # merge the two header rows
-    names = df.columns
-    units = df.iloc[0, :]
-    df.columns = [merge_name_unit(name, unit) for (name, unit) in zip(names, units)]
-
-    # remove second header row
-    df = df.iloc[1:, :]
-
-    return df
-
-
-
 if __name__ == '__main__':
     # parse command-line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--conditions', help='augmented conditions file', required=True)
+    parser.add_argument('--conditions', help='input conditions file')
     parser.add_argument('--trace-input', help='list of nextflow trace files', nargs='+')
     parser.add_argument('--trace-output', help='output trace dataframe')
-    parser.add_argument('--nvprof-input', help='list of nvprof files', nargs='+')
-    parser.add_argument('--nvprof-output', help='output nvprof dataframe')
-    parser.add_argument('--nvprof-mapper', help='mapping file for renaming column names')
     parser.add_argument('--fix-exit-na', help='impute missing exit codes', type=int)
-    parser.add_argument('--fix-runtime-sleep', help='adjust runtime metrics to account for running sleep beforehand', action='store_true')
+    parser.add_argument('--fix-runtime-sleep', help='adjust runtime metrics to account for running sleep beforehand', type=int)
     parser.add_argument('--fix-runtime-ms', help='convert runtime metrics from ms to s', action='store_true')
 
     args = parser.parse_args()
 
-    # load conditions file
-    X_conditions = load_conditions(args.conditions)
+    # load nextflow trace files into a single dataframe
+    df = pd.concat([load_trace(filename) for filename in args.trace_input])
 
-    if args.trace_input:
-        # load nextflow trace files
-        trace_files = [load_trace(filename) for filename in args.trace_input]
+    # impute missing exit codes
+    if args.fix_exit_na != None:
+        df['exit'].fillna(args.fix_exit_na, inplace=True)
+        df['exit'] = df['exit'].astype(int)
 
-        # aggregate trace files into one dataframe
-        X_trace = pd.DataFrame()
+    # adjust runtime metrics to exclude sleep time
+    if args.fix_runtime_sleep != None:
+        df['duration'] -= args.fix_runtime_sleep * 1000
+        df['realtime'] -= args.fix_runtime_sleep * 1000
 
-        for X_i in trace_files:
-            X_trace = X_trace.append(X_i, sort=False)
+    # convert runtime metrics from ms to s
+    if args.fix_runtime_ms:
+        df['duration'] /= 1000
+        df['realtime'] /= 1000
 
-        # remove unused columns
-        X_trace.drop(columns=['process', 'tag', 'name'], inplace=True)
+    # load input conditions from file if specified
+    if args.conditions != None:
+        print('loading input conditions from file')
 
-        # impute missing exit codes
-        if args.fix_exit_na != None:
-            X_trace['exit'].fillna(args.fix_exit_na, inplace=True)
-            X_trace['exit'] = X_trace['exit'].astype(int)
+        df_conditions = load_conditions(args.conditions)
 
-        # adjust runtime metrics to exclude sleep time
-        if args.fix_runtime_sleep:
-            X_trace['duration'] -= 10000
-            X_trace['realtime'] -= 10000
+    # otherwise extract input conditions from process scripts
+    else:
+        print('extracting input conditions from process scripts')
 
-        # convert runtime metrics from ms to s
-        if args.fix_runtime_ms:
-            X_trace['duration'] /= 1000
-            X_trace['realtime'] /= 1000
+        conditions = []
 
-        # merge with input conditions
-        X_trace = X_conditions.join(X_trace, on='task_id')
-        X_trace.sort_index(inplace=True)
+        for task_id in df.index:
+            # load process script
+            filename = os.path.join(df.loc[task_id, 'workdir'], '.command.sh')
 
-        # save trace dataframe
-        X_trace.to_csv(args.trace_output, sep='\t')
+            try:
+                lines = [line.rstrip() for line in open(filename)]
+            except FileNotFoundError:
+                print('error: could not find process script for task %d' % (task_id))
+                continue
 
-    if args.nvprof_input:
-        # load nvprof files
-        nvprof_files = [load_nvprof(filename) for filename in args.nvprof_input]
+            # extract line containing input conditions
+            line = lines[2]
 
-        # aggregate nvprof files into one dataframe
-        X_nvprof = pd.DataFrame()
+            # parse input conditions from text
+            a = line.index('[')
+            b = line.index(']')
+            line = line[(a + 1):b]
 
-        for filename, X_i in zip(args.nvprof_input, nvprof_files):
-            # parse conditions from filename
-            tokens = filename.replace('.', '/').split('/')
-            task_id = int(tokens[-4])
-            pid = int(tokens[-3])
+            items = line.split(', ')
+            items = [item.split(':') for item in items]
+            c = {k: v for k, v in items}
 
-            # append condition columns to input dataframe
-            X_i['task_id'] = task_id
-            X_i['pid'] = pid
+            # convert task_id to number
+            c['task_id'] = int(c['task_id'])
 
-            # append input dataframe rows to output dataframe
-            X_nvprof = X_nvprof.append(X_i, sort=False)
+            # overwrite task_id if it does not match
+            if task_id != c['task_id']:
+                print('warning: task id from trace file (%d) does not match process script (%d), using task id from trace file' % (task_id, c['task_id']))
+                c['task_id'] = task_id
 
-        # rename column names if mapping file is specified
-        if args.nvprof_mapper:
-            mapper = pd.read_csv(args.nvprof_mapper, sep='\t')
-            mapper = {mapper.loc[i, 'display_name']: mapper.loc[i, 'column_name'] for i in mapper.index}
+            # append input conditions to list
+            conditions.append(c)
 
-            X_nvprof.rename(columns=mapper, copy=False, inplace=True)
+        # merge input conditions into dataframe
+        df_conditions = pd.DataFrame(conditions)
 
-        # merge with input conditions
-        X_nvprof = X_conditions.merge(X_nvprof, on='task_id')
+    # merge trace data with input conditions
+    df = df.merge(df_conditions, how='left', on='task_id')
+    df.sort_index(inplace=True)
 
-        # save nvprof dataframe
-        X_nvprof.to_csv(args.nvprof_output, sep='\t', index=False)
+    # save output trace dataframe
+    df.to_csv(args.trace_output, sep='\t')
