@@ -4,7 +4,7 @@
 OUTPUT_DIR="hemelb/input"
 
 module purge
-module add anaconda3/5.1.0-gcc/8.3.1
+module load anaconda3/5.1.0-gcc/8.3.1
 
 source activate mlbd
 
