@@ -15,7 +15,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-site-counts.txt \
     ${OUTPUT_DIR}/hemelb-site-counts.${FORMAT} \
     --plot-type bar \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --mapper-term "n_sites=Number of Sites" \
     --xaxis geometry \
     --yaxis n_sites \
@@ -28,7 +28,7 @@ echo "hemelb-sparsity"
 python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-sparsity.txt \
     ${OUTPUT_DIR}/hemelb-sparsity.${FORMAT} \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --mapper-term "fluid_fraction_percent=Fluid Fraction (%)" \
     --xaxis geometry \
     --yaxis fluid_fraction_percent \
@@ -42,7 +42,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-cut-edges.txt \
     ${OUTPUT_DIR}/hemelb-cut-edges.${FORMAT} \
     --plot-type bar \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --mapper-term "edges=Number of Cut Edges" \
     --xaxis np \
     --yaxis edges \
@@ -54,7 +54,7 @@ echo "hemelb-load-times"
 python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-load-times.txt \
     ${OUTPUT_DIR}/hemelb-load-times.${FORMAT} \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis loadtime \
     --row geometry \
@@ -64,7 +64,7 @@ echo "hemelb-run-times"
 python bin/visualize.py \
     ${OUTPUT_DIR}/hemelb-run-times.txt \
     ${OUTPUT_DIR}/hemelb-run-times.${FORMAT} \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis runtime \
     --row geometry \
@@ -77,7 +77,7 @@ echo "hemelb-blocksize"
 python bin/visualize.py \
     ${OUTPUT_DIR}/trace.txt \
     ${OUTPUT_DIR}/hemelb-blocksize.${FORMAT} \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --mapper-term "blocksize=CUDA Block Size" \
     --xaxis blocksize \
     --yaxis realtime \
@@ -93,7 +93,7 @@ echo "hemelb-latticetype"
 python bin/visualize.py \
     ${OUTPUT_DIR}/trace.txt \
     ${OUTPUT_DIR}/hemelb-latticetype.${FORMAT} \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --mapper-term "latticetype=Lattice Type" \
     --xaxis latticetype \
     --yaxis realtime \
@@ -108,7 +108,7 @@ echo "hemelb-oversubscribe"
 python bin/visualize.py \
     ${OUTPUT_DIR}/trace.txt \
     ${OUTPUT_DIR}/hemelb-oversubscribe.${FORMAT} \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis realtime \
     --row geometry \
@@ -124,7 +124,7 @@ echo "hemelb-exitcode"
 python bin/visualize.py \
     ${OUTPUT_DIR}/trace.txt \
     ${OUTPUT_DIR}/hemelb-exitcode.${FORMAT} \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis exit \
     --col gpu_model \
@@ -135,7 +135,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.txt \
     ${OUTPUT_DIR}/hemelb-realtime.${FORMAT} \
     --plot-type point \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis realtime \
     --hue gpu_model \
@@ -151,7 +151,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/speedup.txt \
     ${OUTPUT_DIR}/hemelb-throughput.${FORMAT} \
     --plot-type point \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --mapper-term "throughput=Throughput (SUP/s)" \
     --xaxis np \
     --yaxis throughput \
@@ -168,7 +168,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/speedup.txt \
     ${OUTPUT_DIR}/hemelb-throughput-aggregate.${FORMAT} \
     --plot-type point \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --mapper-term "throughput=Throughput (SUP/s)" \
     --xaxis np \
     --yaxis throughput \
@@ -181,7 +181,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/speedup.txt \
     ${OUTPUT_DIR}/hemelb-throughput-per-core.${FORMAT} \
     --plot-type point \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --mapper-term "throughput_per_core=Per-core Throughput (SUP/s)" \
     --xaxis np \
     --yaxis throughput_per_core \
@@ -194,7 +194,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/speedup.txt \
     ${OUTPUT_DIR}/hemelb-speedup-np.${FORMAT} \
     --plot-type point \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis speedup_np \
     --hue gpu_model \
@@ -209,7 +209,7 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/speedup.txt \
     ${OUTPUT_DIR}/hemelb-efficiency.${FORMAT} \
     --plot-type point \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis efficiency \
     --hue gpu_model \
@@ -223,7 +223,7 @@ echo "hemelb-speedup-gpu"
 python bin/visualize.py \
     ${OUTPUT_DIR}/speedup.txt \
     ${OUTPUT_DIR}/hemelb-speedup-gpu.${FORMAT} \
-    --mapper files/visualize-mapper.txt \
+    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis speedup_gpu \
     --col gpu_model \

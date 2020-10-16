@@ -60,19 +60,19 @@ if __name__ == '__main__':
     parser.add_argument('outfile', help='output plot')
     parser.add_argument('--plot-type', help='plot type (automatically determined by default)', choices=['hist', 'count', 'scatter', 'ct', 'bar', 'point'])
     parser.add_argument('--xaxis', help='column name of x-axis', required=True)
-    parser.add_argument('--yaxis', help='column name of y-axis', nargs='?')
-    parser.add_argument('--row', help='column name of row-wise category', nargs='?')
-    parser.add_argument('--col', help='column name of column-wise category', nargs='?')
-    parser.add_argument('--hue', help='column name of hue category', nargs='?')
+    parser.add_argument('--yaxis', help='column name of y-axis')
+    parser.add_argument('--row', help='column name of row-wise category')
+    parser.add_argument('--col', help='column name of column-wise category')
+    parser.add_argument('--hue', help='column name of hue category')
     parser.add_argument('--select', help='select a set of values from a column', action='append', default=[], metavar='column=value,value,...')
-    parser.add_argument('--mapper', help='mappping file of display names for axis columns', nargs='?')
+    parser.add_argument('--mapper-file', help='mappping file of display names for axis columns')
     parser.add_argument('--mapper-term', help='additional display name mapping (overwrites mapping file)', action='append', default=[], metavar='column_name=display_name')
     parser.add_argument('--sharex', help='whether to use uniform x-axis across subplots', action='store_true')
     parser.add_argument('--sharey', help='whether to use uniform y-axis across subplots', action='store_true')
     parser.add_argument('--height', help='figure height', type=float, default=3)
     parser.add_argument('--aspect', help='figure aspect', type=float, default=1)
-    parser.add_argument('--color', help='color for all barplot elements', nargs='?')
-    parser.add_argument('--palette', help='palette for all barplot elements', nargs='?')
+    parser.add_argument('--color', help='color for all barplot elements')
+    parser.add_argument('--palette', help='palette for all barplot elements')
     parser.add_argument('--xscale', help='set x-axis scale')
     parser.add_argument('--yscale', help='set y-axis scale')
     parser.add_argument('--rotate-xticklabels', help='rotate x-axis tick labels', action='store_true')
@@ -116,8 +116,8 @@ if __name__ == '__main__':
         sys.exit(-1)
 
     # apply column name mapper to dataframe
-    if args.mapper != None:
-        mapper = pd.read_csv(args.mapper, sep='\t')
+    if args.mapper_file != None:
+        mapper = pd.read_csv(args.mapper_file, sep='\t')
         mapper = {mapper.loc[i, 'column_name']: mapper.loc[i, 'display_name'] for i in mapper.index}
     else:
         mapper = {}

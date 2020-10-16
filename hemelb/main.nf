@@ -24,28 +24,28 @@ CONDITIONS_FILE
 
 
 /**
- * The run_experiment process performs a single run of the
- * application under test for each set of input conditions.
+ * The hemelb process performs a single run of hemelb
+ * for each set of input conditions.
  */
-process run_experiment {
+process hemelb {
     publishDir "${params.output.dir}"
 
     input:
-        set val(geometry), file(gmy_file), file(xml_file) from DATASETS
         each(c) from CONDITIONS
+        set val(geometry), file(gmy_file), file(xml_file) from DATASETS
         each(trial) from Channel.from( 0 .. params.input.trials-1 )
-
-    output:
-        val(c) into CONDITIONS_AUGMENTED
 
     script:
         """
-        # augment conditions with additional features
-        # ${c = c.clone()}
-        # ${c.task_id = task.index}
-        # ${c.geometry = geometry}
-        # ${c.trial = trial}
+        # specify input conditions to be appended to trace data
+        #TRACE blocksize=${c.blocksize}
+        #TRACE geometry=${geometry}
+        #TRACE gpu_model=${c.gpu_model}
+        #TRACE latticetype=${c.latticetype}
+        #TRACE ngpus=${c.ngpus}
+        #TRACE np=${c.np}
 
+        # load environment modules
         module use \${HOME}/modules
 
         if [[ ${c.gpu_model} == "cpu" ]]; then
@@ -77,30 +77,3 @@ process run_experiment {
             -out results
         """
 }
-
-
-
-/**
- * Collect augmented conditions into a csv file.
- */
-CONDITIONS_AUGMENTED
-    .into {
-        CONDITIONS_AUGMENTED_INDIVIDUAL;
-        CONDITIONS_AUGMENTED_MERGED
-    }
-
-CONDITIONS_AUGMENTED_INDIVIDUAL
-    .subscribe {
-        f = file("${params.output.dir}/${it.task_id}.txt")
-        f.text = it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
-    }
-
-CONDITIONS_AUGMENTED_MERGED
-    .map {
-        it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
-    }
-    .collectFile(
-        keepHeader: true,
-        name: "conditions.txt",
-        storeDir: "${params.output.dir}"
-    )

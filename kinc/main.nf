@@ -21,10 +21,10 @@ CONDITIONS_FILE
 
 
 /**
- * The run_experiment process performs a single run of the
- * application under test for each set of input conditions.
+ * The kinc process performs a single run of kinc
+ * for each set of input conditions.
  */
-process run_experiment {
+process kinc {
     publishDir "${params.output.dir}"
 
     input:
@@ -32,17 +32,14 @@ process run_experiment {
         set val(dataset), file(emx_file) from EMX_FILES
         each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
-    output:
-        val(c) into CONDITIONS_AUGMENTED
-
     script:
         """
-        # augment conditions with additional features
-        # ${c = c.clone()}
-        # ${c.task_id = task.index}
-        # ${c.dataset = dataset}
-        # ${c.trial = trial}
+        # specify input conditions to be appended to trace data
+        #TRACE dataset=${dataset}
+        #TRACE gpu_model=${c.gpu_model}
+        #TRACE np=${c.np}
 
+        # load environment modules
         module use \${HOME}/modules
         module load kinc/${c.revision}
 
@@ -68,30 +65,3 @@ process run_experiment {
             --lsize ${c.lsize}
         """
 }
-
-
-
-/**
- * Collect augmented conditions into a csv file.
- */
-CONDITIONS_AUGMENTED
-    .into {
-        CONDITIONS_AUGMENTED_INDIVIDUAL;
-        CONDITIONS_AUGMENTED_MERGED
-    }
-
-CONDITIONS_AUGMENTED_INDIVIDUAL
-    .subscribe {
-        f = file("${params.output.dir}/${it.task_id}.txt")
-        f.text = it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
-    }
-
-CONDITIONS_AUGMENTED_MERGED
-    .map {
-        it.keySet().join('\t') + '\n' + it.values().join('\t') + '\n'
-    }
-    .collectFile(
-        keepHeader: true,
-        name: "conditions.txt",
-        storeDir: "${params.output.dir}"
-    )

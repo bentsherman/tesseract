@@ -18,18 +18,21 @@ source activate mlbd
 
 # generate input files
 python kinc/bin/make-inputs.py \
-	--dataset kinc/data/Yeast.emx.txt \
-	--n-outputs 10
+	--dataset ${INFILE} \
+	--n-row-iters 8 \
+	--n-col-iters 4
 
 # convert emx txt files to emx files
-for INFILE in kinc/data/*.emx.txt; do
-    BASENAME="$(basename ${INFILE} .emx.txt)"
-    EMX_FILE="kinc/data/${BASENAME}.emx"
+DIRNAME=$(dirname ${INFILE})
+BASENAME=$(basename ${INFILE} .emx.txt)
+
+for EMX_TXT_FILE in ${DIRNAME}/${BASENAME}.*.emx.txt; do
+    EMX_FILE="${DIRNAME}/$(basename ${EMX_TXT_FILE} .txt)"
 
     echo ${EMX_FILE}
 
     kinc run import-emx \
-        --input ${INFILE} \
+        --input ${EMX_TXT_FILE} \
         --output ${EMX_FILE} \
         > /dev/null
 done

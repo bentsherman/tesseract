@@ -13,7 +13,8 @@ if __name__ == '__main__':
     # parse command-line arguments
     parser = argparse.ArgumentParser(description='Create a set of datasets drawn from an input dataset')
     parser.add_argument('--dataset', help='input dataset', required=True)
-    parser.add_argument('--n-outputs', help='number of output datasets', type=int, default=10)
+    parser.add_argument('--n-row-iters', help='number of row iterations', type=int, default=8)
+    parser.add_argument('--n-col-iters', help='number of column iterations', type=int, default=4)
 
     args = parser.parse_args()
 
@@ -24,19 +25,22 @@ if __name__ == '__main__':
     prefix = args.dataset.split('.')[0]
 
     # generate output datasets from input
-    for i in range(1, args.n_outputs + 1):
-        # generate filename
-        filename = '%s.%03d.emx.txt' % (prefix, i)
-        print(filename)
+    for i in range(1, args.n_row_iters + 1):
+        for j in range(1, args.n_col_iters + 1):
+            # generate filename
+            filename = '%s.%03d.%03d.emx.txt' % (prefix, i, j)
 
-        # create sub dataset
-        n_samples = df.shape[0] * i // args.n_outputs
-        n_features = df.shape[1] * i // args.n_outputs
+            # create sub dataset
+            n_rows = df.shape[0] * i // args.n_row_iters
+            n_cols = df.shape[1] * j // args.n_col_iters
 
-        samples = random.sample(list(df.index), n_samples)
-        features = random.sample(list(df.columns), n_features)
+            rows = random.sample(list(df.index), n_rows)
+            cols = random.sample(list(df.columns), n_cols)
 
-        x = df.loc[samples, features]
+            x = df.loc[rows, cols]
 
-        # save dataset to file
-        utils.save_dataframe(filename, x)
+            # print dataset stats
+            print('%s\t%d\t%d' % (filename, n_rows, n_cols))
+
+            # save dataset to file
+            utils.save_dataframe(filename, x)
