@@ -41,27 +41,29 @@ if __name__ == '__main__':
         df['duration'] /= 1000
         df['realtime'] /= 1000
 
-    # separate trace data by process
+    # separate trace data by process type
     process_names = df['process'].unique()
 
     for process_name in process_names:
         # extract trace data for process type
         df_process = df[df['process'] == process_name]
 
-        # extract input conditions from process scripts
+        # extract conditions for each executed task
         conditions = []
 
         for hash_id in df_process.index:
-            # load process script
-            filename = os.path.join(df_process.loc[hash_id, 'workdir'], '.command.sh')
+            # load command script and execution log
+            filenames = ['.command.sh', '.command.log']
+            filenames = [os.path.join(df_process.loc[hash_id, 'workdir'], filename) for filename in filenames]
 
             try:
-                lines = [line.strip() for line in open(filename)]
+                files = [open(filename) for filename in filenames]
+                lines = [line.strip() for f in files for line in f]
             except FileNotFoundError:
-                print('error: could not find process script for task %s' % (hash_id))
+                print('error: failed to load files for task %s' % (hash_id))
                 continue
 
-            # parse input conditions from trace directives
+            # parse conditions from trace directives
             PREFIX = '#TRACE'
             lines = [line[len(PREFIX):] for line in lines if line.startswith(PREFIX)]
             items = [line.split('=') for line in lines]
@@ -69,13 +71,13 @@ if __name__ == '__main__':
 
             c['hash'] = hash_id
 
-            # append input conditions to list
+            # append conditions to list
             conditions.append(c)
 
-        # merge input conditions into dataframe
+        # merge conditions into dataframe
         df_conditions = pd.DataFrame(conditions)
 
-        # merge trace data with input conditions
+        # merge trace data with conditions
         df_process = df_process.merge(df_conditions, how='left', on='hash')
         df_process.sort_index(inplace=True)
 

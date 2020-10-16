@@ -3,8 +3,8 @@
 
 # parse command-line arguments
 if [[ $# != 1 ]]; then
-        echo "usage: $0 <infile>"
-        exit -1
+    echo "usage: $0 <infile>"
+    exit -1
 fi
 
 INFILE="$1"
