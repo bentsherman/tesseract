@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 import random
 
-import utils
-
 
 
 if __name__ == '__main__':
@@ -19,7 +17,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # load input dataset
-    df = utils.load_dataframe(args.dataset)
+    df = pd.read_csv(args.dataset, index_col=0, sep="\t")
 
     # compute output filename prefix
     prefix = args.dataset.split('.')[0]
@@ -30,17 +28,17 @@ if __name__ == '__main__':
             # generate filename
             filename = '%s.%03d.%03d.emx.txt' % (prefix, i, j)
 
-            # create sub dataset
+            # create partial dataset
             n_rows = df.shape[0] * i // args.n_row_iters
             n_cols = df.shape[1] * j // args.n_col_iters
 
             rows = random.sample(list(df.index), n_rows)
             cols = random.sample(list(df.columns), n_cols)
 
-            x = df.loc[rows, cols]
+            df_subset = df.loc[rows, cols]
 
             # print dataset stats
             print('%s\t%d\t%d' % (filename, n_rows, n_cols))
 
             # save dataset to file
-            utils.save_dataframe(filename, x)
+            df_subset.to_csv(filename, sep="\t", na_rep="NA", float_format="%.8f")

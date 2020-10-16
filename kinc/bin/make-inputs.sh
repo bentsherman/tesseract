@@ -16,13 +16,17 @@ module load kinc/v3.4.2
 
 source activate mlbd
 
-# generate input files
+# generate partial datsets
+echo 'generating partial datasets...'
+
 python kinc/bin/make-inputs.py \
-	--dataset ${INFILE} \
-	--n-row-iters 8 \
-	--n-col-iters 4
+    --dataset ${INFILE} \
+    --n-row-iters 8 \
+    --n-col-iters 4
 
 # convert emx txt files to emx files
+echo 'converting datasets info emx format...'
+
 DIRNAME=$(dirname ${INFILE})
 BASENAME=$(basename ${INFILE} .emx.txt)
 
