@@ -51,21 +51,6 @@ python bin/visualize.py \
     --aspect 1.5 \
     --palette muted
 
-echo "kinc-np-peak_vmem"
-python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.kinc.txt \
-    ${OUTPUT_DIR}/kinc-np-peak_vmem.${FORMAT} \
-    --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
-    --xaxis np \
-    --yaxis peak_vmem \
-    --hue gpu_model \
-    --row dataset \
-    --select exit=0 \
-    --sharey \
-    --aspect 1.5 \
-    --palette muted
-
 echo "kinc-np-read_bytes"
 python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
@@ -140,21 +125,6 @@ python bin/visualize.py \
     --palette muted \
     --rotate-xticklabels
 
-echo "kinc-dataset-peak_vmem"
-python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.kinc.txt \
-    ${OUTPUT_DIR}/kinc-dataset-peak_vmem.${FORMAT} \
-    --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
-    --xaxis dataset \
-    --yaxis peak_vmem \
-    --hue gpu_model \
-    --select exit=0 \
-    --sharey \
-    --aspect 1.5 \
-    --palette muted \
-    --rotate-xticklabels
-
 echo "kinc-dataset-read_bytes"
 python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
@@ -222,21 +192,6 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis peak_rss \
-    --hue dataset \
-    --col gpu_model \
-    --select exit=0 \
-    --sharey \
-    --aspect 1.5 \
-    --palette viridis
-
-echo "kinc-np-peak_vmem"
-python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.kinc.txt \
-    ${OUTPUT_DIR}/kinc-np-peak_vmem.${FORMAT} \
-    --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
-    --xaxis np \
-    --yaxis peak_vmem \
     --hue dataset \
     --col gpu_model \
     --select exit=0 \

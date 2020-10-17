@@ -10,7 +10,6 @@ source activate mlbd
 
 python bin/make-conditions.py \
 	--default gpu_model=p100 \
-	--default revision=v3.4.2 \
 	--default threads=2 \
 	--default clusmethod=gmm \
 	--default corrmethod=spearman \
@@ -26,7 +25,6 @@ python bin/make-conditions.py \
 
 python bin/make-conditions.py \
 	--default gpu_model=p100 \
-	--default revision=v3.4.2 \
 	--default threads=2 \
 	--default clusmethod=gmm \
 	--default corrmethod=spearman \

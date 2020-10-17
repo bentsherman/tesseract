@@ -45,6 +45,8 @@ if __name__ == '__main__':
     process_names = df['process'].unique()
 
     for process_name in process_names:
+        print(process_name)
+
         # extract trace data for process type
         df_process = df[df['process'] == process_name]
 

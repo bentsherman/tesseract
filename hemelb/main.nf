@@ -45,15 +45,6 @@ process hemelb {
         #TRACE ngpus=${c.ngpus}
         #TRACE np=${c.np}
 
-        # load environment modules
-        module use \${HOME}/modules
-
-        if [[ ${c.gpu_model} == "cpu" ]]; then
-            module load hemelb/${c.latticetype}-p100
-        else
-            module load hemelb/${c.latticetype}-${c.gpu_model}
-        fi
-
         # modify config file
         cp ${xml_file} config.xml
 

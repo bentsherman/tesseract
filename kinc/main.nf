@@ -38,12 +38,8 @@ process kinc {
         #TRACE dataset=${dataset}
         #TRACE gpu_model=${c.gpu_model}
         #TRACE np=${c.np}
-        echo "#TRACE n_rows=\$(tail -n +1 ${emx_txt_file} | wc -l)"
-        echo "#TRACE n_cols=\$(head -n +1 ${emx_txt_file} | wc -w)"
-
-        # load environment modules
-        module use \${HOME}/modules
-        module load kinc/${c.revision}
+        echo "#TRACE n_rows=`tail -n +1 ${emx_txt_file} | wc -l`"
+        echo "#TRACE n_cols=`head -n +1 ${emx_txt_file} | wc -w`"
 
         # apply runtime settings
         kinc settings set cuda ${c.gpu_model == "cpu" ? "none" : "0"}
@@ -71,9 +67,5 @@ process kinc {
             --bsize ${c.bsize} \
             --gsize ${c.gsize} \
             --lsize ${c.lsize}
-
-        # append trace directives for output data
-        echo "#TRACE ccm_bytes=\$(stat -c '%s' ${dataset}.ccm)"
-        echo "#TRACE cmx_bytes=\$(stat -c '%s' ${dataset}.cmx)"
         """
 }

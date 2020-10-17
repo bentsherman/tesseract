@@ -26,8 +26,8 @@ Here are some trace directives that might be used for the KINC example pipeline:
 #TRACE np=${c.np}
 
 # dynamic trace directives
-echo "#TRACE n_rows=\$(tail -n +1 ${emx_file} | wc -l)"
-echo "#TRACE n_cols=\$(head -n +1 ${emx_file} | wc -w)"
+echo "#TRACE n_rows=`tail -n +1 ${emx_txt_file} | wc -l`"
+echo "#TRACE n_cols=`head -n +1 ${emx_txt_file} | wc -w`"
 ```
 
 In this example, `dataset`, `gpu_model`, and `np` are Nextflow variables supplied by input channels. They can be supplied as static directives, which means they will simply be comments in the process script. On the other hand, `emx_file` is a tab-delimited text file, also supplied by an input channel, but the dimensions of this dataset must be computed by the script itself. As a result, these two directives must be printed to the execution log. After the workflow completes, Tesseract will parse both the process script and the execution log to obtain the input conditions for each executed task.
