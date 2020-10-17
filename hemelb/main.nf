@@ -70,7 +70,7 @@ process hemelb {
             export CUDA_VISIBLE_DEVICES=0
         fi
 
-        # run application
+        # run hemelb
         mpirun -np ${c.np} \
         hemelb \
             -in config.xml \

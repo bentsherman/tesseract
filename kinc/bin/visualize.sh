@@ -12,7 +12,7 @@ OUTPUT_DIR="kinc/output-02"
 
 echo "kinc-np-exit"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-exit.${FORMAT} \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
@@ -22,7 +22,7 @@ python bin/visualize.py \
 
 echo "kinc-np-realtime"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-realtime.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
@@ -30,7 +30,7 @@ python bin/visualize.py \
     --yaxis realtime \
     --hue gpu_model \
     --row dataset \
-    --select gpu_model=cpu,p100,v100 \
+    --select exit=0 \
     --sharey \
     --aspect 1.5 \
     --yscale log \
@@ -38,7 +38,7 @@ python bin/visualize.py \
 
 echo "kinc-np-peak_rss"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-peak_rss.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
@@ -46,14 +46,14 @@ python bin/visualize.py \
     --yaxis peak_rss \
     --hue gpu_model \
     --row dataset \
-    --select gpu_model=cpu,p100,v100 \
+    --select exit=0 \
     --sharey \
     --aspect 1.5 \
     --palette muted
 
 echo "kinc-np-peak_vmem"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-peak_vmem.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
@@ -61,14 +61,14 @@ python bin/visualize.py \
     --yaxis peak_vmem \
     --hue gpu_model \
     --row dataset \
-    --select gpu_model=cpu,p100,v100 \
+    --select exit=0 \
     --sharey \
     --aspect 1.5 \
     --palette muted
 
 echo "kinc-np-read_bytes"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-read_bytes.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
@@ -76,14 +76,14 @@ python bin/visualize.py \
     --yaxis read_bytes \
     --hue gpu_model \
     --row dataset \
-    --select gpu_model=cpu,p100,v100 \
+    --select exit=0 \
     --sharey \
     --aspect 1.5 \
     --palette muted
 
 echo "kinc-np-write_bytes"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-write_bytes.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
@@ -91,24 +91,34 @@ python bin/visualize.py \
     --yaxis write_bytes \
     --hue gpu_model \
     --row dataset \
-    --select gpu_model=cpu,p100,v100 \
+    --select exit=0 \
     --sharey \
     --aspect 1.5 \
     --palette muted
 
 # PART 1: weak scaling analysis (dataset)
-OUTPUT_DIR="kinc/output-03"
+OUTPUT_DIR="kinc/output-05"
+
+echo "kinc-dataset-exit"
+python bin/visualize.py \
+    ${OUTPUT_DIR}/trace.kinc.txt \
+    ${OUTPUT_DIR}/kinc-dataset-exit.${FORMAT} \
+    --mapper-file files/visualize-mapper.txt \
+    --xaxis dataset \
+    --yaxis exit \
+    --col gpu_model \
+    --palette muted
 
 echo "kinc-dataset-realtime"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-dataset-realtime.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis realtime \
     --hue gpu_model \
-    --select gpu_model=cpu,p100,v100 \
+    --select exit=0 \
     --sharey \
     --aspect 1.5 \
     --yscale log \
@@ -117,14 +127,14 @@ python bin/visualize.py \
 
 echo "kinc-dataset-peak_rss"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-dataset-peak_rss.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis peak_rss \
     --hue gpu_model \
-    --select gpu_model=cpu,p100,v100 \
+    --select exit=0 \
     --sharey \
     --aspect 1.5 \
     --palette muted \
@@ -132,14 +142,14 @@ python bin/visualize.py \
 
 echo "kinc-dataset-peak_vmem"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-dataset-peak_vmem.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis peak_vmem \
     --hue gpu_model \
-    --select gpu_model=cpu,p100,v100 \
+    --select exit=0 \
     --sharey \
     --aspect 1.5 \
     --palette muted \
@@ -147,14 +157,14 @@ python bin/visualize.py \
 
 echo "kinc-dataset-read_bytes"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-dataset-read_bytes.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis read_bytes \
     --hue gpu_model \
-    --select gpu_model=cpu,p100,v100 \
+    --select exit=0 \
     --sharey \
     --aspect 1.5 \
     --palette muted \
@@ -162,25 +172,25 @@ python bin/visualize.py \
 
 echo "kinc-dataset-write_bytes"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-dataset-write_bytes.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis write_bytes \
     --hue gpu_model \
-    --select gpu_model=cpu,p100,v100 \
+    --select exit=0 \
     --sharey \
     --aspect 1.5 \
     --palette muted \
     --rotate-xticklabels
 
 # PART 3: strong scaling analysis (dataset, np)
-OUTPUT_DIR="kinc/output"
+OUTPUT_DIR="kinc/output-04"
 
 echo "kinc-np-exit"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-exit.${FORMAT} \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
@@ -190,7 +200,7 @@ python bin/visualize.py \
 
 echo "kinc-np-realtime"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-realtime.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
@@ -206,7 +216,7 @@ python bin/visualize.py \
 
 echo "kinc-np-peak_rss"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-peak_rss.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
@@ -221,7 +231,7 @@ python bin/visualize.py \
 
 echo "kinc-np-peak_vmem"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-peak_vmem.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
@@ -236,7 +246,7 @@ python bin/visualize.py \
 
 echo "kinc-np-read_bytes"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-read_bytes.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
@@ -251,7 +261,7 @@ python bin/visualize.py \
 
 echo "kinc-np-write_bytes"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-write_bytes.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \

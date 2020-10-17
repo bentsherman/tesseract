@@ -5,7 +5,7 @@
 /**
  * Create channel for input files.
  */
-EMX_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.emx_files}", size: 1, flat: true)
+EMX_TXT_FILES = Channel.fromFilePairs("${params.input.dir}/${params.input.emx_txt_files}", size: 1, flat: true)
 
 
 
@@ -29,15 +29,17 @@ process kinc {
 
     input:
         each(c) from CONDITIONS
-        set val(dataset), file(emx_file) from EMX_FILES
+        set val(dataset), file(emx_txt_file) from EMX_TXT_FILES
         each(trial) from Channel.from( 0 .. params.input.trials-1 )
 
     script:
         """
-        # specify input conditions to be appended to trace data
+        # append trace directives for input conditions
         #TRACE dataset=${dataset}
         #TRACE gpu_model=${c.gpu_model}
         #TRACE np=${c.np}
+        echo "#TRACE n_rows=\$(tail -n +1 ${emx_txt_file} | wc -l)"
+        echo "#TRACE n_cols=\$(head -n +1 ${emx_txt_file} | wc -w)"
 
         # load environment modules
         module use \${HOME}/modules
@@ -50,10 +52,16 @@ process kinc {
         kinc settings set buffer 4
         kinc settings set logging off
 
-        # run application
+        # convert input file into emx format
+        kinc run import-emx \
+            --input ${emx_txt_file} \
+            --output ${dataset}.emx \
+            > /dev/null
+
+        # run kinc
         mpirun -np ${c.np.toInteger() + 1} \
         kinc run similarity \
-            --input ${emx_file} \
+            --input ${dataset}.emx \
             --ccm ${dataset}.ccm \
             --cmx ${dataset}.cmx \
             --clusmethod ${c.clusmethod} \
@@ -63,5 +71,9 @@ process kinc {
             --bsize ${c.bsize} \
             --gsize ${c.gsize} \
             --lsize ${c.lsize}
+
+        # append trace directives for output data
+        echo "#TRACE ccm_bytes=\$(stat -c '%s' ${dataset}.ccm)"
+        echo "#TRACE cmx_bytes=\$(stat -c '%s' ${dataset}.cmx)"
         """
 }
