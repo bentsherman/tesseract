@@ -37,7 +37,7 @@ process hemelb {
 
     script:
         """
-        # specify input conditions to be appended to trace data
+        # specify input features for the execution trace
         #TRACE blocksize=${c.blocksize}
         #TRACE geometry=${geometry}
         #TRACE gpu_model=${c.gpu_model}

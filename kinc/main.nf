@@ -34,10 +34,10 @@ process kinc {
 
     script:
         """
-        # append trace directives for input conditions
-        #TRACE dataset=${dataset}
-        #TRACE gpu_model=${c.gpu_model}
-        #TRACE np=${c.np}
+        # specify input features for the execution trace
+        echo "#TRACE dataset=${dataset}"
+        echo "#TRACE gpu_model=${c.gpu_model}"
+        echo "#TRACE np=${c.np}"
         echo "#TRACE n_rows=`tail -n +1 ${emx_txt_file} | wc -l`"
         echo "#TRACE n_cols=`head -n +1 ${emx_txt_file} | wc -w`"
 
