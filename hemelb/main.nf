@@ -38,12 +38,12 @@ process hemelb {
     script:
         """
         # specify input features for the execution trace
-        #TRACE blocksize=${c.blocksize}
-        #TRACE geometry=${geometry}
-        #TRACE gpu_model=${c.gpu_model}
-        #TRACE latticetype=${c.latticetype}
-        #TRACE ngpus=${c.ngpus}
-        #TRACE np=${c.np}
+        echo "#TRACE blocksize=${c.blocksize}"
+        echo "#TRACE geometry=${geometry}"
+        echo "#TRACE gpu_model=${c.gpu_model}"
+        echo "#TRACE latticetype=${c.latticetype}"
+        echo "#TRACE ngpus=${c.ngpus}"
+        echo "#TRACE np=${c.np}"
 
         # modify config file
         cp ${xml_file} config.xml

@@ -50,22 +50,19 @@ if __name__ == '__main__':
         # extract trace data for process type
         df_process = df[df['process'] == process_name]
 
-        # extract conditions for each executed task
+        # extract input features for each executed task
         conditions = []
 
         for hash_id in df_process.index:
-            # load command script and execution log
-            filenames = ['.command.sh', '.command.log']
-            filenames = [os.path.join(df_process.loc[hash_id, 'workdir'], filename) for filename in filenames]
-
+            # load execution log
             try:
-                files = [open(filename) for filename in filenames]
-                lines = [line.strip() for f in files for line in f]
+                filename = os.path.join(df_process.loc[hash_id, 'workdir'], '.command.log')
+                lines = [line.strip() for line in open(filename)]
             except FileNotFoundError:
                 print('error: failed to load files for task %s' % (hash_id))
                 continue
 
-            # parse conditions from trace directives
+            # parse input features from trace directives
             PREFIX = '#TRACE'
             lines = [line[len(PREFIX):] for line in lines if line.startswith(PREFIX)]
             items = [line.split('=') for line in lines]
@@ -73,13 +70,13 @@ if __name__ == '__main__':
 
             c['hash'] = hash_id
 
-            # append conditions to list
+            # append input features to list
             conditions.append(c)
 
-        # merge conditions into dataframe
+        # convert input features into dataframe
         df_conditions = pd.DataFrame(conditions)
 
-        # merge trace data with conditions
+        # merge trace data with input features
         df_process = df_process.merge(df_conditions, how='left', on='hash')
         df_process.sort_index(inplace=True)
 
