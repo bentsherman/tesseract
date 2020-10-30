@@ -56,10 +56,12 @@ if __name__ == '__main__':
         for hash_id in df_process.index:
             # load execution log
             try:
-                filename = os.path.join(df_process.loc[hash_id, 'workdir'], '.command.log')
-                lines = [line.strip() for line in open(filename)]
+                filenames = ['.command.out', '.command.err']
+                filenames = [os.path.join(df_process.loc[hash_id, 'workdir'], filename) for filename in filenames]
+                files = [open(filename) for filename in filenames]
+                lines = [line.strip() for f in files for line in f]
             except FileNotFoundError:
-                print('error: failed to load files for task %s' % (hash_id))
+                print('warning: failed to load execution log for task %s' % (hash_id))
                 continue
 
             # parse input features from trace directives
@@ -72,6 +74,11 @@ if __name__ == '__main__':
 
             # append input features to list
             conditions.append(c)
+
+        # skip this process if no execution logs were found
+        if len(conditions) == 0:
+            print('warning: no execution logs found for process %s' % (process_name))
+            continue
 
         # convert input features into dataframe
         df_conditions = pd.DataFrame(conditions)
