@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/time.h>
 
 
@@ -35,7 +36,7 @@ double mysecond()
  *   https://www.math.utah.edu/~mayer/linux/bmark.html
  */
 #define MATMUL_ARRAY_SIZE 1000
-#define MATMUL_NTIMES 10
+#define MATMUL_NTIMES 4
 
 #define ELEM(M, n, i, j) ((M)[(i) * (n) + (j)])
 
@@ -166,7 +167,7 @@ double benchmark_cpu_flops()
  *   http://www.cs.virginia.edu/stream/
  */
 #define STREAM_ARRAY_SIZE 10000000
-#define STREAM_NTIMES 10
+#define STREAM_NTIMES 4
 
 double benchmark_mem_bw()
 {
@@ -219,7 +220,7 @@ double benchmark_mem_bw()
  * Read a file from disk.
  */
 #define READ_FILE_SIZE (1<<30)
-#define READ_NTIMES 10
+#define READ_NTIMES 4
 
 double benchmark_disk_read()
 {
@@ -270,7 +271,7 @@ double benchmark_disk_read()
  * Write a file to disk.
  */
 #define WRITE_FILE_SIZE (1<<30)
-#define WRITE_NTIMES 10
+#define WRITE_NTIMES 4
 
 double benchmark_disk_write()
 {
@@ -315,6 +316,13 @@ double benchmark_disk_write()
 
 typedef struct {
     char * name;
+    char * format;
+} format_t;
+
+
+
+typedef struct {
+    char * name;
     benchmark_func_t func;
 } benchmark_t;
 
@@ -322,6 +330,39 @@ typedef struct {
 
 int main(int argc, char **argv)
 {
+    // parse command-line arguments
+    if ( argc != 2 )
+    {
+        fprintf(stderr, "usage: ./minibench <output-format>\n");
+        exit(-1);
+    }
+
+    char * fmt_name = argv[1];
+
+    // define output formats
+    format_t formats[] = {
+        { "csv",   "%s\t%0.6f" },
+        { "trace", "#TRACE %s=%0.6f" }
+    };
+    int n_formats = sizeof(formats) / sizeof(format_t);
+
+    // select output format
+    format_t * fmt = NULL;
+
+    for ( int i = 0; i < n_formats; i++ )
+    {
+        if ( strcmp(formats[i].name, fmt_name) == 0 )
+        {
+            fmt = &formats[i];
+        }
+    }
+
+    if ( fmt == NULL )
+    {
+        fprintf(stderr, "error: invalid output format %s\n", fmt_name);
+        exit(-1);
+    }
+
     // define benchmarks
     benchmark_t benchmarks[] = {
         { "cpu_iops",   benchmark_cpu_iops },   // GIOP/s
@@ -337,7 +378,8 @@ int main(int argc, char **argv)
     {
         benchmark_t *b = &benchmarks[i];
 
-        printf("%s\t%0.6f\n", b->name, b->func());
+        printf(fmt->format, b->name, b->func());
+        printf("\n");
     }
 
     return 0;

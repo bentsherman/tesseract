@@ -1,6 +1,8 @@
 
+all: minibench
+
 test: minibench
-	./minibench
+	./minibench trace
 
 clean:
 	rm -f minibench
