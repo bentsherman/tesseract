@@ -13,7 +13,9 @@ source activate mlbd
 export TF_CPP_MIN_LOG_LEVEL="3"
 
 python bin/train.py \
-    ${OUTPUT_DIR}/trace.hemelb.merged.txt \
+    ${OUTPUT_DIR}/trace.hemelb.txt \
+    --merge geometry ${OUTPUT_DIR}/hemelb-site-counts.txt \
+    --merge geometry ${OUTPUT_DIR}/hemelb-sparsity.txt \
     --inputs gpu_model:onehot np n_sites fluid_fraction_percent \
     --output realtime:log2 \
     --scaler maxabs \

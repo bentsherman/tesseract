@@ -99,6 +99,7 @@ if __name__ == '__main__':
     # parse command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('trace_file', help='annotated trace file')
+    parser.add_argument('--merge', help='join an additional dataframe to trace file', action='append', nargs=2, metavar=('key', 'mergefile'), default=[])
     parser.add_argument('--inputs', help='list of input features (append :<transform> for additional transform)', nargs='+', required=True)
     parser.add_argument('--output', help='output variable (append :<transform> for additional transform)', required=True)
     parser.add_argument('--scaler', help='preprocessing transform to apply to inputs', choices=['maxabs', 'minmax', 'standard'])
@@ -121,8 +122,13 @@ if __name__ == '__main__':
         }
         Scaler = scalers[args.scaler]
 
-    # load nextflow trace files into a single dataframe
+    # load trace file
     df = pd.read_csv(args.trace_file, sep='\t')
+
+    # load merge files and join with trace file
+    for key, filename in args.merge:
+        df_merge = pd.read_csv(filename, sep='\t')
+        df = df.merge(df_merge, on=key, how='left', copy=False)
 
     # select only tasks that completed successfully
     df = df[df['exit'] == 0]
