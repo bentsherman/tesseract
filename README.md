@@ -48,7 +48,7 @@ The `visualize.py` script provides a simple but powerful interface for creating 
 
 ### Train Prediction Models
 
-TODO
+Use the `train.py` script to train prediction models on your performance dataset. You can use any columns as inputs or outputs, you can specify transforms such as one-hot encoding and log2, and you can pick from a variety of machine learning models. The multi-layer perceptron (MLP) with default settings is a good start. This script will save your trained model to a file so that you can use it later for inference. Refer to the example pipelines to see how this script is used.
 
 ### Deploy Prediction Models
 
