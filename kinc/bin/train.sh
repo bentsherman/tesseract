@@ -18,4 +18,4 @@ python bin/train.py \
     --output realtime:log2 \
     --scaler maxabs \
     --model ${MODEL} \
-    --model-file ${OUTPUT_DIR}/kinc.realtime.${MODEL}.h5
+    --model-file ${OUTPUT_DIR}/kinc.realtime.${MODEL}.pkl

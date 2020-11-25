@@ -8,9 +8,12 @@ import pickle
 import sklearn.ensemble
 import sklearn.metrics
 import sklearn.model_selection
+import sklearn.pipeline
 import sklearn.preprocessing
 import sys
 from tensorflow import keras
+
+from utils import KerasRegressor
 
 
 
@@ -38,7 +41,7 @@ def create_mlp(input_shape, hidden_layer_sizes=[10], activation='relu'):
 
         return mlp
 
-    return keras.wrappers.scikit_learn.KerasRegressor(
+    return KerasRegressor(
         build_fn=build_fn,
         batch_size=32,
         epochs=200,
@@ -113,16 +116,9 @@ if __name__ == '__main__':
     inputs = [parse_transforms(arg) for arg in args.inputs]
     output = parse_transforms(args.output)
 
-    # select scaler
-    if args.scaler != None:
-        scalers = {
-            'maxabs': sklearn.preprocessing.MaxAbsScaler,
-            'minmax': sklearn.preprocessing.MinMaxScaler,
-            'standard': sklearn.preprocessing.StandardScaler
-        }
-        Scaler = scalers[args.scaler]
-
     # load trace file
+    print('loading data')
+
     df = pd.read_csv(args.trace_file, sep='\t')
 
     # load merge files and join with trace file
@@ -134,10 +130,8 @@ if __name__ == '__main__':
     df = df[df['exit'] == 0]
 
     # extract input/output data from trace data
-    input_names = [c['name'] for c in inputs]
-
     try:
-        X = df[input_names]
+        X = df[[c['name'] for c in inputs]]
         y = df[output['name']]
     except KeyError:
         print('error: one or more input/output variables are not in the dataset')
@@ -148,56 +142,62 @@ if __name__ == '__main__':
 
     X = pd.get_dummies(X, columns=onehot_columns, drop_first=False)
 
-    # apply scaler to input data
-    if args.scaler != None:
-        X = Scaler().fit_transform(X)
-
     # apply transforms to output
     for transform in output['transforms']:
-        if transform == 'log2':
+        if transform == 'exp2':
+            y = 2 ** y
+        elif transform == 'log2':
             y = np.log2(y)
         else:
             print('error: output transform %s not recognized' % (transform))
             sys.exit(1)
 
-    # select model
+    # print transformed input features
+    print('input features: %s' % (' '.join(X.columns)))
+
+    # select scaler
+    if args.scaler != None:
+        scalers = {
+            'maxabs': sklearn.preprocessing.MaxAbsScaler,
+            'minmax': sklearn.preprocessing.MinMaxScaler,
+            'standard': sklearn.preprocessing.StandardScaler
+        }
+        Scaler = scalers[args.scaler]
+
+    # select regression model
     if args.model == 'mlp':
-        print('training mlp model')
-
-        # train mlp
-        model = create_mlp(X.shape[1], hidden_layer_sizes=[128, 64, 32])
-
-        # evaluate mlp
-        scores = evaluate_cv(model, X, y, cv=args.cv)
-
-        # print cross-validation results
-        print('MAPE: %0.3f %%' % (scores.mean()))
-
-        # save trained model if specified
-        if args.model_file != None:
-            # train model on full dataset
-            model.fit(X, y)
-
-            # save model to file
-            model.model.save(args.model_file)
+        regressor = create_mlp(X.shape[1], hidden_layer_sizes=[128, 64, 32])
 
     elif args.model == 'rf':
-        print('training rf model')
+        regressor = create_rf()
 
-        # train random forest
-        model = create_rf()
+    # create pipeline
+    model = sklearn.pipeline.Pipeline([
+        ('scaler', Scaler()),
+        ('regressor', regressor)
+    ])
 
-        # evaluate random forest
-        scores = evaluate_cv(model, X, y, cv=args.cv)
+    # train and evaluate model
+    print('training model')
 
-        # print training results
-        print('MAPE: %0.3f %%' % (scores.mean()))
+    scores = evaluate_cv(model, X, y, cv=args.cv)
 
-        # save trained model if specified
-        if args.model_file != None:
-            # train model on full dataset
-            model.fit(X, y)
+    # print cross-validation results
+    print('MAPE: %0.3f %%' % (scores.mean()))
 
-            # save model to file
-            f = open(args.model_file, 'wb')
-            pickle.dump(model, f)
+    # save trained model if specified
+    if args.model_file != None:
+        print('saving model to file')
+
+        # train model on full dataset
+        model.fit(X, y)
+
+        # workaround for keras models
+        try:
+            model.named_steps['regressor'].build_fn = None
+        except:
+            pass
+
+        # save model to file
+        f = open(args.model_file, 'wb')
+        pickle.dump(model, f)

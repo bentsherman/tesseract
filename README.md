@@ -52,4 +52,4 @@ Use the `train.py` script to train prediction models on your performance dataset
 
 ### Deploy Prediction Models
 
-TODO
+Use the `predict.py` script to make predictions on new input data. It is important that you provide the input features in the order in which they are defined in the trained model. Refer to the example pipelines to see how this script is used.

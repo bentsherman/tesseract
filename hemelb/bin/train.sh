@@ -15,9 +15,8 @@ export TF_CPP_MIN_LOG_LEVEL="3"
 python bin/train.py \
     ${OUTPUT_DIR}/trace.hemelb.txt \
     --merge geometry ${OUTPUT_DIR}/hemelb-site-counts.txt \
-    --merge geometry ${OUTPUT_DIR}/hemelb-sparsity.txt \
-    --inputs gpu_model:onehot np n_sites fluid_fraction_percent \
+    --inputs gpu_model:onehot np n_sites \
     --output realtime:log2 \
     --scaler maxabs \
     --model ${MODEL} \
-    --model-file ${OUTPUT_DIR}/hemelb.realtime.${MODEL}.h5
+    --model-file ${OUTPUT_DIR}/hemelb.realtime.${MODEL}.pkl
