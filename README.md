@@ -4,6 +4,10 @@ Tesseract is a machine learning system for predicting resource usage of scientif
 
 _Note: Not to be confused with the [Tesseract OCR Engine](https://github.com/tesseract-ocr)._
 
+## Installatino
+
+Tesseract's code is written in Python, so you will need a Python or Anaconda environment that provides the packages listed in `requirements.txt`. Additionally, you will need [Nextflow](https://www.nextflow.io/) to run your Nextflow pipelines.
+
 ## Usage
 
 ### Select an Application
