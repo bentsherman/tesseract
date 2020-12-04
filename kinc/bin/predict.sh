@@ -12,7 +12,11 @@ source activate mlbd
 # run inference script
 export TF_CPP_MIN_LOG_LEVEL="3"
 
-# inputs = np n_rows n_cols hardware_type:onehot
 python bin/predict.py \
     ${OUTPUT_DIR}/kinc.realtime.${MODEL} \
-    1 7050 188 1 0 0
+    np=1 \
+    n_rows=7050 \
+    n_cols=188 \
+    hardware_type_cpu=1 \
+    hardware_type_p100=0 \
+    hardware_type_v100=0

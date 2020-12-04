@@ -12,7 +12,10 @@ source activate mlbd
 # run inference script
 export TF_CPP_MIN_LOG_LEVEL="3"
 
-# inputs = np n_sites hardware_type:onehot
 python bin/predict.py \
     ${OUTPUT_DIR}/hemelb.realtime.${MODEL} \
-    1 3850000 1 0 0
+    np=1 \
+    n_sites=3850000 \
+    hardware_type_cpu=1 \
+    hardware_type_p100=0 \
+    hardware_type_v100=0

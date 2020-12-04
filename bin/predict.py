@@ -14,7 +14,7 @@ if __name__ == '__main__':
     # parse command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('model_name', help='name of trained model')
-    parser.add_argument('inputs', help='input values for prediction', nargs='+', type=float)
+    parser.add_argument('inputs', help='key-value pairs of input values', nargs='+')
 
     args = parser.parse_args()
 
@@ -26,8 +26,13 @@ if __name__ == '__main__':
     f = open('%s.json' % (args.model_name), 'r')
     config = json.load(f)
 
+    # parse inputs
+    inputs = [kv.split('=') for kv in args.inputs]
+    inputs = {k: float(v) for k, v in inputs}
+    x_input = [inputs[column] for column in config['inputs']]
+
     # perform inference
-    X = np.array([args.inputs])
+    X = np.array([x_input])
     y = model.predict(X)
 
     # apply transforms to output if specified
