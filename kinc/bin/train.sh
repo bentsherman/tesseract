@@ -14,7 +14,7 @@ export TF_CPP_MIN_LOG_LEVEL="3"
 
 python bin/train.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
-    --inputs gpu_model:onehot np n_rows n_cols \
+    --inputs hardware_type:onehot np n_rows n_cols \
     --output realtime:log2 \
     --scaler maxabs \
     --model ${MODEL} \

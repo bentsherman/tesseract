@@ -17,7 +17,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis exit \
-    --col gpu_model \
+    --col hardware_type \
     --palette muted
 
 echo "kinc-np-realtime"
@@ -28,7 +28,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis realtime \
-    --hue gpu_model \
+    --hue hardware_type \
     --row dataset \
     --select exit=0 \
     --sharey \
@@ -44,7 +44,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis peak_rss \
-    --hue gpu_model \
+    --hue hardware_type \
     --row dataset \
     --select exit=0 \
     --sharey \
@@ -59,7 +59,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis read_bytes \
-    --hue gpu_model \
+    --hue hardware_type \
     --row dataset \
     --select exit=0 \
     --sharey \
@@ -74,7 +74,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis write_bytes \
-    --hue gpu_model \
+    --hue hardware_type \
     --row dataset \
     --select exit=0 \
     --sharey \
@@ -91,7 +91,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis exit \
-    --col gpu_model \
+    --col hardware_type \
     --palette muted
 
 echo "kinc-dataset-realtime"
@@ -102,7 +102,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis realtime \
-    --hue gpu_model \
+    --hue hardware_type \
     --select exit=0 \
     --sharey \
     --aspect 1.5 \
@@ -118,7 +118,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis peak_rss \
-    --hue gpu_model \
+    --hue hardware_type \
     --select exit=0 \
     --sharey \
     --aspect 1.5 \
@@ -133,7 +133,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis read_bytes \
-    --hue gpu_model \
+    --hue hardware_type \
     --select exit=0 \
     --sharey \
     --aspect 1.5 \
@@ -148,7 +148,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis write_bytes \
-    --hue gpu_model \
+    --hue hardware_type \
     --select exit=0 \
     --sharey \
     --aspect 1.5 \
@@ -166,7 +166,7 @@ python bin/visualize.py \
     --xaxis np \
     --yaxis exit \
     --row dataset \
-    --col gpu_model
+    --col hardware_type
 
 echo "kinc-np-realtime"
 python bin/visualize.py \
@@ -177,7 +177,7 @@ python bin/visualize.py \
     --xaxis np \
     --yaxis realtime \
     --hue dataset \
-    --col gpu_model \
+    --col hardware_type \
     --select exit=0 \
     --sharey \
     --aspect 1.5 \
@@ -193,7 +193,7 @@ python bin/visualize.py \
     --xaxis np \
     --yaxis peak_rss \
     --hue dataset \
-    --col gpu_model \
+    --col hardware_type \
     --select exit=0 \
     --sharey \
     --aspect 1.5 \
@@ -208,7 +208,7 @@ python bin/visualize.py \
     --xaxis np \
     --yaxis read_bytes \
     --hue dataset \
-    --col gpu_model \
+    --col hardware_type \
     --select exit=0 \
     --sharey \
     --aspect 1.5 \
@@ -223,7 +223,7 @@ python bin/visualize.py \
     --xaxis np \
     --yaxis write_bytes \
     --hue dataset \
-    --col gpu_model \
+    --col hardware_type \
     --select exit=0 \
     --sharey \
     --aspect 1.5 \

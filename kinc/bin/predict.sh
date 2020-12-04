@@ -12,7 +12,7 @@ source activate mlbd
 # run inference script
 export TF_CPP_MIN_LOG_LEVEL="3"
 
-# inputs = np n_rows n_cols gpu_model:onehot
+# inputs = np n_rows n_cols hardware_type:onehot
 # output = realtime:log2
 python bin/predict.py \
     ${OUTPUT_DIR}/kinc.realtime.${MODEL}.pkl \

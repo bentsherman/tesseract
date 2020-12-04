@@ -82,8 +82,8 @@ python bin/visualize.py \
     --xaxis blocksize \
     --yaxis realtime \
     --row geometry \
-    --col gpu_model \
-    --select gpu_model=p100,v100 \
+    --col hardware_type \
+    --select hardware_type=p100,v100 \
     --select latticetype=D3Q15 \
     --select np=1 \
     --select ngpus=0 \
@@ -98,8 +98,8 @@ python bin/visualize.py \
     --xaxis latticetype \
     --yaxis realtime \
     --row geometry \
-    --col gpu_model \
-    --select gpu_model=cpu,p100,v100 \
+    --col hardware_type \
+    --select hardware_type=cpu,p100,v100 \
     --select np=1 \
     --select ngpus=0 \
     --color steelblue
@@ -112,8 +112,8 @@ python bin/visualize.py \
     --xaxis np \
     --yaxis realtime \
     --row geometry \
-    --col gpu_model \
-    --select gpu_model=p100,v100 \
+    --col hardware_type \
+    --select hardware_type=p100,v100 \
     --select ngpus=1 \
     --color steelblue
 
@@ -127,7 +127,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis exit \
-    --col gpu_model \
+    --col hardware_type \
     --palette muted
 
 echo "hemelb-realtime"
@@ -138,7 +138,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis realtime \
-    --hue gpu_model \
+    --hue hardware_type \
     --row geometry \
     --sharey \
     --height 2 \
@@ -155,7 +155,7 @@ python bin/visualize.py \
     --mapper-term "throughput=Throughput (SUP/s)" \
     --xaxis np \
     --yaxis throughput \
-    --hue gpu_model \
+    --hue hardware_type \
     --row geometry \
     --sharey \
     --height 2 \
@@ -172,7 +172,7 @@ python bin/visualize.py \
     --mapper-term "throughput=Throughput (SUP/s)" \
     --xaxis np \
     --yaxis throughput \
-    --hue gpu_model \
+    --hue hardware_type \
     --yscale log \
     --palette muted
 
@@ -185,7 +185,7 @@ python bin/visualize.py \
     --mapper-term "throughput_per_core=Per-core Throughput (SUP/s)" \
     --xaxis np \
     --yaxis throughput_per_core \
-    --hue gpu_model \
+    --hue hardware_type \
     --yscale log \
     --palette muted
 
@@ -197,7 +197,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis speedup_np \
-    --hue gpu_model \
+    --hue hardware_type \
     --row geometry \
     --sharey \
     --height 2 \
@@ -212,7 +212,7 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis efficiency \
-    --hue gpu_model \
+    --hue hardware_type \
     --row geometry \
     --sharey \
     --height 2 \
@@ -226,9 +226,9 @@ python bin/visualize.py \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis speedup_gpu \
-    --col gpu_model \
+    --col hardware_type \
     --row geometry \
-    --select gpu_model=p100,v100 \
+    --select hardware_type=p100,v100 \
     --sharey \
     --height 2 \
     --aspect 1.5 \

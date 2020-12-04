@@ -40,7 +40,7 @@ process hemelb {
         # specify input features for the execution trace
         echo "#TRACE blocksize=${c.blocksize}"
         echo "#TRACE geometry=${geometry}"
-        echo "#TRACE gpu_model=${c.gpu_model}"
+        echo "#TRACE hardware_type=${c.hardware_type}"
         echo "#TRACE latticetype=${c.latticetype}"
         echo "#TRACE ngpus=${c.ngpus}"
         echo "#TRACE np=${c.np}"
@@ -48,7 +48,7 @@ process hemelb {
         # modify config file
         cp ${xml_file} config.xml
 
-        if [[ ${c.gpu_model} == "cpu" ]]; then
+        if [[ ${c.hardware_type} == "cpu" ]]; then
             sed 's/use_gpu value="1"/use_gpu value="0"/' config.xml > tmp; mv tmp config.xml
         else
             sed 's/use_gpu value="0"/use_gpu value="1"/' config.xml > tmp; mv tmp config.xml

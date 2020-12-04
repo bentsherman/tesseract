@@ -12,7 +12,7 @@ source activate mlbd
 # run inference script
 export TF_CPP_MIN_LOG_LEVEL="3"
 
-# inputs = np n_sites gpu_model:onehot
+# inputs = np n_sites hardware_type:onehot
 # output = realtime:log2
 python bin/predict.py \
     ${OUTPUT_DIR}/hemelb.realtime.${MODEL}.pkl \

@@ -25,10 +25,10 @@ def main():
 
     # remove unused rows
     df = df[df['blocksize'] == 32]
-    df = select_rows_by_values(df, 'gpu_model', ['cpu', 'p100', 'v100'])
+    df = select_rows_by_values(df, 'hardware_type', ['cpu', 'p100', 'v100'])
 
     # aggregate trials into averages
-    group_keys = ['latticetype', 'gpu_model', 'geometry', 'np']
+    group_keys = ['latticetype', 'hardware_type', 'geometry', 'np']
     aggregate_keys = ['realtime']
 
     df = df[group_keys + aggregate_keys]
@@ -54,7 +54,7 @@ def main():
     for idx, row in df.iterrows():
         mask = \
             (df['latticetype'] == row['latticetype']) \
-            & (df['gpu_model'] == row['gpu_model']) \
+            & (df['hardware_type'] == row['hardware_type']) \
             & (df['geometry'] == row['geometry']) \
             & (df['np'] == 1)
 
@@ -71,8 +71,8 @@ def main():
     df['speedup_gpu'] = 0.0
 
     for idx, row in df.iterrows():
-        if row['gpu_model'] != 'cpu':
-            row_cpu = df[(df['gpu_model'] == 'cpu') & (df['geometry'] == row['geometry']) & (df['np'] == row['np'])]
+        if row['hardware_type'] != 'cpu':
+            row_cpu = df[(df['hardware_type'] == 'cpu') & (df['geometry'] == row['geometry']) & (df['np'] == row['np'])]
             realtime_cpu = row_cpu['realtime|mean']
 
             if not realtime_cpu.empty:

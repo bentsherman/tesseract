@@ -36,13 +36,13 @@ process kinc {
         """
         # specify input features for the execution trace
         echo "#TRACE dataset=${dataset}"
-        echo "#TRACE gpu_model=${c.gpu_model}"
+        echo "#TRACE hardware_type=${c.hardware_type}"
         echo "#TRACE np=${c.np}"
         echo "#TRACE n_rows=`tail -n +1 ${emx_txt_file} | wc -l`"
         echo "#TRACE n_cols=`head -n +1 ${emx_txt_file} | wc -w`"
 
         # apply runtime settings
-        kinc settings set cuda ${c.gpu_model == "cpu" ? "none" : "0"}
+        kinc settings set cuda ${c.hardware_type == "cpu" ? "none" : "0"}
         kinc settings set opencl none
         kinc settings set threads ${c.threads}
         kinc settings set buffer 4

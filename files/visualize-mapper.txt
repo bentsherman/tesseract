@@ -2,7 +2,7 @@ column_name	display_name
 dataset	Dataset
 efficiency	Parallel Efficiency
 geometry	Geometry
-gpu_model	GPU Model
+hardware_type	Hardware Type
 np	MPI Ranks
 realtime	Runtime (s)
 speedup_gpu	GPU Speedup
