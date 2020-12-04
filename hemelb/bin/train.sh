@@ -1,7 +1,7 @@
 #!/bin/bash
 
-MODEL="mlp"
-OUTPUT_DIR="hemelb/output-large-16"
+MODEL_TYPE="mlp"
+OUTPUT_DIR="hemelb/output-large-15"
 
 # initialize environment
 module purge
@@ -18,5 +18,5 @@ python bin/train.py \
     --inputs hardware_type:onehot np n_sites \
     --output realtime:log2 \
     --scaler maxabs \
-    --model ${MODEL} \
-    --model-file ${OUTPUT_DIR}/hemelb.realtime.${MODEL}.pkl
+    --model-type ${MODEL_TYPE} \
+    --model-name ${OUTPUT_DIR}/hemelb.realtime.${MODEL_TYPE}

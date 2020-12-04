@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MODEL="mlp"
-OUTPUT_DIR="hemelb/output-large-16"
+OUTPUT_DIR="hemelb/output-large-15"
 
 # initialize environment
 module purge
@@ -13,9 +13,6 @@ source activate mlbd
 export TF_CPP_MIN_LOG_LEVEL="3"
 
 # inputs = np n_sites hardware_type:onehot
-# output = realtime:log2
 python bin/predict.py \
-    ${OUTPUT_DIR}/hemelb.realtime.${MODEL}.pkl \
-    --model ${MODEL} \
-    --output-transform exp2 \
-    --inputs 1 3850000 1 0 0
+    ${OUTPUT_DIR}/hemelb.realtime.${MODEL} \
+    1 3850000 1 0 0

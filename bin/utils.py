@@ -2,7 +2,15 @@ import copy
 import dill as pickle
 import h5py
 import io
+import numpy as np
+import sklearn.preprocessing
 import tensorflow as tf
+
+
+
+transforms = {
+    'log2': sklearn.preprocessing.FunctionTransformer(func=np.log2, inverse_func=lambda x: 2 ** x)
+}
 
 
 

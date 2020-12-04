@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MODEL="mlp"
+MODEL_TYPE="mlp"
 OUTPUT_DIR="kinc/output-04"
 
 # initialize environment
@@ -17,5 +17,5 @@ python bin/train.py \
     --inputs hardware_type:onehot np n_rows n_cols \
     --output realtime:log2 \
     --scaler maxabs \
-    --model ${MODEL} \
-    --model-file ${OUTPUT_DIR}/kinc.realtime.${MODEL}.pkl
+    --model-type ${MODEL_TYPE} \
+    --model-name ${OUTPUT_DIR}/kinc.realtime.${MODEL_TYPE}

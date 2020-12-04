@@ -1,38 +1,42 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 import numpy as np
 import pickle
 import sys
+
+import utils
 
 
 
 if __name__ == '__main__':
     # parse command-line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('model_file', help='trained model file')
-    parser.add_argument('--model', help='model type', choices=['mlp', 'rf'], required=True)
-    parser.add_argument('--inputs', help='input values for prediction', nargs='+', type=float, required=True)
-    parser.add_argument('--output-transform', help='apply transform to output variable')
+    parser.add_argument('model_name', help='name of trained model')
+    parser.add_argument('inputs', help='input values for prediction', nargs='+', type=float)
 
     args = parser.parse_args()
 
-    # load model from file
-    f = open(args.model_file, 'rb')
+    # load model
+    f = open('%s.pkl' % (args.model_name), 'rb')
     model = pickle.load(f)
+
+    # load model configuration
+    f = open('%s.json' % (args.model_name), 'r')
+    config = json.load(f)
 
     # perform inference
     X = np.array([args.inputs])
     y = model.predict(X)
 
-    # apply transform to output if specified
-    if args.output_transform != None:
-        if args.output_transform == 'exp2':
-            y = 2 ** y
-        elif args.output_transform == 'log2':
-            y = np.log2(y)
-        else:
-            print('error: output transform %s not recognized' % (args.output_transform))
+    # apply transforms to output if specified
+    for transform in config['output-transforms']:
+        try:
+            t = utils.transforms[transform]
+            y = t.inverse_transform(y)
+        except:
+            print('error: output transform %s not recognized' % (transform))
             sys.exit(1)
 
     # print results

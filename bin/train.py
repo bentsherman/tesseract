@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 import numpy as np
 import os
 import pandas as pd
@@ -13,7 +14,7 @@ import sklearn.preprocessing
 import sys
 from tensorflow import keras
 
-from utils import KerasRegressor
+import utils
 
 
 
@@ -41,7 +42,7 @@ def create_mlp(input_shape, hidden_layer_sizes=[10], activation='relu'):
 
         return mlp
 
-    return KerasRegressor(
+    return utils.KerasRegressor(
         build_fn=build_fn,
         batch_size=32,
         epochs=200,
@@ -106,9 +107,9 @@ if __name__ == '__main__':
     parser.add_argument('--inputs', help='list of input features (append :<transform> for additional transform)', nargs='+', required=True)
     parser.add_argument('--output', help='output variable (append :<transform> for additional transform)', required=True)
     parser.add_argument('--scaler', help='preprocessing transform to apply to inputs', choices=['maxabs', 'minmax', 'standard'])
-    parser.add_argument('--model', help='which model to train', choices=['mlp', 'rf'], required=True)
+    parser.add_argument('--model-type', help='which model to train', choices=['mlp', 'rf'], required=True)
     parser.add_argument('--cv', help='number of folds for cross-validation', type=int, default=5)
-    parser.add_argument('--model-file', help='output file to save trained model')
+    parser.add_argument('--model-name', help='name of trained model for output files')
 
     args = parser.parse_args()
 
@@ -144,11 +145,10 @@ if __name__ == '__main__':
 
     # apply transforms to output
     for transform in output['transforms']:
-        if transform == 'exp2':
-            y = 2 ** y
-        elif transform == 'log2':
-            y = np.log2(y)
-        else:
+        try:
+            t = utils.transforms[transform]
+            y = t.transform(y)
+        except:
             print('error: output transform %s not recognized' % (transform))
             sys.exit(1)
 
@@ -164,11 +164,11 @@ if __name__ == '__main__':
         }
         Scaler = scalers[args.scaler]
 
-    # select regression model
-    if args.model == 'mlp':
+    # select model type
+    if args.model_type == 'mlp':
         regressor = create_mlp(X.shape[1], hidden_layer_sizes=[128, 64, 32])
 
-    elif args.model == 'rf':
+    elif args.model_type == 'rf':
         regressor = create_rf()
 
     # create pipeline
@@ -176,6 +176,13 @@ if __name__ == '__main__':
         ('scaler', Scaler()),
         ('regressor', regressor)
     ])
+
+    # create model configuration
+    config = {
+        'inputs': list(X.columns),
+        'model-type': args.model_type,
+        'output-transforms': output['transforms']
+    }
 
     # train and evaluate model
     print('training model')
@@ -186,7 +193,7 @@ if __name__ == '__main__':
     print('MAPE: %0.3f %%' % (scores.mean()))
 
     # save trained model if specified
-    if args.model_file != None:
+    if args.model_name != None:
         print('saving model to file')
 
         # train model on full dataset
@@ -199,5 +206,9 @@ if __name__ == '__main__':
             pass
 
         # save model to file
-        f = open(args.model_file, 'wb')
+        f = open('%s.pkl' % (args.model_name), 'wb')
         pickle.dump(model, f)
+
+        # save model configuration
+        f = open('%s.json' % (args.model_name), 'w')
+        json.dump(config, f)

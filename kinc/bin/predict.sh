@@ -13,9 +13,6 @@ source activate mlbd
 export TF_CPP_MIN_LOG_LEVEL="3"
 
 # inputs = np n_rows n_cols hardware_type:onehot
-# output = realtime:log2
 python bin/predict.py \
-    ${OUTPUT_DIR}/kinc.realtime.${MODEL}.pkl \
-    --model ${MODEL} \
-    --output-transform exp2 \
-    --inputs 1 7050 188 1 0 0
+    ${OUTPUT_DIR}/kinc.realtime.${MODEL} \
+    1 7050 188 1 0 0
