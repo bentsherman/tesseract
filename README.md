@@ -8,7 +8,7 @@ _Note: Not to be confused with the [Tesseract OCR Engine](https://github.com/tes
 
 Tesseract's code is written in Python, so you will need a Python or Anaconda environment that provides the packages listed in `requirements.txt`. Additionally, you will need [Nextflow](https://www.nextflow.io/) to run your Nextflow pipelines.
 
-## Usage
+## Offline Usage
 
 ### Select an Application
 
@@ -56,4 +56,8 @@ Use the `train.py` script to train prediction models on your performance dataset
 
 ### Deploy Prediction Models
 
-Use the `predict.py` script to make predictions on new input data. It is important that you provide the input features in the order in which they are defined in the trained model. Refer to the example pipelines to see how this script is used.
+Use the `predict.py` script to make predictions on new input data. Refer to the example pipelines to see how this script is used.
+
+## Online Usage
+
+Tesseract is integrated into [Nextflow-API](https://github.com/SciDAS/nextflow-api), a workflow-as-a-service that allows you to run Nextflow pipelines through a browser interface atop any execution environment. Nextflow-API automatically collects execution traces, including any custom trace directives, and provides interfaces for visualizing performance data, training models, and downloading the raw data for custom analyses. Refer to the Nextflow-API repo for more information on these features.
