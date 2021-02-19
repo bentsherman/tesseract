@@ -1,11 +1,7 @@
 import os
+import numpy as np
 import pandas as pd
 import sys
-
-
-
-def select_rows_by_values(df, column, values):
-    return pd.DataFrame().append([df[df[column].astype(str) == v] for v in values], sort=False)
 
 
 
@@ -23,12 +19,8 @@ def main():
     df = pd.read_csv(args_trace, sep='\t')
     df_sizes = pd.read_csv(args_sizes, sep='\t')
 
-    # remove unused rows
-    df = df[df['blocksize'] == 32]
-    df = select_rows_by_values(df, 'hardware_type', ['cpu', 'p100', 'v100'])
-
     # aggregate trials into averages
-    group_keys = ['latticetype', 'hardware_type', 'geometry', 'np']
+    group_keys = ['blocksize', 'geometry', 'hardware_type', 'latticetype', 'ngpus', 'np']
     aggregate_keys = ['realtime']
 
     df = df[group_keys + aggregate_keys]
@@ -40,6 +32,9 @@ def main():
 
     # append site counts to trace data
     df = df.merge(df_sizes, on='geometry', how='left', copy=False)
+
+    # make sure np is integer
+    df['np'] = df['np'].astype(int)
 
     # compute throughput
     n_iters = 50000
@@ -80,6 +75,8 @@ def main():
 
     # save output dataframe
     df.to_csv(args_output, sep='\t', index=False)
+
+
 
 if __name__ == '__main__':
     main()

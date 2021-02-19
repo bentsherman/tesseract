@@ -75,12 +75,13 @@ OUTPUT_DIR="hemelb/output-small"
 
 echo "hemelb-blocksize"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/speedup.txt \
     ${OUTPUT_DIR}/hemelb-blocksize.${FORMAT} \
     --mapper-file files/visualize-mapper.txt \
     --mapper-term "blocksize=CUDA Block Size" \
+    --mapper-term "throughput=Throughput (SUP/s)" \
     --xaxis blocksize \
-    --yaxis realtime \
+    --yaxis throughput \
     --row geometry \
     --col hardware_type \
     --select hardware_type=p100,v100 \
@@ -91,14 +92,16 @@ python bin/visualize.py \
 
 echo "hemelb-latticetype"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/speedup.txt \
     ${OUTPUT_DIR}/hemelb-latticetype.${FORMAT} \
     --mapper-file files/visualize-mapper.txt \
     --mapper-term "latticetype=Lattice Type" \
+    --mapper-term "throughput=Throughput (SUP/s)" \
     --xaxis latticetype \
-    --yaxis realtime \
+    --yaxis throughput \
     --row geometry \
     --col hardware_type \
+    --select blocksize=32 \
     --select hardware_type=cpu,p100,v100 \
     --select np=1 \
     --select ngpus=0 \
@@ -106,14 +109,17 @@ python bin/visualize.py \
 
 echo "hemelb-oversubscribe"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/speedup.txt \
     ${OUTPUT_DIR}/hemelb-oversubscribe.${FORMAT} \
     --mapper-file files/visualize-mapper.txt \
+    --mapper-term "throughput=Throughput (SUP/s)" \
     --xaxis np \
-    --yaxis realtime \
+    --yaxis throughput \
     --row geometry \
     --col hardware_type \
+    --select blocksize=32 \
     --select hardware_type=p100,v100 \
+    --select latticetype=D3Q15 \
     --select ngpus=1 \
     --color steelblue
 
@@ -122,7 +128,7 @@ OUTPUT_DIR="hemelb/output-large"
 
 echo "hemelb-exitcode"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.hemelb.txt \
     ${OUTPUT_DIR}/hemelb-exitcode.${FORMAT} \
     --mapper-file files/visualize-mapper.txt \
     --xaxis np \
@@ -132,7 +138,7 @@ python bin/visualize.py \
 
 echo "hemelb-realtime"
 python bin/visualize.py \
-    ${OUTPUT_DIR}/trace.txt \
+    ${OUTPUT_DIR}/trace.hemelb.txt \
     ${OUTPUT_DIR}/hemelb-realtime.${FORMAT} \
     --plot-type point \
     --mapper-file files/visualize-mapper.txt \
@@ -200,6 +206,7 @@ python bin/visualize.py \
     --hue hardware_type \
     --row geometry \
     --sharey \
+    --ymin 0 \
     --height 2 \
     --aspect 1.5 \
     --palette muted
@@ -215,6 +222,8 @@ python bin/visualize.py \
     --hue hardware_type \
     --row geometry \
     --sharey \
+    --ymin 0 \
+    --ymax 1 \
     --height 2 \
     --aspect 1.5 \
     --palette muted
@@ -230,6 +239,7 @@ python bin/visualize.py \
     --row geometry \
     --select hardware_type=p100,v100 \
     --sharey \
+    --ymin 0 \
     --height 2 \
     --aspect 1.5 \
     --color steelblue

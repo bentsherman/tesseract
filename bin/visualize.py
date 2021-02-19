@@ -73,6 +73,8 @@ if __name__ == '__main__':
     parser.add_argument('--aspect', help='figure aspect', type=float, default=1)
     parser.add_argument('--color', help='color for all barplot elements')
     parser.add_argument('--palette', help='palette for all barplot elements')
+    parser.add_argument('--ymin', help='set y-axis minimum', type=float)
+    parser.add_argument('--ymax', help='set y-axis maximum', type=float)
     parser.add_argument('--xscale', help='set x-axis scale')
     parser.add_argument('--yscale', help='set y-axis scale')
     parser.add_argument('--rotate-xticklabels', help='rotate x-axis tick labels', action='store_true')
@@ -261,13 +263,17 @@ if __name__ == '__main__':
         if args.hue != None:
             g.add_legend()
 
+    # set y-axis limits if specified
+    if args.ymin != None or args.ymax != None:
+        g.set(ylim=(args.ymin, args.ymax))
+
     # set x-axis scale if specified
     if args.xscale != None:
-        plt.gca().set_xscale(args.xscale)
+        g.set(xscale=args.xscale)
 
     # set y-axis scale if specified
     if args.yscale != None:
-        plt.gca().set_yscale(args.yscale)
+        g.set(yscale=args.yscale)
 
     # rotate x-axis tick labels if specified
     if args.rotate_xticklabels:
