@@ -10,7 +10,7 @@ import random
 if __name__ == '__main__':
     # parse command-line arguments
     parser = argparse.ArgumentParser(description='Create a list of gene sets drawn from an input dataset')
-    parser.add_argument('--dataset', help='input dataset (genes x samples)', required=True)
+    parser.add_argument('--dataset', help='input dataset (samples x genes)', required=True)
     parser.add_argument('--min-genes', help='minimum gene set size', type=int, default=1)
     parser.add_argument('--max-genes', help='maximum gene set size', type=int)
     parser.add_argument('--n-sets', help='number of gene sets', type=int, default=50)
@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     # load input dataset
     df = pd.read_csv(args.dataset, index_col=0, sep="\t")
-    df_genes = list(df.index)
+    df_genes = list(df.columns)
 
     # set max genes if needed
     if args.max_genes == None:
