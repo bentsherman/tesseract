@@ -9,8 +9,8 @@ import random
 
 if __name__ == '__main__':
     # parse command-line arguments
-    parser = argparse.ArgumentParser(description='Create a set of datasets drawn from an input dataset')
-    parser.add_argument('--dataset', help='input dataset', required=True)
+    parser = argparse.ArgumentParser(description='Create a range of datasets drawn from an input dataset')
+    parser.add_argument('--dataset', help='input dataset (genes x samples)', required=True)
     parser.add_argument('--n-row-iters', help='number of row iterations', type=int, default=8)
     parser.add_argument('--n-col-iters', help='number of column iterations', type=int, default=4)
 
