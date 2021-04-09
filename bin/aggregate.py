@@ -26,6 +26,9 @@ if __name__ == '__main__':
     # load nextflow trace files into a single dataframe
     df = pd.concat([load_trace(filename) for filename in args.trace_files])
 
+    # remove duplicate rows
+    df = df[~df.index.duplicated()]
+
     # impute missing exit codes
     if args.fix_exit_na != None:
         df['exit'].fillna(args.fix_exit_na, inplace=True)

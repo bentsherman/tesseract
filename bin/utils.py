@@ -9,7 +9,8 @@ import tensorflow as tf
 
 
 transforms = {
-    'log2': sklearn.preprocessing.FunctionTransformer(func=np.log2, inverse_func=lambda x: 2 ** x)
+    'log2': sklearn.preprocessing.FunctionTransformer(func=np.log2, inverse_func=lambda x: 2 ** x),
+    'sqrt': sklearn.preprocessing.FunctionTransformer(func=np.sqrt, inverse_func=lambda x: x ** 2)
 }
 
 

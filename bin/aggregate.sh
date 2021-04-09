@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # parse command-line arguments
-if [[ $# != 1 ]]; then
-        echo "usage: $0 <output-dir>"
+if [[ $# != 2 ]]; then
+        echo "usage: $0 <input-dir> <output-dir>"
         exit -1
 fi
 
-OUTPUT_DIR="$1"
+INPUT_DIR="$1"
+OUTPUT_DIR="$2"
 
 # initialize environment
 module purge
@@ -16,7 +17,7 @@ source activate mlbd
 
 # run aggregate script
 python bin/aggregate.py \
-    ${OUTPUT_DIR}/reports/trace.txt \
+    ${INPUT_DIR}/trace.*.txt \
     --output-dir ${OUTPUT_DIR} \
     --fix-exit-na -1 \
     --fix-runtime-ms
