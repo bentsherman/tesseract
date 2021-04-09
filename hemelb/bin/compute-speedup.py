@@ -19,6 +19,23 @@ def main():
     df = pd.read_csv(args_trace, sep='\t')
     df_sizes = pd.read_csv(args_sizes, sep='\t')
 
+    # append site counts to trace data
+    df = df.merge(df_sizes, on='geometry', how='left', copy=False)
+
+    # compute throughput
+    n_iters = 50000
+    df['throughput'] = df['n_sites'] * n_iters / df['realtime']
+
+    # compute per-core throughput
+    df['throughput_per_core'] = df['throughput'] / df['np']
+
+    # save trace file with throughput appended
+    df.to_csv(args_trace, sep='\t', index=False)
+
+    # remove failed jobs
+    df = df[df['exit'] == 0]
+    df['np'] = df['np'].astype(int)
+
     # aggregate trials into averages
     group_keys = ['blocksize', 'geometry', 'hardware_type', 'latticetype', 'ngpus', 'np']
     aggregate_keys = ['realtime']
@@ -32,9 +49,6 @@ def main():
 
     # append site counts to trace data
     df = df.merge(df_sizes, on='geometry', how='left', copy=False)
-
-    # make sure np is integer
-    df['np'] = df['np'].astype(int)
 
     # compute throughput
     n_iters = 50000
@@ -64,6 +78,7 @@ def main():
 
     # compute GPU speedup
     df['speedup_gpu'] = 0.0
+    df.loc[df['hardware_type'] == 'cpu', 'speedup_gpu'] = 1.0
 
     for idx, row in df.iterrows():
         if row['hardware_type'] != 'cpu':

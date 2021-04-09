@@ -54,12 +54,7 @@ process hemelb {
             sed 's/use_gpu value="0"/use_gpu value="1"/' config.xml > tmp; mv tmp config.xml
         fi
 
-        sed 's/blocksize="[0-9]+"/blocksize="${c.blocksize}"/' config.xml > tmp; mv tmp config.xml
-
-        # use only gpu 0 if ngpus is 1
-        if [[ ${c.ngpus} == 1 ]]; then
-            export CUDA_VISIBLE_DEVICES=0
-        fi
+        sed 's/blocksize="[0-9]\\+"/blocksize="${c.blocksize}"/' config.xml > tmp; mv tmp config.xml
 
         # run hemelb
         mpirun -np ${c.np} \

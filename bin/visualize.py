@@ -79,6 +79,7 @@ if __name__ == '__main__':
     parser.add_argument('--yscale', help='set y-axis scale')
     parser.add_argument('--rotate-xticklabels', help='rotate x-axis tick labels', action='store_true')
     parser.add_argument('--rotate-yticklabels', help='rotate y-axis tick labels', action='store_true')
+    parser.add_argument('--sort-xaxis', help='sort data by x-axis value', action='store_true')
     parser.add_argument('--sort-yaxis', help='sort data by y-axis value', action='store_true')
 
     args = parser.parse_args()
@@ -145,6 +146,12 @@ if __name__ == '__main__':
     if args.hue != None:
         data.sort_values(by=args.hue, inplace=True, kind='mergesort')
 
+    # sort data by x-axis if specified
+    if args.sort_xaxis:
+        x_values = sorted(list(set(data[args.xaxis])))
+    else:
+        x_values = None
+
     # sort data by y-axis if specified
     if args.sort_yaxis:
         data.sort_values(by=args.yaxis, inplace=True, kind='mergesort')
@@ -186,13 +193,6 @@ if __name__ == '__main__':
         else:
             print('error: could not find a plotting method for the given axes')
             sys.exit(-1)
-
-    # create order of x values for discrete plots
-    # unless y-axis sorting is enabled (so as not to override it)
-    if is_discrete(data, args.xaxis) and not args.sort_yaxis:
-        x_values = sorted(list(set(data[args.xaxis])))
-    else:
-        x_values = None
 
     # create plot
     if args.plot_type == 'hist':
