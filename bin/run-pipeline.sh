@@ -12,7 +12,7 @@ PIPELINE_DIR="$1"
 # initialize environment
 module purge
 module load anaconda3/5.1.0-gcc/8.3.1
-module load nextflow/20.07.1
+module load nextflow/21.04.1
 
 # run nextflow pipeline
 cd ${PIPELINE_DIR}

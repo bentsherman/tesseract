@@ -19,7 +19,6 @@ if __name__ == '__main__':
     parser.add_argument('--output-dir', help='output directory', default='.')
     parser.add_argument('--fix-exit-na', help='impute missing exit codes', type=int)
     parser.add_argument('--fix-runtime-sleep', help='adjust runtime metrics to account for running sleep beforehand', type=int)
-    parser.add_argument('--fix-runtime-ms', help='convert runtime metrics from ms to s', action='store_true')
 
     args = parser.parse_args()
 
@@ -38,11 +37,6 @@ if __name__ == '__main__':
     if args.fix_runtime_sleep != None:
         df['duration'] -= args.fix_runtime_sleep * 1000
         df['realtime'] -= args.fix_runtime_sleep * 1000
-
-    # convert runtime metrics from ms to s
-    if args.fix_runtime_ms:
-        df['duration'] /= 1000
-        df['realtime'] /= 1000
 
     # separate trace data by process type
     process_names = df['process'].unique()

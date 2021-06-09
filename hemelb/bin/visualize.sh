@@ -136,7 +136,7 @@ fi
 
 # PART 3: STRONG SCALING ANALYSIS
 if [[ ${RUN_LARGE} == "1" ]]; then
-    OUTPUT_DIR="hemelb/output-large-15"
+    OUTPUT_DIR="hemelb/output-large-17"
 
     echo "hemelb-exitcode"
     python bin/visualize.py \
@@ -177,7 +177,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
         --hue hardware_type \
         --row geometry \
         --select exit=0 \
-        --select geometry=Cylinder,C0004 \
         --sharey \
         --height 2 \
         --aspect 1.5 \
@@ -238,7 +237,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
         --yaxis efficiency \
         --hue hardware_type \
         --row geometry \
-        --select geometry=Cylinder,C0004 \
         --sharey \
         --ymin 0 \
         --ymax 1 \
@@ -256,7 +254,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
         --yaxis speedup_gpu \
         --hue hardware_type \
         --row geometry \
-        --select geometry=Cylinder,C0004 \
         --sharey \
         --ymin 0 \
         --height 2 \

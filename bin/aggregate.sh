@@ -17,7 +17,6 @@ source activate mlbd
 
 # run aggregate script
 python bin/aggregate.py \
-    ${INPUT_DIR}/trace.*.txt \
+    ${INPUT_DIR}/trace*.txt \
     --output-dir ${OUTPUT_DIR} \
-    --fix-exit-na -1 \
-    --fix-runtime-ms
+    --fix-exit-na -1
