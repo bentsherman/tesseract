@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a list of gene sets drawn from an input dataset')
     parser.add_argument('--dataset', help='input dataset (samples x genes)', required=True)
     parser.add_argument('--labels', help='list of sample labels', required=True)
-    parser.add_argument('--train-size', help='training set proportion', type=float, default=0.8)
+    parser.add_argument('--train-size-iters', help='training set proportion', type=float, nargs='+')
     parser.add_argument('--min-genes', help='minimum gene set size', type=int, default=1)
     parser.add_argument('--max-genes', help='maximum gene set size', type=int)
     parser.add_argument('--n-sets', help='number of gene sets', type=int, default=50)
@@ -29,14 +29,20 @@ if __name__ == '__main__':
     # get filename prefix
     prefix = args.dataset.split('.')[0]
 
-    # split dataset into train/perturb sets
-    x_train, x_perturb, y_train, y_perturb = sklearn.model_selection.train_test_split(x, y, test_size=1 - args.train_size)
+    # set train size iters if needed
+    if args.train_size_iters == None:
+        args.train_size_iters = np.arange(0.1, 1.0, 0.1)
 
-    # save train/perturb data to file
-    x_train.to_csv('%s.train.emx.txt' % (prefix), sep='\t')
-    y_train.to_csv('%s.train.labels.txt' % (prefix), sep='\t', header=None)
-    x_perturb.to_csv('%s.perturb.emx.txt' % (prefix), sep='\t')
-    y_perturb.to_csv('%s.perturb.labels.txt' % (prefix), sep='\t', header=None)
+    # generate train/perturb splits
+    for i, train_size in enumerate(args.train_size_iters):
+        # split dataset into train/perturb sets
+        x_train, x_perturb, y_train, y_perturb = sklearn.model_selection.train_test_split(x, y, test_size=1 - train_size)
+
+        # save train/perturb data to file
+        x_train.to_csv('%s.%d.train.emx.txt' % (prefix, i + 1), sep='\t')
+        y_train.to_csv('%s.%d.train.labels.txt' % (prefix, i + 1), sep='\t', header=None)
+        x_perturb.to_csv('%s.%d.perturb.emx.txt' % (prefix, i + 1), sep='\t')
+        y_perturb.to_csv('%s.%d.perturb.labels.txt' % (prefix, i + 1), sep='\t', header=None)
 
     # set max genes if needed
     if args.max_genes == None:

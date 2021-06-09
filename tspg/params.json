@@ -1,0 +1,8 @@
+{
+    "conditions_file": "tspg/data/conditions.txt",
+    "pipeline_dir": "${HOME}/workspace/tspg",
+    "pipeline_output_dir": "output",
+    "profiles": "pbs",
+    "trace_dir": "tspg/trace",
+    "trials": 1
+}
