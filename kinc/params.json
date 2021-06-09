@@ -1,0 +1,8 @@
+{
+    "conditions_file": "kinc/data/conditions-chunk.txt",
+    "pipeline_dir": "${HOME}/workspace/kinc-nf",
+    "pipeline_output_dir": "output",
+    "profiles": "pbs,modules",
+    "trace_dir": "kinc/trace",
+    "trials": 1
+}
