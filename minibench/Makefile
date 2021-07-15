@@ -1,6 +1,9 @@
 
 all: minibench
 
+%: %.cu
+	nvcc $^ -o $@
+
 test: minibench
 	./minibench trace
 
