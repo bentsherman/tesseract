@@ -60,3 +60,4 @@ if __name__ == '__main__':
     # save gene sets to file
     f = open('%s.genesets.txt' % (prefix), 'w')
     f.write('\n'.join(['\t'.join(gene_set) for gene_set in gene_sets]))
+    f.write('\n')
