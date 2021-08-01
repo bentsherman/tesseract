@@ -35,14 +35,5 @@ if __name__ == '__main__':
     X = np.array([x_input])
     y = model.predict(X)
 
-    # apply transforms to output if specified
-    for transform in config['output-transforms']:
-        try:
-            t = utils.transforms[transform]
-            y = t.inverse_transform(y)
-        except:
-            print('error: output transform %s not recognized' % (transform))
-            sys.exit(1)
-
     # print results
     print(y)

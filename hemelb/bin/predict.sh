@@ -13,7 +13,7 @@ source activate mlbd
 export TF_CPP_MIN_LOG_LEVEL="3"
 
 python bin/predict.py \
-    ${OUTPUT_DIR}/hemelb.realtime.${MODEL} \
+    ${OUTPUT_DIR}/hemelb.runtime_hr.${MODEL} \
     np=1 \
     n_sites=3850000 \
     hardware_type_cpu=1 \

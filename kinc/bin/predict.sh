@@ -13,7 +13,7 @@ source activate mlbd
 export TF_CPP_MIN_LOG_LEVEL="3"
 
 python bin/predict.py \
-    ${OUTPUT_DIR}/kinc.realtime.${MODEL} \
+    ${OUTPUT_DIR}/kinc.runtime_hr.${MODEL} \
     np=1 \
     n_rows=7050 \
     n_cols=188 \

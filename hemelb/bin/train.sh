@@ -15,8 +15,8 @@ export TF_CPP_MIN_LOG_LEVEL="3"
 python bin/train.py \
     ${OUTPUT_DIR}/trace.hemelb.txt \
     --merge geometry ${OUTPUT_DIR}/hemelb-site-counts.txt \
-    --inputs hardware_type:onehot np n_sites \
-    --output realtime:log2 \
+    --inputs hardware_type np n_sites \
+    --output runtime_hr \
     --scaler maxabs \
     --model-type ${MODEL_TYPE} \
-    --model-name ${OUTPUT_DIR}/hemelb.realtime.${MODEL_TYPE}
+    --model-name ${OUTPUT_DIR}/hemelb.runtime_hr.${MODEL_TYPE}

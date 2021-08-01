@@ -8,13 +8,6 @@ import tensorflow as tf
 
 
 
-transforms = {
-    'log2': sklearn.preprocessing.FunctionTransformer(func=np.log2, inverse_func=lambda x: 2 ** x),
-    'sqrt': sklearn.preprocessing.FunctionTransformer(func=np.sqrt, inverse_func=lambda x: x ** 2)
-}
-
-
-
 class KerasRegressor(tf.keras.wrappers.scikit_learn.KerasRegressor):
     '''
     TensorFlow Keras API neural network regressor.
