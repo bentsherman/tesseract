@@ -373,6 +373,13 @@ void benchmark_gpu_flops_kernel(int n, real_t * A, real_t * B, real_t * C)
 
 double benchmark_gpu_flops()
 {
+    int n_devices;
+    cudaGetDeviceCount(&n_devices);
+
+    if ( n_devices == 0 ) {
+        return 0.0;
+    }
+
     int n = MATMUL_GPU_ARRAY_SIZE;
     real_t * A = (real_t *)malloc(n * n * sizeof(real_t));
     real_t * B = (real_t *)malloc(n * n * sizeof(real_t));
@@ -475,6 +482,13 @@ void benchmark_gpu_mem_bw_kernel(int n, real_t * a, real_t * b, real_t * c, real
  */
 double benchmark_gpu_mem_bw()
 {
+    int n_devices;
+    cudaGetDeviceCount(&n_devices);
+
+    if ( n_devices == 0 ) {
+        return 0.0;
+    }
+
     int n = STREAM_ARRAY_SIZE;
     real_t * a = (real_t *)malloc(n * sizeof(real_t));
     real_t * b = (real_t *)malloc(n * sizeof(real_t));

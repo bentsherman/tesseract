@@ -18,7 +18,7 @@ process minibench {
         echo "#TRACE phase=${c.phase}"
         echo "#TRACE hostname=`hostname`"
 
-        # run minibench
-        ${workflow.launchDir}/minibench trace
+        # verify that beforeScript isn't included in nextflow trace
+        sleep 10
         """
 }
