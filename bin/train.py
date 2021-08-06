@@ -8,6 +8,7 @@ import os
 import pandas as pd
 import pickle
 import sklearn.ensemble
+import sklearn.linear_model
 from sklearn.metrics import mean_absolute_error
 import sklearn.model_selection
 import sklearn.pipeline
@@ -117,15 +118,17 @@ def create_dataset(df, inputs, target=None):
     # save column order
     columns = list(X.columns)
 
-    # normalize input data
-    X = sklearn.preprocessing.MaxAbsScaler().fit_transform(X)
-
-    return X, y, columns
+    return X.values, y, columns
 
 
 
 def create_gb(loss='lad'):
     return sklearn.ensemble.GradientBoostingRegressor(loss=loss, n_estimators=100)
+
+
+
+def create_lr():
+    return sklearn.linear_model.LinearRegression()
 
 
 
@@ -190,6 +193,14 @@ def create_mlp(
 
 def create_rf(criterion='mae'):
     return sklearn.ensemble.RandomForestRegressor(n_estimators=100, criterion=criterion)
+
+
+
+def create_pipeline(reg, scaler_fn=sklearn.preprocessing.MaxAbsScaler):
+    return sklearn.pipeline.Pipeline([
+        ('scaler', scaler_fn()),
+        ('reg', reg)
+    ])
 
 
 
@@ -300,19 +311,13 @@ if __name__ == '__main__':
 
     # extract input/output data from trace data
     try:
-        X = df[args.inputs]
-        y = df[args.output]
+        X, y, columns = create_dataset(df, args.inputs, args.output)
     except KeyError:
         print('error: one or more input/output variables are not in the dataset')
         sys.exit(1)
 
-    # one-hot encode categorical inputs
-    for column in args.inputs:
-        if is_categorical(X, column):
-            X = pd.get_dummies(X, columns=[column], drop_first=False)
-
     # print transformed input features
-    print('input features: %s' % (' '.join(X.columns)))
+    print('input features: %s' % (' '.join(columns)))
 
     # select scaler
     if args.scaler != None:
@@ -324,24 +329,24 @@ if __name__ == '__main__':
         Scaler = scalers[args.scaler]
 
     # select model type
-    if args.model_type == 'gb':
-        regressor = create_gb()
+    if args.model_type == 'lr':
+        reg = create_lr()
+
+    elif args.model_type == 'gb':
+        reg = create_gb()
 
     elif args.model_type == 'mlp':
-        regressor = create_mlp(X.shape[1])
+        reg = create_mlp(X.shape[1])
 
     elif args.model_type == 'rf':
-        regressor = create_rf()
+        reg = create_rf()
 
     # create pipeline
-    model = sklearn.pipeline.Pipeline([
-        ('scaler', Scaler()),
-        ('regressor', regressor)
-    ])
+    model = create_pipeline(reg, scaler_fn=Scaler)
 
     # create model configuration
     config = {
-        'inputs': list(X.columns),
+        'inputs': columns,
         'model-type': args.model_type
     }
 
@@ -363,7 +368,7 @@ if __name__ == '__main__':
 
         # workaround for keras models
         try:
-            model.named_steps['regressor'].build_fn = None
+            model.named_steps['reg'].build_fn = None
         except:
             pass
 

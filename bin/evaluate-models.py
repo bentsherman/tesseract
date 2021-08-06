@@ -12,6 +12,7 @@ from train import \
     create_gb, \
     create_mlp, \
     create_rf, \
+    create_pipeline, \
     evaluate_cv
 
 
@@ -26,6 +27,9 @@ def evaluate_models(pipeline_name, config, dfs):
         # skip if there are too few samples
         if len(df.index) < 10:
             continue
+
+        # remove inputs that have constant value
+        inputs = [c for c in inputs if df[c].nunique() > 1]
 
         # skip if there are no input features
         if len(inputs) == 0:
@@ -42,7 +46,9 @@ def evaluate_models(pipeline_name, config, dfs):
                 'target': target,
                 'min': df[target].min(),
                 'med': df[target].median(),
-                'max': df[target].max()
+                'max': df[target].max(),
+                'mean': df[target].mean(),
+                'std': df[target].std()
             }
 
             # extract performance dataset
@@ -55,14 +61,17 @@ def evaluate_models(pipeline_name, config, dfs):
                 ('mlp', create_mlp(X.shape[1])),
             ]
 
+            # prepend scaler to each model
+            models = [(name, create_pipeline(model)) for name, model in models]
+
             # evaluate each model on dataset
             for model_name, model in models:
                 # evaluate model
                 scores, y_pred = evaluate_cv(model, X, y, cv=5)
 
                 # save metrics
-                row['%s|mae' % (model_name)] = np.mean(scores['mae'])
-                row['%s|rae' % (model_name)] = np.mean(scores['rae'])
+                row['%s | mae' % (model_name)] = np.mean(scores['mae'])
+                row['%s | rae' % (model_name)] = np.mean(scores['rae'])
 
             # save results
             results.append(row)
