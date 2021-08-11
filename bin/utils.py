@@ -1,9 +1,11 @@
 import copy
 import dill as pickle
+import forestci
 import h5py
 import io
 import numpy as np
 import sklearn.base
+from sklearn.ensemble import RandomForestRegressor
 import tensorflow as tf
 
 
@@ -97,3 +99,43 @@ class KerasRegressor(tf.keras.wrappers.scikit_learn.KerasRegressor):
             with h5py.File(model_hdf5_bio, mode='r') as file:
                 state['model'] = tf.keras.models.load_model(file)
         self.__dict__ = state
+
+
+
+class KerasRegressorWithIntervals(KerasRegressor):
+
+    def predict(self, X, n_preds=10, alpha=0.05):
+        # compute several predictions for each sample
+        y_preds = np.array([KerasRegressor.predict(self, X) for _ in range(n_preds)])
+
+        # compute point predictions and prediciton intervals
+        y_pred = np.mean(y_preds, axis=0)
+        y_lower = np.percentile(y_preds,       100 * alpha / 2, axis=0)
+        y_upper = np.percentile(y_preds, 100 - 100 * alpha / 2, axis=0)
+
+        return y_pred, y_lower, y_upper
+
+
+
+class RandomForestRegressorWithIntervals(RandomForestRegressor):
+
+    def fit(self, X, y):
+        # fit random forest
+        RandomForestRegressor.fit(self, X, y)
+
+        # save training set for variance estimate
+        self.X_train = X
+
+    def predict(self, X, n_stds=2.0):
+        # compute predictions
+        y_pred = RandomForestRegressor.predict(self, X)
+
+        # compute variance estimate
+        V_IJ_U = forestci.random_forest_error(self, self.X_train, X)
+
+        # compute prediction intervals
+        y_err = n_stds * np.sqrt(V_IJ_U)
+        y_lower = y_pred - y_err
+        y_upper = y_pred + y_err
+
+        return y_pred, y_lower, y_upper

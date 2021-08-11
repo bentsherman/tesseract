@@ -7,6 +7,7 @@ import numpy as np
 import os
 import pandas as pd
 import pickle
+import sklearn.dummy
 import sklearn.ensemble
 import sklearn.linear_model
 from sklearn.metrics import mean_absolute_error
@@ -122,6 +123,11 @@ def create_dataset(df, inputs, target=None):
 
 
 
+def create_dummy(strategy='mean'):
+    return sklearn.dummy.DummyRegressor(strategy=strategy)
+
+
+
 def create_gb(loss='lad'):
     return sklearn.ensemble.GradientBoostingRegressor(loss=loss, n_estimators=100)
 
@@ -129,6 +135,18 @@ def create_gb(loss='lad'):
 
 def create_lr():
     return sklearn.linear_model.LinearRegression()
+
+
+
+def asym_error(y_true, y_pred):
+    error = y_pred - y_true
+    return tf.reduce_mean(
+        tf.where(
+            error <= 0,
+            tf.square(error),
+            error
+        ),
+        axis=-1)
 
 
 
@@ -181,7 +199,12 @@ def create_mlp(
 
         return mlp
 
-    return utils.KerasRegressor(
+    if conf_intervals:
+        KerasRegressor = utils.KerasRegressorWithIntervals
+    else:
+        KerasRegressor = utils.KerasRegressor
+
+    return KerasRegressor(
         build_fn=build_fn,
         batch_size=32,
         epochs=200,
@@ -191,8 +214,13 @@ def create_mlp(
 
 
 
-def create_rf(criterion='mae'):
-    return sklearn.ensemble.RandomForestRegressor(n_estimators=100, criterion=criterion)
+def create_rf(criterion='mae', conf_intervals=False):
+    if conf_intervals:
+        RandomForestRegressor = utils.RandomForestRegressorWithIntervals
+    else:
+        RandomForestRegressor = sklearn.ensemble.RandomForestRegressor
+
+    return RandomForestRegressor(n_estimators=100, criterion=criterion)
 
 
 
@@ -218,12 +246,13 @@ def relative_absolute_error(y_true, y_pred):
 
 
 
-def evaluate_trials(model, X, y, train_size=0.8, n_trials=5):
-    scores = {
-        'mae': [],
-        'rae': []
-    }
+def prediction_interval_coverage(y_true, y_lower, y_upper):
+    return np.mean((y_lower <= y_true) & (y_true <= y_upper))
 
+
+
+def evaluate_trials(model, X, y, train_size=0.8, n_trials=5):
+    # perform repeated trials
     def evaluate(i):
         # create train/test split
         X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, test_size=1 - train_size)
@@ -231,14 +260,25 @@ def evaluate_trials(model, X, y, train_size=0.8, n_trials=5):
         # train model
         model.fit(X_train, y_train)
 
-        # evaluate model
+        # get model predictions
         y_pred = model.predict(X_test)
+
+        if isinstance(y_pred, tuple):
+            y_pred, _, _ = y_pred
+
+        # evaluate model
         mae = mean_absolute_error(y_test, y_pred)
         rae = relative_absolute_error(y_test, y_pred)
 
         return mae, rae
 
     results = Parallel(n_jobs=-1)(delayed(evaluate)(i) for i in range(n_trials))
+
+    # collect results
+    scores = {
+        'mae': [],
+        'rae': []
+    }
 
     for mae, rae in results:
         scores['mae'].append(mae)
@@ -249,12 +289,8 @@ def evaluate_trials(model, X, y, train_size=0.8, n_trials=5):
 
 
 def evaluate_cv(model, X, y, cv=5):
+    # perform k-fold cross validation
     kfold = sklearn.model_selection.KFold(n_splits=cv, shuffle=True)
-    scores = {
-        'mae': [],
-        'rae': []
-    }
-    y_pred = np.empty_like(y)
 
     def evaluate(train_index, test_index):
         # extract train/test split
@@ -265,21 +301,39 @@ def evaluate_cv(model, X, y, cv=5):
         model_ = sklearn.base.clone(model)
         model_.fit(X_train, y_train)
 
-        # evaluate model
+        # get model predictions
         y_pred_i = model_.predict(X_test)
-        mae = mean_absolute_error(y_test, y_pred_i)
-        rae = relative_absolute_error(y_test, y_pred_i)
 
-        return test_index, y_pred_i, mae, rae
+        return y_pred_i, test_index
 
     results = Parallel(n_jobs=-1)(delayed(evaluate)(*args) for args in kfold.split(X))
 
-    for test_index, y_pred_i, mae, rae in results:
-        y_pred[test_index] = y_pred_i
-        scores['mae'].append(mae)
-        scores['rae'].append(rae)
+    # collect results
+    y_pred = np.empty_like(y)
+    y_lower = np.empty_like(y)
+    y_upper = np.empty_like(y)
 
-    return scores, y_pred
+    for y_pred_i, test_index in results:
+        # save prediction intervals
+        if isinstance(y_pred_i, tuple):
+            y_pred_i, y_lower_i, y_upper_i = y_pred_i
+            y_lower[test_index] = y_lower_i
+            y_upper[test_index] = y_upper_i
+        else:
+            y_lower[test_index] = y_pred_i
+            y_upper[test_index] = y_pred_i
+
+        # save point predictions
+        y_pred[test_index] = y_pred_i
+
+    # evaluate predictions
+    scores = {
+        'mae': mean_absolute_error(y, y_pred),
+        'rae': relative_absolute_error(y, y_pred),
+        'cov': prediction_interval_coverage(y, y_lower, y_upper)
+    }
+
+    return scores, y_pred, y_lower, y_upper
 
 
 
