@@ -6,6 +6,7 @@ import io
 import numpy as np
 import sklearn.base
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import FunctionTransformer
 import tensorflow as tf
 
 
@@ -102,16 +103,61 @@ class KerasRegressor(tf.keras.wrappers.scikit_learn.KerasRegressor):
 
 
 
+class RegressorWithOutputTransform(sklearn.base.BaseEstimator):
+
+    def __init__(self, model, transform=None):
+        self.model = model
+
+        if transform == 'sqrt':
+            np_pow2 = lambda x: np.power(x, 2)
+            self.transform = FunctionTransformer(func=np_pow2, inverse_func=np.sqrt)
+        elif transform == 'log':
+            self.transform = FunctionTransformer(func=np.exp, inverse_func=np.log)
+        else:
+            self.transform = FunctionTransformer()
+
+    def fit(self, X, y):
+        # train regressor on transformed target data
+        self.model.fit(X, self.transform.inverse_transform(y))
+
+        return self
+
+    def predict(self, X):
+        # compute predictions from base model
+        y = self.model.predict(X)
+
+        # return transformed predictions
+        return self.transform.transform(y)
+
+
+
 class KerasRegressorWithIntervals(KerasRegressor):
+
+    def inverse_tau(self, N, lmbda=1e-5, p_dropout=0.1, ls_2=0.005):
+        return (2 * N * lmbda) / (1 - p_dropout) / ls_2
+
+    def fit(self, X, y):
+        # fit neural network
+        super(KerasRegressorWithIntervals, self).fit(X, y)
+
+        # save training set size for tau adjustment
+        self.n_train_samples = X.shape[0]
+
+        return self
 
     def predict(self, X, n_preds=10, alpha=0.05):
         # compute several predictions for each sample
-        y_preds = np.array([KerasRegressor.predict(self, X) for _ in range(n_preds)])
+        y_preds = np.array([super(KerasRegressorWithIntervals, self).predict(X) for _ in range(n_preds)])
 
-        # compute point predictions and prediciton intervals
+        # compute point predictions and prediction intervals
         y_pred = np.mean(y_preds, axis=0)
         y_lower = np.percentile(y_preds,       100 * alpha / 2, axis=0)
         y_upper = np.percentile(y_preds, 100 - 100 * alpha / 2, axis=0)
+
+        # compute tau adjustment
+        tau_inv = self.inverse_tau(self.n_train_samples)
+        y_lower -= 2.0 * tau_inv
+        y_upper += 2.0 * tau_inv
 
         return y_pred, y_lower, y_upper
 
@@ -121,14 +167,16 @@ class RandomForestRegressorWithIntervals(RandomForestRegressor):
 
     def fit(self, X, y):
         # fit random forest
-        RandomForestRegressor.fit(self, X, y)
+        super(RandomForestRegressorWithIntervals, self).fit(X, y)
 
         # save training set for variance estimate
         self.X_train = X
 
+        return self
+
     def predict(self, X, n_stds=2.0):
         # compute predictions
-        y_pred = RandomForestRegressor.predict(self, X)
+        y_pred = super(RandomForestRegressorWithIntervals, self).predict(X)
 
         # compute variance estimate
         V_IJ_U = forestci.random_forest_error(self, self.X_train, X)

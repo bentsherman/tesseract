@@ -138,19 +138,19 @@ def create_lr():
 
 
 
-def asym_error(y_true, y_pred):
+def asym_loss(y_true, y_pred):
     error = y_pred - y_true
     return tf.reduce_mean(
         tf.where(
-            error <= 0,
-            tf.square(error),
+            error < 0,
+            y_true * tf.abs(error),
             error
         ),
         axis=-1)
 
 
 
-def huber_asym(y_true, y_pred, delta=1.0):
+def asym_huber_loss(y_true, y_pred, delta=1.0):
     error = y_pred - y_true
     return tf.reduce_mean(
         tf.where(
@@ -166,10 +166,11 @@ def create_mlp(
     input_shape,
     hidden_layer_sizes=[128, 128, 128],
     activation='relu',
+    activation_target=None,
     l1=0,
-    l2=1e-3,
+    l2=1e-5,
     p_dropout=0.1,
-    conf_intervals=False,
+    intervals=False,
     optimizer='adam', # lr=0.001
     loss='mean_absolute_error'):
 
@@ -181,16 +182,16 @@ def create_mlp(
         for units in hidden_layer_sizes:
             x = keras.layers.Dense(
                 units=units,
-                activation='relu',
+                activation=activation,
                 kernel_regularizer=keras.regularizers.l1_l2(l1, l2),
                 bias_regularizer=keras.regularizers.l1_l2(l1, l2)
             )(x)
 
             if p_dropout != None:
-                training = True if conf_intervals else None
+                training = True if intervals else None
                 x = keras.layers.Dropout(p_dropout)(x, training=training)
 
-        y_output = keras.layers.Dense(units=1)(x)
+        y_output = keras.layers.Dense(units=1, activation=activation_target)(x)
 
         mlp = keras.models.Model(x_input, y_output)
 
@@ -199,7 +200,7 @@ def create_mlp(
 
         return mlp
 
-    if conf_intervals:
+    if intervals:
         KerasRegressor = utils.KerasRegressorWithIntervals
     else:
         KerasRegressor = utils.KerasRegressor
@@ -214,8 +215,8 @@ def create_mlp(
 
 
 
-def create_rf(criterion='mae', conf_intervals=False):
-    if conf_intervals:
+def create_rf(criterion='mae', intervals=False):
+    if intervals:
         RandomForestRegressor = utils.RandomForestRegressorWithIntervals
     else:
         RandomForestRegressor = sklearn.ensemble.RandomForestRegressor

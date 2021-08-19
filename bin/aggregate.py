@@ -79,9 +79,10 @@ if __name__ == '__main__':
 
         # convert input features into dataframe
         df_conditions = pd.DataFrame(conditions)
+        df_conditions.set_index('hash', inplace=True)
 
         # merge trace data with input features
-        df_process = df_process.merge(df_conditions, how='left', on='hash')
+        df_process = df_process.merge(df_conditions, how='left', left_index=True, right_index=True)
         df_process.sort_index(inplace=True)
 
         # save output trace dataframe
