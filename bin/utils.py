@@ -138,26 +138,25 @@ class KerasRegressorWithIntervals(KerasRegressor):
 
     def fit(self, X, y):
         # fit neural network
-        super(KerasRegressorWithIntervals, self).fit(X, y)
+        history = super(KerasRegressorWithIntervals, self).fit(X, y)
 
         # save training set size for tau adjustment
         self.n_train_samples = X.shape[0]
 
-        return self
+        return history
 
-    def predict(self, X, n_preds=10, alpha=0.05):
+    def predict(self, X, n_preds=10, n_stds=2.0):
         # compute several predictions for each sample
         y_preds = np.array([super(KerasRegressorWithIntervals, self).predict(X) for _ in range(n_preds)])
 
-        # compute point predictions and prediction intervals
-        y_pred = np.mean(y_preds, axis=0)
-        y_lower = np.percentile(y_preds,       100 * alpha / 2, axis=0)
-        y_upper = np.percentile(y_preds, 100 - 100 * alpha / 2, axis=0)
-
         # compute tau adjustment
         tau_inv = self.inverse_tau(self.n_train_samples)
-        y_lower -= 2.0 * tau_inv
-        y_upper += 2.0 * tau_inv
+
+        # compute point predictions and prediction intervals
+        y_pred = np.mean(y_preds, axis=0)
+        y_std = np.std(y_preds, axis=0)
+        y_lower = y_pred - n_stds * (y_std + tau_inv)
+        y_upper = y_pred + n_stds * (y_std + tau_inv)
 
         return y_pred, y_lower, y_upper
 

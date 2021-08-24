@@ -46,13 +46,6 @@ def contingency_table(x, y, data, **kwargs):
 
 
 
-def rotate_ticklabels(ticklabels, angle=45):
-    for tick in ticklabels:
-        tick.set_horizontalalignment('right')
-        tick.set_rotation(angle)
-
-
-
 if __name__ == '__main__':
     # parse command-line arguments
     parser = argparse.ArgumentParser()
@@ -276,11 +269,11 @@ if __name__ == '__main__':
 
     # rotate x-axis tick labels if specified
     if args.rotate_xticklabels:
-        rotate_ticklabels(plt.gca().get_xticklabels())
+        plt.xticks(rotation=45)
 
     # rotate y-axis tick labels if specified
     if args.rotate_yticklabels:
-        rotate_ticklabels(plt.gca().get_yticklabels())
+        plt.yticks(rotation=45)
 
     # disable x-axis ticks if there are too many categories
     if is_discrete(data, args.xaxis) and len(set(data[args.xaxis])) >= 100:

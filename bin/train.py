@@ -143,7 +143,7 @@ def asym_loss(y_true, y_pred):
     return tf.reduce_mean(
         tf.where(
             error < 0,
-            y_true * tf.abs(error),
+            tf.square(error),
             error
         ),
         axis=-1)
@@ -247,14 +247,20 @@ def relative_absolute_error(y_true, y_pred):
 
 
 
+def hpc_cost(y_true, y_pred):
+    error = y_pred - y_true
+    return np.mean(np.where(error < 0, y_pred, error))
+
+
+
 def prediction_interval_coverage(y_true, y_lower, y_upper):
     return np.mean((y_lower <= y_true) & (y_true <= y_upper))
 
 
 
-def evaluate_trials(model, X, y, train_size=0.8, n_trials=5):
+def evaluate_trials(model, X, y, train_sizes=[0.8], n_trials=5):
     # perform repeated trials
-    def evaluate(i):
+    def evaluate(train_size):
         # create train/test split
         X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, test_size=1 - train_size)
 
@@ -269,23 +275,22 @@ def evaluate_trials(model, X, y, train_size=0.8, n_trials=5):
 
         # evaluate model
         mae = mean_absolute_error(y_test, y_pred)
-        rae = relative_absolute_error(y_test, y_pred)
+        mpe = mean_absolute_percentage_error(y_test, y_pred)
 
-        return mae, rae
+        return train_size, mae, mpe
 
-    results = Parallel(n_jobs=-1)(delayed(evaluate)(i) for i in range(n_trials))
+    results = Parallel(n_jobs=-1)(delayed(evaluate)(ts) for ts in train_sizes for _ in range(n_trials))
 
     # collect results
-    scores = {
-        'mae': [],
-        'rae': []
-    }
+    scores_map = {}
 
-    for mae, rae in results:
-        scores['mae'].append(mae)
-        scores['rae'].append(rae)
+    for train_size in train_sizes:
+        scores_map[train_size] = {
+            'mae': [mae for (ts, mae, mpe) in results if ts == train_size],
+            'mpe': [mpe for (ts, mae, mpe) in results if ts == train_size]
+        }
 
-    return scores
+    return scores_map
 
 
 
@@ -330,7 +335,9 @@ def evaluate_cv(model, X, y, cv=5):
     # evaluate predictions
     scores = {
         'mae': mean_absolute_error(y, y_pred),
+        'mpe': mean_absolute_percentage_error(y, y_pred),
         'rae': relative_absolute_error(y, y_pred),
+        'hpc': hpc_cost(y, y_pred),
         'cov': prediction_interval_coverage(y, y_lower, y_upper)
     }
 
@@ -412,7 +419,7 @@ if __name__ == '__main__':
 
     # print cross-validation results
     print('MAE: %0.3f' % (scores['mae'].mean()))
-    print('RAE: %0.3f %%' % (scores['rae'].mean()))
+    print('MAPE: %0.3f %%' % (scores['mpe'].mean()))
 
     # save trained model if specified
     if args.model_name != None:
