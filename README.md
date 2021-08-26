@@ -31,10 +31,10 @@ echo "#TRACE dataset=${dataset}"
 echo "#TRACE n_rows=`tail -n +1 ${emx_txt_file} | wc -l`"
 echo "#TRACE n_cols=`head -n +1 ${emx_txt_file} | wc -w`"
 echo "#TRACE hardware_type=${params.similarity_hardware_type}"
-echo "#TRACE np=${params.similarity_chunks}"
+echo "#TRACE chunks=${params.similarity_chunks}"
 ```
 
-In this example, `dataset`, `hardware_type`, and `np` are Nextflow variables supplied by input channels. On the other hand, `emx_txt_file` is a tab-delimited text file, also supplied by an input channel, but the dimensions of this dataset must be computed by the script itself. All of these directives will be printed to the execution log. After the workflow completes, Tesseract will extract these input features from the execution log for each executed task.
+In this example, `dataset`, `hardware_type`, and `chunks` are Nextflow variables supplied by input channels or as params. On the other hand, `emx_txt_file` is a tab-delimited text file, also supplied by an input channel, but the dimensions of this dataset must be computed by the script itself. All of these directives will be printed to the execution log. After the workflow completes, Tesseract will extract these input features from the execution log for each executed task.
 
 The variables in this example have been determined to be the most relevant input features for KINC. You will have to make a similar selection for each process in your pipeline. It is better to be inclusive rather than exclusive at this stage; you can include as many features as you want and you can always remove them from your dataset later, but to add a new feature after the fact you will have to redo all of your application runs.
 
