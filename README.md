@@ -25,16 +25,16 @@ Tesseract can be applied to any application or Nextflow workflow. Individual app
 
 Once you have your application in a Nextflow pipeline, you must annotate each process statement by adding "trace" directives to the process script. These directives will specify the input features of the execution, which will be parsed by Tesseract and supplied as the input features of your performance dataset. You can specify whatever features you like, and each process can have different features, as Tesseract will create separate prediction models for each process.
 
-Here are some trace directives that might be used for the KINC example pipeline:
+Here are some example trace directives that were taken from the KINC pipeline:
 ```bash
 echo "#TRACE dataset=${dataset}"
 echo "#TRACE n_rows=`tail -n +1 ${emx_txt_file} | wc -l`"
 echo "#TRACE n_cols=`head -n +1 ${emx_txt_file} | wc -w`"
-echo "#TRACE hardware_type=${c.hardware_type}"
-echo "#TRACE np=${c.np}"
+echo "#TRACE hardware_type=${params.similarity_hardware_type}"
+echo "#TRACE np=${params.similarity_chunks}"
 ```
 
-In this example, `dataset`, `hardware_type`, and `np` are Nextflow variables supplied by input channels. On the other hand, `emx_txt_file` is a tab-delimited text file, also supplied by an input channel, but the dimensions of this dataset must be computed by the script itself. All of these directives will be printed to the execution log. After the workflow completes, Tesseract will parse the execution logs to obtain these input features for each executed task.
+In this example, `dataset`, `hardware_type`, and `np` are Nextflow variables supplied by input channels. On the other hand, `emx_txt_file` is a tab-delimited text file, also supplied by an input channel, but the dimensions of this dataset must be computed by the script itself. All of these directives will be printed to the execution log. After the workflow completes, Tesseract will extract these input features from the execution log for each executed task.
 
 The variables in this example have been determined to be the most relevant input features for KINC. You will have to make a similar selection for each process in your pipeline. It is better to be inclusive rather than exclusive at this stage; you can include as many features as you want and you can always remove them from your dataset later, but to add a new feature after the fact you will have to redo all of your application runs.
 
