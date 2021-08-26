@@ -1,22 +1,27 @@
 # tesseract
 
-Tesseract is a machine learning system for predicting resource usage of scientific applications and workflows. Tesseract provides a generic and user-friendly way to create prediction models from performance data collected from application runs. This repository contains the code for Tesseract as well as some Nextflow workflows that have been instrumented to generate performance data for visualization and model training. Tesseract can be used for tasks such as predicting resource usage, detecting execution anomalies, and predicting failures.
+Tesseract is an intelligent resource prediction tool for scientific applications and workflows. It provides a generic and user-friendly way to predict resource usage from historical performance data. Tesseract is used primarily to predict resource usage of scientific workflows for the purpose of resource provisioning, but it can also be used to collect and analyze performance data for whatever purpose, such as identifying execution anomalies or predicting failures.
+
+This repository contains the code for Tesseract as well as some additional scripts that were used to generate performance data for a number of scientific workflows:
+- [GEMmaker](https://github.com/SystemsGenetics/GEMmaker)
+- [gene-oracle](https://github.com/SystemsGenetics/gene-oracle)
+- [HemeLB](https://github.com/Clemson-MSE/hemelb-gpu)
+- [KINC-nf](https://github.com/SystemsGenetics/KINC-nf)
+- [TSPG](https://github.com/ctargon/TSPG)
 
 _Note: Not to be confused with the [Tesseract OCR Engine](https://github.com/tesseract-ocr)._
 
 ## Installation
 
-Tesseract's code is written in Python, so you will need a Python or Anaconda environment that provides the packages listed in `requirements.txt`. Additionally, you will need [Nextflow](https://www.nextflow.io/) to run your Nextflow pipelines.
+Tesseract is a collection of Python scripts, so you will need a Python or Anaconda environment that provides the packages listed in `requirements.txt`. Additionally, Tesseract is intended to work with [Nextflow](https://www.nextflow.io/) pipelines, so you will need to install Nextflow as well.
 
 ## Offline Usage
 
 ### Select an Application
 
-### Creating a Nextflow Pipeline
+Tesseract can be applied to any application or Nextflow workflow. Individual applications can be easily wrapped into a Nextflow pipeline, refer to the HemeLB pipeline in this repository. Workflows based on a different workflow manager must be converted into a Nextflow pipeline, which should also not be difficult as Nextflow is highly generic and easy to use. Tesseract relies on Nextflow's trace feature, which automatically collects a performance trace of every process that is executed. Again, refer to the example pipelines in this repository. In particular, the `trace` section in any of the example config files shows how to enable this feature.
 
-Tesseract can be applied to any application or Nextflow workflow. Individual applications can be easily wrapped into a Nextflow pipeline, refer to the examples in this repository. Workflows based on a different workflow manager must be converted into a Nextflow pipeline, which should also not be difficult as Nextflow is highly generic and easy to use. Tesseract relies on Nextflow's trace feature, which automatically collects a performance trace of every process that is executed. Again, refer to the example pipelines in this repository. In particular, the `trace` section in any of the example config files shows how to enable this feature.
-
-### Annotating Your Pipeline
+### Define Input Features
 
 Once you have your application in a Nextflow pipeline, you must annotate each process statement by adding "trace" directives to the process script. These directives will specify the input features of the execution, which will be parsed by Tesseract and supplied as the input features of your performance dataset. You can specify whatever features you like, and each process can have different features, as Tesseract will create separate prediction models for each process.
 
@@ -37,7 +42,20 @@ Keep in mind that trace directives should be fast and easy to compute, otherwise
 
 ### Collect Performance Data
 
-Once you have an annotated Nextflow pipeline, you just need to run it many times to generate plenty of performance data. There are multiple ways to do this; you can do a parameter sweep like the examples in this repo, or you can simply use it in your normal work and allow the performance data to accumulate. In any case, each workflow run will create a performance trace called `trace.txt`. You must collect these trace files into one location and aggregate them into a performance dataset:
+Once you have an annotated Nextflow pipeline, you just need to run it many times to generate plenty of performance data. There are multiple ways to do this; you can do a parameter sweep like the examples in this repo, or you can simply use it in your normal work and allow the performance data to accumulate. Tesseract provides a Nextflow "meta-pipeline" to run a Nextflow pipeline several times in order to generate performance data quickly. For example, to generate performance data for the KINC pipeline:
+```bash
+# provide input data for kinc
+mkdir kinc/input
+# ...
+
+# generate conditions file
+kinc/bin/make-conditions.sh
+
+# run meta-pipeline
+nextflow run main.nf -params-file kinc/params.json
+```
+
+In any case, each workflow run will create a performance trace called `trace.txt`. You must collect these trace files into one location and aggregate them into a performance dataset:
 ```bash
 python bin/aggregate.py <trace-files>
 ```
@@ -60,4 +78,4 @@ Use the `predict.py` script to make predictions on new input data. Refer to the 
 
 ## Online Usage
 
-Tesseract is integrated into [Nextflow-API](https://github.com/SciDAS/nextflow-api), a workflow-as-a-service that allows you to run Nextflow pipelines through a browser interface atop any execution environment. Nextflow-API automatically collects execution traces, including any custom trace directives, and provides interfaces for visualizing performance data, training models, and downloading the raw data for custom analyses. Refer to the Nextflow-API repo for more information on these features.
+Tesseract is integrated into [Nextflow-API](https://github.com/SciDAS/nextflow-api), a workflow-as-a-service that allows you to run Nextflow pipelines through a browser interface atop any execution environment. Nextflow-API automatically collects execution traces, including any custom trace directives, and provides interfaces for visualizing performance data, training models, and downloading the raw data for manual analysis. Refer to the Nextflow-API repo for more information on these features.

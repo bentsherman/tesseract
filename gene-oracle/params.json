@@ -1,7 +1,7 @@
 {
-    "conditions_file": "tspg/data/conditions.txt",
-    "launch_dir": "tspg",
-    "pipeline_name": "ctargon/tspg",
+    "conditions_file": "gene-oracle/data/conditions.txt",
+    "launch_dir": "gene-oracle",
+    "pipeline_name": "systemsgenetics/gene-oracle",
     "pipeline_profiles": "pbs",
     "pipeline_output_dir": "output",
     "pipeline_trace_file": "output/reports/trace.txt",
