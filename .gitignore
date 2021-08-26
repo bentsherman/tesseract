@@ -3,6 +3,7 @@
 data
 input*
 output*
+results*
 
 *.pyc
 *.txt
