@@ -1,9 +1,19 @@
 {
-    "conditions_file": "kinc/data/conditions-chunk.txt",
-    "launch_dir": "kinc",
-    "pipeline_name": "systemsgenetics/kinc-nf",
-    "pipeline_profiles": "pbs,modules",
-    "pipeline_output_dir": "output",
-    "pipeline_trace_file": "output/reports/trace.txt",
-    "trials": 1
+    "pipeline_name": "kinc",
+
+    "run_conditions_file": "kinc/input/conditions-chunk.txt",
+    "run_pipeline": "systemsgenetics/kinc-nf",
+    "run_profiles": "pbs,modules",
+    "run_output_dir": "output",
+    "run_trace_file": "output/reports/trace.txt",
+    "run_trials": 1,
+
+    "train_merge_arg": "dataset kinc.import_emx.trace.txt",
+    "train_inputs": {
+        "import_emx":       ["n_rows", "n_cols"],
+        "similarity_chunk": ["n_rows", "n_cols", "hardware_type", "chunks"],
+        "similarity_merge": ["n_rows", "n_cols", "chunks", "abd_bytes"],
+        "threshold_rmt":    ["n_rows", "n_cols", "cmx_bytes"],
+        "extract":          ["n_rows", "n_cols", "ccm_bytes", "cmx_bytes"]
+    }
 }

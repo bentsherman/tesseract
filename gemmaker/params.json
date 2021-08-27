@@ -1,0 +1,20 @@
+{
+    "pipeline_name": "gemmaker",
+
+    "run_conditions_file": "gemmaker/input/conditions.txt",
+    "run_pipeline": "systemsgenetics/gemmaker",
+    "run_profiles": "singularity",
+    "run_output_dir": "results",
+    "run_trace_file": "results/pipeline_info/execution_trace.txt",
+    "run_trials": 1,
+
+    "train_merge_arg": null,
+    "train_inputs": {
+        "download_runs":  ["n_remote_run_ids", "n_spots"],
+        "fastq_dump":     ["sra_bytes"],
+        "fastq_merge":    ["fastq_lines"],
+        "fastqc_1":       ["fastq_lines"],
+        "kallisto":       ["fastq_lines", "index_bytes"],
+        "kallisto_tpm":   []
+    }
+}

@@ -11,6 +11,14 @@ import tensorflow as tf
 
 
 
+UNITS = {
+    'runtime_hr': 'hr',
+    'memory_GB': 'GB',
+    'disk_GB': 'GB'
+}
+
+
+
 class CategoryTreeRegressor(sklearn.base.BaseEstimator):
     '''
     Regression tree that trains a regressor for each value of
@@ -149,14 +157,14 @@ class KerasRegressorWithIntervals(KerasRegressor):
         # compute several predictions for each sample
         y_preds = np.array([super(KerasRegressorWithIntervals, self).predict(X) for _ in range(n_preds)])
 
-        # compute tau adjustment
-        tau_inv = self.inverse_tau(self.n_train_samples)
-
-        # compute point predictions and prediction intervals
+        # compute point predictions
         y_pred = np.mean(y_preds, axis=0)
-        y_std = np.std(y_preds, axis=0)
-        y_lower = y_pred - n_stds * (y_std + tau_inv)
-        y_upper = y_pred + n_stds * (y_std + tau_inv)
+
+        # compute prediction intervals
+        tau_inv = self.inverse_tau(self.n_train_samples)
+        y_std = np.std(y_preds, axis=0) + tau_inv
+        y_lower = y_pred - n_stds * y_std
+        y_upper = y_pred + n_stds * y_std
 
         return y_pred, y_lower, y_upper
 
@@ -178,11 +186,11 @@ class RandomForestRegressorWithIntervals(RandomForestRegressor):
         y_pred = super(RandomForestRegressorWithIntervals, self).predict(X)
 
         # compute variance estimate
-        V_IJ_U = forestci.random_forest_error(self, self.X_train, X)
+        y_var = forestci.random_forest_error(self, self.X_train, X)
 
         # compute prediction intervals
-        y_err = n_stds * np.sqrt(V_IJ_U)
-        y_lower = y_pred - y_err
-        y_upper = y_pred + y_err
+        y_std = np.sqrt(y_var)
+        y_lower = y_pred - n_stds * y_std
+        y_upper = y_pred + n_stds * y_std
 
         return y_pred, y_lower, y_upper

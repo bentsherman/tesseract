@@ -1,9 +1,18 @@
 {
-    "conditions_file": "tspg/data/conditions.txt",
-    "launch_dir": "tspg",
-    "pipeline_name": "ctargon/tspg",
-    "pipeline_profiles": "pbs",
-    "pipeline_output_dir": "output",
-    "pipeline_trace_file": "output/reports/trace.txt",
-    "trials": 1
+    "pipeline_name": "tspg",
+
+    "run_conditions_file": "tspg/data/conditions.txt",
+    "run_pipeline": "ctargon/tspg",
+    "run_profiles": "pbs",
+    "run_output_dir": "output",
+    "run_trace_file": "output/reports/trace.txt",
+    "run_trials": 1,
+
+    "train_merge_arg": null,
+    "train_inputs": {
+        "train_target": ["n_genes", "n_train_samples"],
+        "train_advgan": ["n_genes", "n_train_samples"],
+        "perturb":      ["n_genes", "n_train_samples", "n_perturb_samples"],
+        "visualize":    ["n_genes", "n_train_samples", "n_perturb_samples"]
+    }
 }

@@ -17,6 +17,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('trace_files', help='list of nextflow trace files', nargs='+')
     parser.add_argument('--output-dir', help='output directory', default='.')
+    parser.add_argument('--pipeline-name', help='name of pipeline', required=True)
     parser.add_argument('--fix-exit-na', help='impute missing exit codes', type=int)
     parser.add_argument('--fix-runtime-sleep', help='adjust runtime metrics to account for running sleep beforehand', type=int)
 
@@ -86,5 +87,5 @@ if __name__ == '__main__':
         df_process.sort_index(inplace=True)
 
         # save output trace dataframe
-        filename = '%s/trace.%s.txt' % (args.output_dir, process_name)
+        filename = '%s/%s.%s.trace.txt' % (args.output_dir, args.pipeline_name, process_name)
         df_process.to_csv(filename, sep='\t', index=False)

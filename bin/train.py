@@ -22,30 +22,14 @@ import utils
 
 
 
-def load_pipeline(trace_dir, merge_files=[]):
-    # get list of trace files
-    filenames = os.listdir(trace_dir)
-    process_names = [f.split('.')[1] for f in filenames if f.startswith('trace.') and f.endswith('.txt')]
+def load_dataset(trace_file):
+    # load trace file
+    df = pd.read_csv(trace_file, sep='\t')
 
-    # load trace files
-    dfs = {process_name: pd.read_csv('%s/trace.%s.txt' % (trace_dir, process_name), sep='\t') for process_name in process_names}
-
-    # load merge files
-    for key, columns, filename in merge_files:
-        for process_name in dfs:
-            if filename == 'trace.%s.txt' % (process_name):
-                continue
-
-            df = dfs[process_name]
-
-            if len(set(columns).intersection(set(df.columns))) > 0:
-                print('warning: merge columns already present, skipping merge')
-                continue
-
-            if key in df.columns:
-                df_merge = pd.read_csv(os.path.join(trace_dir, filename), sep='\t')
-                df_merge = df_merge[[key] + columns]
-                dfs[process_name] = df.merge(df_merge, on=key, how='left', copy=False)
+    # convert each resource metric to hr or GB
+    df['runtime_hr'] = df['realtime'] / 1000 / 3600
+    df['memory_GB'] = df['peak_rss'] / (1024 ** 3)
+    df['disk_GB'] = df['write_bytes'] / (1024 ** 3)
 
     # remove unused columns
     drop_columns = [
@@ -66,12 +50,16 @@ def load_pipeline(trace_dir, merge_files=[]):
         'start',
         'complete',
         'duration',
+        'realtime',
         'queue',
         '%cpu',
         '%mem',
         'rss',
         'vmem',
+        'peak_rss',
         'peak_vmem',
+        'read_bytes',
+        'write_bytes',
         'rchar',
         'wchar',
         'syscr',
@@ -82,18 +70,46 @@ def load_pipeline(trace_dir, merge_files=[]):
         'error_action'
     ]
 
-    for process_name, df in dfs.items():
-        df.drop(columns=drop_columns, inplace=True, errors='ignore')
+    df.drop(columns=drop_columns, inplace=True, errors='ignore')
 
-    # apply additional transformations
-    for process_name, df in dfs.items():
-        # compute normalized output features
-        df['runtime_hr'] = df['realtime'] / 1000 / 3600
-        df['memory_GB'] = df['peak_rss'] / (1024 ** 3)
-        df['disk_GB'] = df['write_bytes'] / (1024 ** 3)
+    # remove failed jobs
+    df = df[df['exit'] == 0]
 
-        # remove failed jobs
-        df = df[df['exit'] == 0]
+    return df
+
+
+
+def merge_dataset(df, key, merge_file):
+    if key in df.columns:
+        # load other dataset
+        df_merge = load_dataset(merge_file)
+
+        # get list of new columns in other dataset
+        columns = [c for c in df_merge.columns if c not in df.columns]
+        df_merge = df_merge[[key] + columns]
+
+        # merge other dataset
+        df = df.merge(df_merge, on=key, how='left', copy=False)
+
+    return df
+
+
+
+def load_datasets(pipeline_name, process_names, base_dir='.', merge_files=[]):
+    # load dataset for each process
+    dfs = {}
+
+    for process_name in process_names:
+        trace_file = '%s/%s.%s.trace.txt' % (base_dir, pipeline_name, process_name)
+        dfs[process_name] = load_dataset(trace_file)
+
+    # load merge files
+    for process_name in dfs:
+        df = dfs[process_name]
+
+        for key, merge_file in merge_files:
+            merge_file = os.path.join(base_dir, merge_file)
+            df = merge_dataset(df, key, merge_file)
 
         dfs[process_name] = df
 
@@ -111,29 +127,32 @@ def create_dataset(df, inputs, target=None):
     X = df[inputs]
     y = df[target].values if target != None else None
 
-    # one-hot encode categorical inputs
+    # one-hot encode categorical inputs, save categories
+    options = {column: None for column in inputs}
+
     for column in inputs:
         if is_categorical(X, column):
+            options[column] = X[column].unique().tolist()
             X = pd.get_dummies(X, columns=[column], drop_first=False)
 
     # save column order
     columns = list(X.columns)
 
-    return X.values, y, columns
+    return X.values, y, columns, options
 
 
 
-def create_dummy(strategy='mean'):
-    return sklearn.dummy.DummyRegressor(strategy=strategy)
+def create_dummy():
+    return sklearn.dummy.DummyRegressor(strategy='quantile', quantile=1.0)
 
 
 
-def create_gb(loss='lad'):
+def create_gb(loss='lad', intervals=False):
     return sklearn.ensemble.GradientBoostingRegressor(loss=loss, n_estimators=100)
 
 
 
-def create_lr():
+def create_lr(intervals=False):
     return sklearn.linear_model.LinearRegression()
 
 
@@ -348,34 +367,32 @@ def evaluate_cv(model, X, y, cv=5):
 if __name__ == '__main__':
     # parse command-line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('trace_file', help='annotated trace file')
-    parser.add_argument('--merge', help='join an additional dataframe to trace file', action='append', nargs=2, metavar=('key', 'mergefile'), default=[])
+    parser.add_argument('dataset', help='dataset file')
+    parser.add_argument('--base-dir', help='base directory for dataset files', default='.')
+    parser.add_argument('--merge', help='additional dataset to merge into training data', action='append', nargs=2, metavar=('key', 'mergefile'), default=[])
     parser.add_argument('--inputs', help='list of input features', nargs='+', required=True)
-    parser.add_argument('--output', help='target variable', required=True)
-    parser.add_argument('--scaler', help='preprocessing transform to apply to inputs', choices=['maxabs', 'minmax', 'standard'])
-    parser.add_argument('--model-type', help='which model to train', choices=['gb', 'mlp', 'rf'], required=True)
-    parser.add_argument('--model-name', help='name of trained model for output files')
+    parser.add_argument('--target', help='target variable', required=True)
+    parser.add_argument('--scaler', help='preprocessing transform to apply to inputs', choices=['maxabs', 'minmax', 'standard'], default='maxabs')
+    parser.add_argument('--model-type', help='which model to train', choices=['gb', 'lr', 'mlp', 'rf'], required=True)
+    parser.add_argument('--model-name', help='name of trained model for output files', required=True)
 
     args = parser.parse_args()
 
-    # load trace file
+    # load dataset
     print('loading data')
 
-    df = pd.read_csv(args.trace_file, sep='\t')
+    df = load_dataset(args.dataset)
 
     # load merge files and join with trace file
-    for key, filename in args.merge:
-        df_merge = pd.read_csv(filename, sep='\t')
-        df = df.merge(df_merge, on=key, how='left', copy=False)
+    for key, merge_file in args.merge:
+        merge_file = os.path.join(args.base_dir, merge_file)
+        df = merge_dataset(df, key, merge_file)
 
-    # select only tasks that completed successfully
-    df = df[df['exit'] == 0]
-
-    # extract input/output data from trace data
+    # extract inputs/target from dataset
     try:
-        X, y, columns = create_dataset(df, args.inputs, args.output)
+        X, y, columns, options = create_dataset(df, args.inputs, args.target)
     except KeyError:
-        print('error: one or more input/output variables are not in the dataset')
+        print('error: one or more input/target columns are not in the dataset')
         sys.exit(1)
 
     # print transformed input features
@@ -384,42 +401,54 @@ if __name__ == '__main__':
     # select scaler
     if args.scaler != None:
         scalers = {
-            'maxabs': sklearn.preprocessing.MaxAbsScaler,
-            'minmax': sklearn.preprocessing.MinMaxScaler,
+            'maxabs':   sklearn.preprocessing.MaxAbsScaler,
+            'minmax':   sklearn.preprocessing.MinMaxScaler,
             'standard': sklearn.preprocessing.StandardScaler
         }
         Scaler = scalers[args.scaler]
 
-    # select model type
-    if args.model_type == 'lr':
-        reg = create_lr()
+    # use dummy regressor if target data has low variance
+    if y.std() < 0.1:
+        model_type = 'dummy'
+    else:
+        model_type = args.model_type
 
-    elif args.model_type == 'gb':
+    # select model type
+    if model_type == 'dummy':
+        reg = create_dummy()
+
+    elif model_type == 'gb':
         reg = create_gb()
 
-    elif args.model_type == 'mlp':
+    elif model_type == 'lr':
+        reg = create_lr()
+
+    elif model_type == 'mlp':
         reg = create_mlp(X.shape[1])
 
-    elif args.model_type == 'rf':
+    elif model_type == 'rf':
         reg = create_rf()
 
-    # create pipeline
+    # create model pipeline
     model = create_pipeline(reg, scaler_fn=Scaler)
 
     # create model configuration
     config = {
-        'inputs': columns,
-        'model-type': args.model_type
+        'inputs': options,
+        'columns': columns,
+        'target': args.target,
+        'model_type': model_type
     }
 
     # train and evaluate model
     print('training model')
 
-    scores, y_pred = evaluate_cv(model, X, y)
+    scores, y_pred, _, _ = evaluate_cv(model, X, y)
 
     # print cross-validation results
-    print('MAE: %0.3f' % (scores['mae'].mean()))
-    print('MAPE: %0.3f %%' % (scores['mpe'].mean()))
+    print('mae: %0.3f %s' % (scores['mae'], utils.UNITS[args.target]))
+    print('mpe: %0.3f %%' % (scores['mpe']))
+    print('cov: %0.3f'    % (scores['cov']))
 
     # save trained model if specified
     if args.model_name != None:

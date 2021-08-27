@@ -19,7 +19,7 @@ Tesseract is a collection of Python scripts, so you will need a Python or Anacon
 
 ### Select an Application
 
-Tesseract can be applied to any application or Nextflow workflow. Individual applications can be easily wrapped into a Nextflow pipeline, refer to the HemeLB pipeline in this repository. Workflows based on a different workflow manager must be converted into a Nextflow pipeline, which should also not be difficult as Nextflow is highly generic and easy to use. Tesseract relies on Nextflow's trace feature, which automatically collects a performance trace of every process that is executed. Again, refer to the example pipelines in this repository. In particular, the `trace` section in any of the example config files shows how to enable this feature.
+Tesseract can be applied to any application or Nextflow workflow. Individual applications can be easily wrapped into a Nextflow pipeline; refer to the HemeLB pipeline in this repository. Workflows based on a different workflow manager must be converted into a Nextflow pipeline, which should also not be difficult as Nextflow is highly generic and easy to use. Tesseract relies on Nextflow's trace feature, which automatically collects a performance trace of every task that is executed. Again, refer to the HemeLB example in this repository.
 
 ### Define Input Features
 
@@ -34,7 +34,7 @@ echo "#TRACE hardware_type=${params.similarity_hardware_type}"
 echo "#TRACE chunks=${params.similarity_chunks}"
 ```
 
-In this example, `dataset`, `hardware_type`, and `chunks` are Nextflow variables supplied by input channels or as params. On the other hand, `emx_txt_file` is a tab-delimited text file, also supplied by an input channel, but the dimensions of this dataset must be computed by the script itself. All of these directives will be printed to the execution log. After the workflow completes, Tesseract will extract these input features from the execution log for each executed task.
+In this example, `dataset`, `hardware_type`, and `chunks` are defined directly from existing Nextflow variables. On the other hand, `n_rows` and `n_cols` are the dimensions of a text file which must be computed during task execution. All of these directives will be printed to the execution log. After the workflow completes, Tesseract will extract these input features from the execution log for each executed task.
 
 The variables in this example have been determined to be the most relevant input features for KINC. You will have to make a similar selection for each process in your pipeline. It is better to be inclusive rather than exclusive at this stage; you can include as many features as you want and you can always remove them from your dataset later, but to add a new feature after the fact you will have to redo all of your application runs.
 
@@ -42,22 +42,9 @@ Keep in mind that trace directives should be fast and easy to compute, otherwise
 
 ### Collect Performance Data
 
-Once you have an annotated Nextflow pipeline, you just need to run it many times to generate plenty of performance data. There are multiple ways to do this; you can do a parameter sweep like the examples in this repo, or you can simply use it in your normal work and allow the performance data to accumulate. Tesseract provides a Nextflow "meta-pipeline" to run a Nextflow pipeline several times in order to generate performance data quickly. For example, to generate performance data for the KINC pipeline:
+Once you have an annotated Nextflow pipeline, you just need to run it many times to generate plenty of performance data. There are multiple ways to do this; you can do a parameter sweep like the examples in this repo, or you can simply use it in your normal work and allow the performance data to accumulate. In any case, each workflow run will create a performance trace called `trace.txt`. You must collect these trace files into one location and aggregate them into a performance dataset:
 ```bash
-# provide input data for kinc
-mkdir kinc/input
-# ...
-
-# generate conditions file
-kinc/bin/make-conditions.sh
-
-# run meta-pipeline
-nextflow run main.nf -params-file kinc/params.json
-```
-
-In any case, each workflow run will create a performance trace called `trace.txt`. You must collect these trace files into one location and aggregate them into a performance dataset:
-```bash
-python bin/aggregate.py <trace-files>
+bin/aggregate.py <trace-files>
 ```
 
 This script will concatenate the trace files, obtain the input features for each individual run, and output a performance dataset for each process in your pipeline. These datasets can then be used for normal data science tasks such as visualization and training models.
@@ -68,13 +55,47 @@ _Note_: Tesseract parses the `#TRACE` directives from the execution logs, which 
 
 The `visualize.py` script provides a simple but powerful interface for creating many kinds of visualizations from a dataframe. You can visualize one or two variables, and you can disaggregate across up to three dimensions. The script supports both discrete and continuous variables, and it will by default select the most appropriate type of plot for the variables that you specify. Refer to the example pipelines for example uses of this script.
 
-### Train Prediction Models
+### Train Models
 
-Use the `train.py` script to train prediction models on your performance dataset. You can use any columns as inputs or outputs, you can specify transforms such as one-hot encoding and log2, and you can pick from a variety of machine learning models. The multi-layer perceptron (MLP) with default settings is a good start. This script will save your trained model to a file so that you can use it later for inference. Refer to the example pipelines to see how this script is used.
+Use `train.py` to train prediction models on your performance dataset. You can use any columns as inputs or outputs, categorical features are automatically one-hot encoded, and you can pick from a variety of machine learning models. The multi-layer perceptron (MLP) with default settings is a good start. This script will save your trained model to a file so that you can use it later for inference.
 
-### Deploy Prediction Models
+### Predict Resource Usage
 
-Use the `predict.py` script to make predictions on new input data. Refer to the example pipelines to see how this script is used.
+Use `predict.py` to predict resource usage for a particular workflow process.
+
+### Example
+
+Here is an end-to-end example usage of Tesseract to predict resource usage for the KINC pipeline.
+```bash
+# provide input data for kinc
+mkdir kinc/input
+# ...
+
+# generate conditions file
+kinc/bin/make-conditions.sh
+
+# perform several runs of kinc
+nextflow run main.nf \
+    -params-file kinc/params.json \
+    --run
+
+# aggregate trace files into datasets
+nextflow run main.nf \
+    -params-file kinc/params.json \
+    --aggregate
+
+# train models for each kinc process
+nextflow run main.nf \
+    -params-file kinc/params.json \
+    --train
+
+# predict resource usage of kinc/similarity_mpi
+nextflow run main.nf \
+    -params-file kinc/params.json \
+    --predict \
+    --predict_process similarity_mpi \
+    --predict_inputs 'np=1 n_rows=7050 n_cols=188 hardware_type=cpu'
+```
 
 ## Online Usage
 

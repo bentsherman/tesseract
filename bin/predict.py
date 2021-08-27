@@ -4,7 +4,6 @@ import argparse
 import json
 import numpy as np
 import pickle
-import sys
 
 import utils
 
@@ -28,12 +27,27 @@ if __name__ == '__main__':
 
     # parse inputs
     inputs = [kv.split('=') for kv in args.inputs]
-    inputs = {k: float(v) for k, v in inputs}
-    x_input = [inputs[column] for column in config['inputs']]
+    inputs = {k: v for k, v in inputs}
+
+    # convert inputs into an ordered vector
+    x_input = {}
+
+    for column, options in config['inputs'].items():
+        # one-hot encode categorical inputs
+        if options != None:
+            for v in options:
+                x_input['%s_%s' % (column, v)] = (inputs[column] == v)
+
+        # copy numerical inputs directly
+        else:
+            x_input[column] = inputs[column]
+
+    x_input = [float(x_input[c]) for c in config['columns']]
 
     # perform inference
     X = np.array([x_input])
     y = model.predict(X)
 
     # print results
-    print(y)
+    target = config['target']
+    print('%s = %0.3f %s' % (target, y, utils.UNITS[target]))

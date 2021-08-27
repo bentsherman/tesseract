@@ -1,9 +1,15 @@
 {
-    "conditions_file": "hemelb/data/conditions-small.txt",
-    "launch_dir": "hemelb",
-    "pipeline_name": "main.nf",
-    "pipeline_profiles": "pbs,modules",
-    "pipeline_output_dir": "output",
-    "pipeline_trace_file": "output/reports/trace.txt",
-    "trials": 1
+    "pipeline_name": "hemelb",
+
+    "run_conditions_file": "hemelb/input/conditions-small.txt",
+    "run_pipeline": "main.nf",
+    "run_profiles": "pbs,modules",
+    "run_output_dir": "output",
+    "run_trace_file": "output/reports/trace.txt",
+    "run_trials": 1,
+
+    "train_merge_arg": null,
+    "train_inputs": {
+        "hemelb": ["n_sites", "hardware_type", "np"]
+    }
 }
