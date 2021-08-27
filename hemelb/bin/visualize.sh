@@ -19,7 +19,6 @@ if [[ ${RUN_PRELIM} == "1" ]]; then
         ${OUTPUT_DIR}/hemelb-site-counts.txt \
         ${OUTPUT_DIR}/hemelb-site-counts.${FORMAT} \
         --plot-type bar \
-        --mapper-file files/visualize-mapper.txt \
         --mapper-term "n_sites=Number of Sites" \
         --xaxis geometry \
         --yaxis n_sites \
@@ -32,7 +31,6 @@ if [[ ${RUN_PRELIM} == "1" ]]; then
     python bin/visualize.py \
         ${OUTPUT_DIR}/hemelb-sparsity.txt \
         ${OUTPUT_DIR}/hemelb-sparsity.${FORMAT} \
-        --mapper-file files/visualize-mapper.txt \
         --mapper-term "fluid_fraction_percent=Fluid Fraction (%)" \
         --xaxis geometry \
         --yaxis fluid_fraction_percent \
@@ -46,7 +44,6 @@ if [[ ${RUN_PRELIM} == "1" ]]; then
         ${OUTPUT_DIR}/hemelb-cut-edges.txt \
         ${OUTPUT_DIR}/hemelb-cut-edges.${FORMAT} \
         --plot-type bar \
-        --mapper-file files/visualize-mapper.txt \
         --mapper-term "edges=Number of Cut Edges" \
         --xaxis np \
         --yaxis edges \
@@ -58,7 +55,6 @@ if [[ ${RUN_PRELIM} == "1" ]]; then
     python bin/visualize.py \
         ${OUTPUT_DIR}/hemelb-load-times.txt \
         ${OUTPUT_DIR}/hemelb-load-times.${FORMAT} \
-        --mapper-file files/visualize-mapper.txt \
         --xaxis np \
         --yaxis loadtime \
         --row geometry \
@@ -68,7 +64,6 @@ if [[ ${RUN_PRELIM} == "1" ]]; then
     python bin/visualize.py \
         ${OUTPUT_DIR}/hemelb-run-times.txt \
         ${OUTPUT_DIR}/hemelb-run-times.${FORMAT} \
-        --mapper-file files/visualize-mapper.txt \
         --xaxis np \
         --yaxis runtime \
         --row geometry \
@@ -83,7 +78,6 @@ if [[ ${RUN_SMALL} == "1" ]]; then
     python bin/visualize.py \
         ${OUTPUT_DIR}/trace.hemelb.txt \
         ${OUTPUT_DIR}/hemelb-blocksize.${FORMAT} \
-        --mapper-file files/visualize-mapper.txt \
         --mapper-term "blocksize=CUDA Block Size" \
         --mapper-term "throughput=Throughput (SUP/s)" \
         --xaxis blocksize \
@@ -101,7 +95,6 @@ if [[ ${RUN_SMALL} == "1" ]]; then
     python bin/visualize.py \
         ${OUTPUT_DIR}/trace.hemelb.txt \
         ${OUTPUT_DIR}/hemelb-latticetype.${FORMAT} \
-        --mapper-file files/visualize-mapper.txt \
         --mapper-term "latticetype=Lattice Type" \
         --mapper-term "throughput=Throughput (SUP/s)" \
         --xaxis latticetype \
@@ -120,7 +113,6 @@ if [[ ${RUN_SMALL} == "1" ]]; then
     python bin/visualize.py \
         ${OUTPUT_DIR}/trace.hemelb.txt \
         ${OUTPUT_DIR}/hemelb-oversubscribe.${FORMAT} \
-        --mapper-file files/visualize-mapper.txt \
         --mapper-term "throughput=Throughput (SUP/s)" \
         --xaxis np \
         --yaxis throughput \
@@ -142,7 +134,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
     python bin/visualize.py \
         ${OUTPUT_DIR}/trace.hemelb.txt \
         ${OUTPUT_DIR}/hemelb-exitcode.${FORMAT} \
-        --mapper-file files/visualize-mapper.txt \
         --xaxis np \
         --yaxis exit \
         --col hardware_type \
@@ -153,7 +144,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
         ${OUTPUT_DIR}/trace.hemelb.txt \
         ${OUTPUT_DIR}/hemelb-realtime.${FORMAT} \
         --plot-type point \
-        --mapper-file files/visualize-mapper.txt \
         --xaxis np \
         --yaxis realtime \
         --hue hardware_type \
@@ -170,7 +160,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
         ${OUTPUT_DIR}/trace.hemelb.txt \
         ${OUTPUT_DIR}/hemelb-throughput.${FORMAT} \
         --plot-type point \
-        --mapper-file files/visualize-mapper.txt \
         --mapper-term "throughput=Throughput (SUP/s)" \
         --xaxis np \
         --yaxis throughput \
@@ -188,7 +177,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
         ${OUTPUT_DIR}/trace.hemelb.txt \
         ${OUTPUT_DIR}/hemelb-throughput-aggregate.${FORMAT} \
         --plot-type point \
-        --mapper-file files/visualize-mapper.txt \
         --mapper-term "throughput=Throughput (SUP/s)" \
         --xaxis np \
         --yaxis throughput \
@@ -202,7 +190,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
         ${OUTPUT_DIR}/trace.hemelb.txt \
         ${OUTPUT_DIR}/hemelb-throughput-per-core.${FORMAT} \
         --plot-type point \
-        --mapper-file files/visualize-mapper.txt \
         --mapper-term "throughput_per_core=Per-core Throughput (SUP/s)" \
         --xaxis np \
         --yaxis throughput_per_core \
@@ -216,7 +203,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
         ${OUTPUT_DIR}/speedup.txt \
         ${OUTPUT_DIR}/hemelb-speedup-np.${FORMAT} \
         --plot-type point \
-        --mapper-file files/visualize-mapper.txt \
         --xaxis np \
         --yaxis speedup_np \
         --hue hardware_type \
@@ -232,7 +218,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
         ${OUTPUT_DIR}/speedup.txt \
         ${OUTPUT_DIR}/hemelb-efficiency.${FORMAT} \
         --plot-type point \
-        --mapper-file files/visualize-mapper.txt \
         --xaxis np \
         --yaxis efficiency \
         --hue hardware_type \
@@ -249,7 +234,6 @@ if [[ ${RUN_LARGE} == "1" ]]; then
         ${OUTPUT_DIR}/speedup.txt \
         ${OUTPUT_DIR}/hemelb-speedup-gpu.${FORMAT} \
         --plot-type point \
-        --mapper-file files/visualize-mapper.txt \
         --xaxis np \
         --yaxis speedup_gpu \
         --hue hardware_type \

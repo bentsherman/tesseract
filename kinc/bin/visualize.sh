@@ -14,7 +14,6 @@ echo "kinc-np-exit"
 python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-exit.${FORMAT} \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis exit \
     --col hardware_type \
@@ -25,7 +24,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-realtime.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis realtime \
     --hue hardware_type \
@@ -41,7 +39,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-peak_rss.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis peak_rss \
     --hue hardware_type \
@@ -56,7 +53,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-read_bytes.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis read_bytes \
     --hue hardware_type \
@@ -71,7 +67,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-write_bytes.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis write_bytes \
     --hue hardware_type \
@@ -88,7 +83,6 @@ echo "kinc-dataset-exit"
 python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-dataset-exit.${FORMAT} \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis exit \
     --col hardware_type \
@@ -99,7 +93,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-dataset-realtime.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis realtime \
     --hue hardware_type \
@@ -115,7 +108,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-dataset-peak_rss.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis peak_rss \
     --hue hardware_type \
@@ -130,7 +122,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-dataset-read_bytes.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis read_bytes \
     --hue hardware_type \
@@ -145,7 +136,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-dataset-write_bytes.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis dataset \
     --yaxis write_bytes \
     --hue hardware_type \
@@ -162,7 +152,6 @@ echo "kinc-np-exit"
 python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-exit.${FORMAT} \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis exit \
     --row dataset \
@@ -173,7 +162,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-realtime.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis realtime \
     --hue dataset \
@@ -189,7 +177,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-peak_rss.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis peak_rss \
     --hue dataset \
@@ -204,7 +191,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-read_bytes.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis read_bytes \
     --hue dataset \
@@ -219,7 +205,6 @@ python bin/visualize.py \
     ${OUTPUT_DIR}/trace.kinc.txt \
     ${OUTPUT_DIR}/kinc-np-write_bytes.${FORMAT} \
     --plot-type point \
-    --mapper-file files/visualize-mapper.txt \
     --xaxis np \
     --yaxis write_bytes \
     --hue dataset \
