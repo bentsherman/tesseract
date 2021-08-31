@@ -1,9 +1,10 @@
 .ipynb_checkpoints
 .nextflow*
-data
+data*
 input*
 output*
 results*
+trace*
 
 *.pyc
 *.txt
