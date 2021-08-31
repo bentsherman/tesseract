@@ -3,22 +3,23 @@
 
 
 /**
- * The minibench process runs minibench in a given compute environment.
+ * The minibench process runs the minibench benchmark for
+ * each node type in a compute environment.
  */
 process minibench {
-    publishDir "${params.output.dir}"
+    publishDir "${params.output_dir}"
 
     input:
-        each(c) from Channel.from( params.input.conditions )
-        each(trial) from Channel.from( 0 .. params.input.trials-1 )
+        each(c) from Channel.fromList( params.conditions )
+        each(trial) from Channel.fromList( 0 .. params.trials-1 )
 
     script:
         """
-        # specify input features
-        echo "#TRACE phase=${c.phase}"
-        echo "#TRACE hostname=`hostname`"
+        # specify node type
+        echo "#TRACE node_type=${c.node_type}"
 
-        # verify that beforeScript isn't included in nextflow trace
-        sleep 10
+        # build and run minibench
+        make -C ${workflow.launchDir}
+        ${workflow.launchDir}/minibench trace
         """
 }
