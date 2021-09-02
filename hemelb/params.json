@@ -3,7 +3,7 @@
 
     "run_conditions_file": "hemelb/input/conditions-small.txt",
     "run_pipeline": "main.nf",
-    "run_profiles": "pbs,modules",
+    "run_profiles": "palmetto,modules",
     "run_output_dir": "output",
     "run_trace_file": "output/reports/trace.txt",
     "run_trials": 1,

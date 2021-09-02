@@ -3,7 +3,7 @@
 
     "run_conditions_file": "gene-oracle/data/conditions.txt",
     "run_pipeline": "systemsgenetics/gene-oracle",
-    "run_profiles": "pbs",
+    "run_profiles": "palmetto",
     "run_output_dir": "output",
     "run_trace_file": "output/reports/trace.txt",
     "run_trials": 1,

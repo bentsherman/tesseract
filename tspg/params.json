@@ -3,7 +3,7 @@
 
     "run_conditions_file": "tspg/data/conditions.txt",
     "run_pipeline": "ctargon/tspg",
-    "run_profiles": "pbs",
+    "run_profiles": "palmetto",
     "run_output_dir": "output",
     "run_trace_file": "output/reports/trace.txt",
     "run_trials": 1,

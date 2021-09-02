@@ -3,7 +3,7 @@
 
     "run_conditions_file": "kinc/input/conditions-chunk.txt",
     "run_pipeline": "systemsgenetics/kinc-nf",
-    "run_profiles": "pbs,modules",
+    "run_profiles": "palmetto,modules",
     "run_output_dir": "output",
     "run_trace_file": "output/reports/trace.txt",
     "run_trials": 1,
@@ -13,6 +13,7 @@
         "import_emx":       ["n_rows", "n_cols"],
         "similarity_chunk": ["n_rows", "n_cols", "hardware_type", "chunks"],
         "similarity_merge": ["n_rows", "n_cols", "chunks", "abd_bytes"],
+        "similarity_mpi":   ["n_rows", "n_cols", "hardware_type", "np"],
         "threshold_rmt":    ["n_rows", "n_cols", "cmx_bytes"],
         "extract":          ["n_rows", "n_cols", "ccm_bytes", "cmx_bytes"]
     }
