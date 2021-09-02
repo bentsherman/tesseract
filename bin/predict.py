@@ -14,6 +14,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('model_name', help='name of trained model')
     parser.add_argument('inputs', help='key-value pairs of input values', nargs='+')
+    parser.add_argument('--n-stds', help='number of standard deviations for confidence interval', default=2.0)
 
     args = parser.parse_args()
 
@@ -46,8 +47,13 @@ if __name__ == '__main__':
 
     # perform inference
     X = np.array([x_input])
-    y = model.predict(X)
+    y_bar, y_std = utils.check_std(model.predict(X))
+    y_lower, y_upper = utils.predict_intervals(y_bar, y_std, n_stds=args.n_stds)
 
     # print results
     target = config['target']
-    print('%s = %0.3f %s' % (target, y, utils.UNITS[target]))
+
+    print('%12s : %8.3f - %8.3f - %8.3f %s' % (
+        target,
+        y_lower, y_bar, y_upper,
+        utils.UNITS[target]))

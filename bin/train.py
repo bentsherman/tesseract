@@ -147,12 +147,12 @@ def create_dummy():
 
 
 
-def create_gb(loss='lad', intervals=False):
+def create_gb(loss='lad'):
     return sklearn.ensemble.GradientBoostingRegressor(loss=loss, n_estimators=100)
 
 
 
-def create_lr(intervals=False):
+def create_lr():
     return sklearn.linear_model.LinearRegression()
 
 
@@ -267,8 +267,7 @@ def relative_absolute_error(y_true, y_pred):
 
 
 def hpc_cost(y_true, y_pred):
-    error = y_pred - y_true
-    return np.mean(np.where(error < 0, y_pred, error))
+    return np.mean(np.where(y_pred < y_true, y_pred + y_true, y_pred))
 
 
 
@@ -287,14 +286,11 @@ def evaluate_trials(model, X, y, train_sizes=[0.8], n_trials=5):
         model.fit(X_train, y_train)
 
         # get model predictions
-        y_pred = model.predict(X_test)
-
-        if isinstance(y_pred, tuple):
-            y_pred, _, _ = y_pred
+        y_bar, y_std = utils.check_std(model.predict(X_test))
 
         # evaluate model
-        mae = mean_absolute_error(y_test, y_pred)
-        mpe = mean_absolute_percentage_error(y_test, y_pred)
+        mae = mean_absolute_error(y_test, y_bar)
+        mpe = mean_absolute_percentage_error(y_test, y_bar)
 
         return train_size, mae, mpe
 
@@ -313,7 +309,7 @@ def evaluate_trials(model, X, y, train_sizes=[0.8], n_trials=5):
 
 
 
-def evaluate_cv(model, X, y, cv=5):
+def evaluate_cv(model, X, y, cv=5, n_stds=2.0):
     # perform k-fold cross validation
     kfold = sklearn.model_selection.KFold(n_splits=cv, shuffle=True)
 
@@ -327,40 +323,33 @@ def evaluate_cv(model, X, y, cv=5):
         model_.fit(X_train, y_train)
 
         # get model predictions
-        y_pred_i = model_.predict(X_test)
+        y_bar, y_std = utils.check_std(model_.predict(X_test))
 
-        return y_pred_i, test_index
+        return test_index, y_bar, y_std
 
     results = Parallel(n_jobs=-1)(delayed(evaluate)(*args) for args in kfold.split(X))
 
     # collect results
-    y_pred = np.empty_like(y)
-    y_lower = np.empty_like(y)
-    y_upper = np.empty_like(y)
+    y_bar = np.empty_like(y)
+    y_std = np.empty_like(y)
 
-    for y_pred_i, test_index in results:
-        # save prediction intervals
-        if isinstance(y_pred_i, tuple):
-            y_pred_i, y_lower_i, y_upper_i = y_pred_i
-            y_lower[test_index] = y_lower_i
-            y_upper[test_index] = y_upper_i
-        else:
-            y_lower[test_index] = y_pred_i
-            y_upper[test_index] = y_pred_i
+    for test_index, y_bar_i, y_std_i in results:
+        y_bar[test_index] = y_bar_i
+        y_std[test_index] = y_std_i
 
-        # save point predictions
-        y_pred[test_index] = y_pred_i
+    # compute prediction intervals
+    y_lower, y_upper = utils.predict_intervals(y_bar, y_std, n_stds=n_stds)
 
     # evaluate predictions
     scores = {
-        'mae': mean_absolute_error(y, y_pred),
-        'mpe': mean_absolute_percentage_error(y, y_pred),
-        'rae': relative_absolute_error(y, y_pred),
-        'hpc': hpc_cost(y, y_pred),
+        'mae': mean_absolute_error(y, y_bar),
+        'mpe': mean_absolute_percentage_error(y, y_bar),
+        'rae': relative_absolute_error(y, y_bar),
+        'hpc': hpc_cost(y, y_bar),
         'cov': prediction_interval_coverage(y, y_lower, y_upper)
     }
 
-    return scores, y_pred, y_lower, y_upper
+    return scores, y_bar, y_std
 
 
 
@@ -372,9 +361,11 @@ if __name__ == '__main__':
     parser.add_argument('--merge', help='additional dataset to merge into training data', action='append', nargs=2, metavar=('key', 'mergefile'), default=[])
     parser.add_argument('--inputs', help='list of input features', nargs='+', required=True)
     parser.add_argument('--target', help='target variable', required=True)
+    parser.add_argument('--min-std', help='minimum std dev required to train model', type=float, default=0.1)
     parser.add_argument('--scaler', help='preprocessing transform to apply to inputs', choices=['maxabs', 'minmax', 'standard'], default='maxabs')
     parser.add_argument('--model-type', help='which model to train', choices=['gb', 'lr', 'mlp', 'rf'], required=True)
     parser.add_argument('--model-name', help='name of trained model for output files', required=True)
+    parser.add_argument('--intervals', help='enable confidence intervals', action='store_true')
 
     args = parser.parse_args()
 
@@ -408,7 +399,8 @@ if __name__ == '__main__':
         Scaler = scalers[args.scaler]
 
     # use dummy regressor if target data has low variance
-    if y.std() < 0.1:
+    if y.std() < args.min_std:
+        print('target value has low variance, using max value rounded up')
         model_type = 'dummy'
     else:
         model_type = args.model_type
@@ -424,10 +416,10 @@ if __name__ == '__main__':
         reg = create_lr()
 
     elif model_type == 'mlp':
-        reg = create_mlp(X.shape[1])
+        reg = create_mlp(X.shape[1], intervals=args.intervals)
 
     elif model_type == 'rf':
-        reg = create_rf()
+        reg = create_rf(intervals=args.intervals)
 
     # create model pipeline
     model = create_pipeline(reg, scaler_fn=Scaler)
@@ -443,7 +435,7 @@ if __name__ == '__main__':
     # train and evaluate model
     print('training model')
 
-    scores, y_pred, _, _ = evaluate_cv(model, X, y)
+    scores, _, _ = evaluate_cv(model, X, y)
 
     # print cross-validation results
     print('mae: %0.3f %s' % (scores['mae'], utils.UNITS[args.target]))

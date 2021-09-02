@@ -19,6 +19,22 @@ UNITS = {
 
 
 
+def check_std(y_pred):
+    if isinstance(y_pred, tuple):
+        return y_pred
+    else:
+        return y_pred, np.zeros_like(y_pred)
+
+
+
+def predict_intervals(y_bar, y_std, n_stds=2.0):
+    y_lower = y_bar - n_stds * y_std
+    y_upper = y_bar + n_stds * y_std
+
+    return y_lower, y_upper
+
+
+
 class CategoryTreeRegressor(sklearn.base.BaseEstimator):
     '''
     Regression tree that trains a regressor for each value of
@@ -153,20 +169,18 @@ class KerasRegressorWithIntervals(KerasRegressor):
 
         return history
 
-    def predict(self, X, n_preds=10, n_stds=2.0):
+    def predict(self, X, n_preds=10):
         # compute several predictions for each sample
         y_preds = np.array([super(KerasRegressorWithIntervals, self).predict(X) for _ in range(n_preds)])
 
-        # compute point predictions
-        y_pred = np.mean(y_preds, axis=0)
-
-        # compute prediction intervals
+        # compute tau adjustment
         tau_inv = self.inverse_tau(self.n_train_samples)
-        y_std = np.std(y_preds, axis=0) + tau_inv
-        y_lower = y_pred - n_stds * y_std
-        y_upper = y_pred + n_stds * y_std
 
-        return y_pred, y_lower, y_upper
+        # compute mean and variance
+        y_bar = np.mean(y_preds, axis=0)
+        y_std = np.std(y_preds, axis=0) + tau_inv
+
+        return y_bar, y_std
 
 
 
@@ -181,16 +195,12 @@ class RandomForestRegressorWithIntervals(RandomForestRegressor):
 
         return self
 
-    def predict(self, X, n_stds=2.0):
+    def predict(self, X):
         # compute predictions
-        y_pred = super(RandomForestRegressorWithIntervals, self).predict(X)
+        y_bar = super(RandomForestRegressorWithIntervals, self).predict(X)
 
         # compute variance estimate
         y_var = forestci.random_forest_error(self, self.X_train, X)
-
-        # compute prediction intervals
         y_std = np.sqrt(y_var)
-        y_lower = y_pred - n_stds * y_std
-        y_upper = y_pred + n_stds * y_std
 
-        return y_pred, y_lower, y_upper
+        return y_bar, y_std

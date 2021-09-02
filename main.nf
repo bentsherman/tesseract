@@ -149,6 +149,7 @@ process train {
 
     input:
         set val(pipeline_name), val(process_name), file(dataset) from DATASETS
+        each(target) from Channel.fromList( params.train_targets )
 
     output:
         set val(pipeline_name), file("*.json"), file("*.pkl") into MODELS_FROM_TRAIN
@@ -164,24 +165,23 @@ process train {
 
         source activate ${params.conda_env}
 
-        # train model for each resource metric
+        # train model
         export TF_CPP_MIN_LOG_LEVEL="3"
 
-        for TARGET in ${params.train_targets.join(' ')}; do
-            echo
-            echo ${pipeline_name} ${process_name} \${TARGET}
-            echo
+        echo
+        echo ${pipeline_name} ${process_name} ${target}
+        echo
 
-            train.py \
-                ${dataset} \
-                --base-dir ${workflow.launchDir}/_datasets \
-                ${params.train_merge_arg != null ? "--merge ${params.train_merge_arg}" : ""} \
-                --inputs ${params.train_inputs[process_name].join(' ')} \
-                --target \${TARGET} \
-                --scaler ${params.train_scaler} \
-                --model-type ${params.train_model_type} \
-                --model-name ${pipeline_name}.${process_name}.\${TARGET}
-        done
+        train.py \
+            ${dataset} \
+            --base-dir ${workflow.launchDir}/_datasets \
+            ${params.train_merge_arg != null ? "--merge ${params.train_merge_arg}" : ""} \
+            --inputs ${params.train_inputs[process_name].join(' ')} \
+            --target ${target} \
+            --scaler ${params.train_scaler} \
+            --model-type ${params.train_model_type} \
+            --model-name ${pipeline_name}.${process_name}.${target} \
+            ${params.train_intervals == true ? "--intervals" : ""}
         """
 }
 

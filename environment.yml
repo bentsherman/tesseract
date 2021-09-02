@@ -5,6 +5,7 @@ channels:
   - defaults
 dependencies:
   - dill
+  - h5py=2.10.0
   - matplotlib
   - numpy
   - pandas
@@ -13,4 +14,4 @@ dependencies:
   - python=3.7
   - scikit-learn
   - seaborn
-  - tensorflow=1.15.0
+  - tensorflow
