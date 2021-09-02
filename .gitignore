@@ -6,5 +6,7 @@ output*
 results*
 trace*
 
+*.json
+*.pkl
 *.pyc
 *.txt

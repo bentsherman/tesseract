@@ -10,8 +10,6 @@ NORMALIZE_PY="${HOME}/workspace/gemprep/bin/normalize.py"
 module purge
 module load anaconda3/5.1.0-gcc/8.3.1
 
-source activate mlbd
-
 # prepare merged GEM for each tissue type
 ${MERGE_PY} \
     ${INPUT_DIR}/bladder-rsem-fpkm-gtex.txt \

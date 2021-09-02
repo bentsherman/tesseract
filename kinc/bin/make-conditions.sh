@@ -11,9 +11,9 @@ bin/make-conditions.py \
 	--default similarity_chunks=1 \
 	--default similarity_hardware_type=p100 \
 	--default similarity_threads=2 \
-	--default corrpower_enabled=true \
-	--default condtest_enabled=true \
-	--default extract_enabled=true \
+	--default corrpower=true \
+	--default condtest=true \
+	--default extract=true \
 	--experiment-outer similarity_hardware_type=cpu,p100,v100 similarity_chunks=1,2,4,8,16 \
 	--remove-duplicates \
 	--output-file "${OUTPUT_DIR}/conditions-chunk.txt"
@@ -23,9 +23,9 @@ bin/make-conditions.py \
 	--default similarity_chunks=1 \
 	--default similarity_hardware_type=p100 \
 	--default similarity_threads=2 \
-	--default corrpower_enabled=false \
-	--default condtest_enabled=false \
-	--default extract_enabled=false \
+	--default corrpower=false \
+	--default condtest=false \
+	--default extract=false \
 	--experiment-outer similarity_hardware_type=cpu,p100,v100 similarity_chunks=1,2,4,8,16 \
 	--remove-duplicates \
 	--output-file "${OUTPUT_DIR}/conditions-mpi.txt"

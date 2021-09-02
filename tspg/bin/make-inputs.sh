@@ -17,8 +17,6 @@ N_SETS=100
 module purge
 module load anaconda3/5.1.0-gcc/8.3.1
 
-source activate mlbd
-
 # generate partial datsets
 python tspg/bin/make-inputs.py \
     --dataset ${EMX_FILE} \

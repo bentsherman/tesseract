@@ -13,7 +13,12 @@ _Note: Not to be confused with the [Tesseract OCR Engine](https://github.com/tes
 
 ## Installation
 
-Tesseract is a collection of Python scripts, so you will need a Python or Anaconda environment that provides the packages listed in `requirements.txt`. Additionally, Tesseract is intended to work with [Nextflow](https://www.nextflow.io/) pipelines, so you will need to install Nextflow as well.
+To use Tesseract, you will need to create an Anaconda environment to provide the necessary Python dependencies:
+```bash
+conda env create -f environment.yml
+```
+
+Tesseract is intended to work with [Nextflow](https://www.nextflow.io/) pipelines. Additionally, Tesseract is itself a Nextflow "meta-pipeline" which provides a more user-friendly way to use the various Python scripts, so Nextflow is required to run your own Nextflow pipelines as well as the meta-pipeline.
 
 ## Offline Usage
 

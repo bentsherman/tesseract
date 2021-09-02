@@ -16,8 +16,6 @@ module purge
 module load anaconda3/5.1.0-gcc/8.3.1
 module load kinc/v3.4.2
 
-source activate mlbd
-
 # generate partial datsets
 echo 'generating datasets...'
 

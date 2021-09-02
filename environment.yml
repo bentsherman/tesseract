@@ -1,0 +1,16 @@
+# You can use this file to create a conda environment for this pipeline:
+#   conda env create -f environment.yml
+name: tesseract
+channels:
+  - defaults
+dependencies:
+  - dill
+  - matplotlib
+  - numpy
+  - pandas
+  - pip:
+    - forestci
+  - python=3.7
+  - scikit-learn
+  - seaborn
+  - tensorflow=1.15.0

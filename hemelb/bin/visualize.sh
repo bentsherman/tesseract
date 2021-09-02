@@ -8,8 +8,6 @@ RUN_LARGE="1"
 module purge
 module load anaconda3/5.1.0-gcc/8.3.1
 
-source activate mlbd
-
 # PART 1: INPUT DATA, PRELIMINARY EXPERIMENTS
 if [[ ${RUN_PRELIM} == "1" ]]; then
     OUTPUT_DIR="hemelb/output-prelim"
