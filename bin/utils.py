@@ -4,6 +4,7 @@ import forestci
 import h5py
 import io
 import numpy as np
+import scipy.stats
 import sklearn.base
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import FunctionTransformer
@@ -16,6 +17,14 @@ UNITS = {
     'memory_GB': 'GB',
     'disk_GB': 'GB'
 }
+
+
+
+def anomaly_score(y, y_loc, y_scale):
+    y_anomaly = scipy.stats.norm.cdf(y, loc=y_loc, scale=y_scale)
+    y_anomaly = 2 * (y_anomaly - 0.50)
+
+    return y_anomaly
 
 
 
