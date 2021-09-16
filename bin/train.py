@@ -18,6 +18,7 @@ import sys
 import tensorflow as tf
 from tensorflow import keras
 
+import models
 import utils
 
 
@@ -220,9 +221,9 @@ def create_mlp(
         return mlp
 
     if intervals:
-        KerasRegressor = utils.KerasRegressorWithIntervals
+        KerasRegressor = models.KerasRegressorWithIntervals
     else:
-        KerasRegressor = utils.KerasRegressor
+        KerasRegressor = models.KerasRegressor
 
     return KerasRegressor(
         build_fn=build_fn,
@@ -236,7 +237,7 @@ def create_mlp(
 
 def create_rf(criterion='mae', intervals=False):
     if intervals:
-        RandomForestRegressor = utils.RandomForestRegressorWithIntervals
+        RandomForestRegressor = models.RandomForestRegressorWithIntervals
     else:
         RandomForestRegressor = sklearn.ensemble.RandomForestRegressor
 
