@@ -310,7 +310,7 @@ def evaluate_trials(model, X, y, train_sizes=[0.8], n_trials=5):
 
 
 
-def evaluate_cv(model, X, y, cv=5, n_stds=2.0):
+def evaluate_cv(model, X, y, cv=5, ci=0.95):
     # perform k-fold cross validation
     kfold = sklearn.model_selection.KFold(n_splits=cv, shuffle=True)
 
@@ -339,7 +339,7 @@ def evaluate_cv(model, X, y, cv=5, n_stds=2.0):
         y_std[test_index] = y_std_i
 
     # compute prediction intervals
-    y_lower, y_upper = utils.predict_intervals(y_bar, y_std, n_stds=n_stds)
+    y_lower, y_upper = utils.predict_intervals(y_bar, y_std, ci=ci)
 
     # evaluate predictions
     scores = {

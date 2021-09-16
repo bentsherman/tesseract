@@ -4,6 +4,7 @@ import argparse
 import json
 import numpy as np
 import pickle
+import sys
 
 import utils
 
@@ -14,9 +15,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('model_name', help='name of trained model')
     parser.add_argument('inputs', help='key-value pairs of input values', nargs='+')
-    parser.add_argument('--n-stds', help='number of standard deviations for confidence interval', default=2.0)
+    parser.add_argument('--ci', help='proportion of confidence interval', default=0.95)
 
     args = parser.parse_args()
+
+    # validate confidence interval
+    if args.ci < 0 or 1 < args.ci:
+        print('error: --ci must be between 0 and 1')
+        sys.exit(1)
 
     # load model
     f = open('%s.pkl' % (args.model_name), 'rb')
@@ -48,7 +54,7 @@ if __name__ == '__main__':
     # perform inference
     X = np.array([x_input])
     y_bar, y_std = utils.check_std(model.predict(X))
-    y_lower, y_upper = utils.predict_intervals(y_bar, y_std, n_stds=args.n_stds)
+    y_lower, y_upper = utils.predict_intervals(y_bar, y_std, ci=args.ci)
 
     # print results
     target = config['target']

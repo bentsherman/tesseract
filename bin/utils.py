@@ -11,8 +11,8 @@ UNITS = {
 
 
 
-def anomaly_score(y, y_loc, y_scale):
-    y_anomaly = scipy.stats.norm.cdf(y, loc=y_loc, scale=y_scale)
+def anomaly_score(y, y_bar, y_std):
+    y_anomaly = scipy.stats.norm.cdf(y, loc=y_bar, scale=y_std)
     y_anomaly = 2 * (y_anomaly - 0.50)
 
     return y_anomaly
@@ -27,7 +27,11 @@ def check_std(y_pred):
 
 
 
-def predict_intervals(y_bar, y_std, n_stds=2.0):
+def predict_intervals(y_bar, y_std, ci=0.95):
+    # compute z score
+    _, n_stds = scipy.stats.norm.interval(ci)
+
+    # compute intervals
     y_lower = y_bar - n_stds * y_std
     y_upper = y_bar + n_stds * y_std
 
