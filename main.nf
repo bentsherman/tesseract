@@ -38,19 +38,20 @@ process run_pipeline {
         module load anaconda3/5.1.0-gcc/8.3.1
         module load nextflow/21.04.1
 
-        # change to launch directory
-        cd ${workflow.launchDir}/${params.pipeline_name}
-
         # create params file from conditions
         echo "${c.toString().replace('[': '', ']': '', ', ': '\n', ':': ': ')}" > params.yaml
 
         make-params.py params.yaml
 
+        # change to launch directory
+        cd ${workflow.launchDir}/${params.pipeline_name}
+
         # run nextflow pipeline
         nextflow run \
             ${params.run_pipeline} \
             -ansi-log false \
-            -params-file params.yaml \
+            -latest \
+            -params-file \${OLDPWD}/params.yaml \
             -profile ${params.run_profiles} \
             -resume
 
@@ -60,7 +61,7 @@ process run_pipeline {
         cp ${params.run_trace_file} \${OLDPWD}/${params.pipeline_name}.trace.\${HASH}.txt
 
         # cleanup
-        rm -rf params.yaml ${params.run_output_dir}
+        rm -rf ${params.run_output_dir}
         """
 }
 
