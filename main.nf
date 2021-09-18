@@ -1,14 +1,79 @@
 #!/usr/bin/env nextflow
 
+nextflow.enable.dsl=2
 
 
-/**
- * Load conditions file and split each line into
- * a set of input conditions.
- */
-Channel.fromPath("${params.run_conditions_file}")
-    .splitCsv(sep: "\t", header: true)
-    .set { CONDITIONS }
+
+workflow {
+    // load conditions file and split each line into
+    // a set of input conditions
+    conditions = Channel.fromPath("${params.run_conditions_file}")
+        .splitCsv(sep: "\t", header: true)
+
+    // run pipeline if specified
+    trials = Channel.fromList( 0 .. params.run_trials-1 )
+
+    if ( params.run == true ) {
+        run_pipeline(conditions, trials)
+        trace_files = run_pipeline.out.trace_files.flatMap()
+    }
+    else {
+        trace_files = Channel.empty()
+    }
+
+    // Load trace files for the current pipeline from the
+    // '_trace' directory and merge with trace files from
+    // the run process.
+    //
+    // Remove duplicate files as trace files from run are
+    // saved to the '_trace' directory.
+    //
+    // Group trace files into a list.
+    trace_files = Channel.fromPath("_trace/${params.pipeline_name}.*.txt")
+        .mix ( trace_files )
+        .unique { it -> it.name }
+        .map { it -> [it.name.split(/\./)[0], it] }
+        .groupTuple ()
+
+    // run aggregate if specified
+    if ( params.aggregate == true ) {
+        aggregate(trace_files)
+        datasets = aggregate.out.datasets.flatMap()
+    }
+    else {
+        datasets = Channel.empty()
+    }
+
+    // Load dataset files for the current pipeline from the
+    // '_datasets' directory and merge with dataset files from
+    // the aggregate process.
+    //
+    // Remove duplicate files as dataset files from aggregate
+    // are saved to the '_datasets' directory.
+    datasets = Channel.fromPath("_datasets/${params.pipeline_name}.*.txt")
+        .mix ( datasets )
+        .unique { it -> it.name }
+        .map { it -> [it.name.split(/\./), it] }
+        .map { it -> [it[0][0], it[0][1], it[1]] }
+
+    // run train if specified
+    train_targets = Channel.fromList( params.train_targets )
+
+    if ( params.train == true ) {
+        train(datasets, train_targets)
+    }
+
+    // create a single resource prediction query from the params
+    predict_queries = Channel.value([
+        params.pipeline_name,
+        params.predict_process,
+        params.predict_inputs
+    ])
+
+    if ( params.predict == true ) {
+        predict(predict_queries)
+    }
+}
 
 
 
@@ -22,14 +87,11 @@ process run_pipeline {
     echo true
 
     input:
-        each(c) from CONDITIONS
-        each(trial) from Channel.fromList( 0 .. params.run_trials-1 )
+        each c
+        each trial
 
     output:
-        file("${params.pipeline_name}.*.txt") into TRACE_FILES_FROM_RUN
-
-    when:
-        params.run == true
+        path("${params.pipeline_name}.*.txt"), emit: trace_files
 
     script:
         """
@@ -68,25 +130,6 @@ process run_pipeline {
 
 
 /**
- * Load trace files for the current pipeline from the
- * '_trace' directory and merge with trace files from
- * the run process.
- *
- * Remove duplicate files as trace files from run are
- * saved to the '_trace' directory.
- *
- * Group trace files into a list.
- */
-Channel.fromPath("_trace/${params.pipeline_name}.*.txt")
-    .mix ( TRACE_FILES_FROM_RUN.flatMap() )
-    .unique { it -> it.name }
-    .map { it -> [it.name.split(/\./)[0], it] }
-    .groupTuple ()
-    .set { TRACE_FILES }
-
-
-
-/**
  * The aggregate process combines the input features from
  * execution logs with resource metrics from trace files to
  * produce a performance dataset for each process in the
@@ -98,13 +141,10 @@ process aggregate {
     echo true
 
     input:
-        set val(pipeline_name), file(trace_files) from TRACE_FILES
+        tuple val(pipeline_name), path(trace_files)
 
     output:
-        file("${params.pipeline_name}.*.trace.txt") into DATASETS_FROM_AGGREGATE
-
-    when:
-        params.aggregate == true
+        path("${params.pipeline_name}.*.trace.txt"), emit: datasets
 
     script:
         """
@@ -123,23 +163,6 @@ process aggregate {
 
 
 /**
- * Load dataset files for the current pipeline from the
- * '_datasets' directory and merge with dataset files from
- * the aggregate process.
- *
- * Remove duplicate files as dataset files from aggregate
- * are saved to the '_datasets' directory.
- */
-Channel.fromPath("_datasets/${params.pipeline_name}.*.txt")
-    .mix ( DATASETS_FROM_AGGREGATE.flatMap() )
-    .unique { it -> it.name }
-    .map { it -> [it.name.split(/\./), it] }
-    .map { it -> [it[0][0], it[0][1], it[1]] }
-    .set { DATASETS }
-
-
-
-/**
  * The train process creates a prediction model for each
  * resource metric for each performance dataset. All models
  * are saved to the '_models' directory.
@@ -149,14 +172,14 @@ process train {
     echo true
 
     input:
-        set val(pipeline_name), val(process_name), file(dataset) from DATASETS
-        each(target) from Channel.fromList( params.train_targets )
+        tuple val(pipeline_name), val(process_name), path(dataset)
+        each target
 
     output:
-        set val(pipeline_name), file("*.json"), file("*.pkl") into MODELS_FROM_TRAIN
+        tuple val(pipeline_name), path("*.json"), path("*.pkl"), emit: models
 
     when:
-        params.train == true && params.train_inputs.containsKey(process_name)
+        params.train_inputs.containsKey(process_name)
 
     script:
         """
@@ -189,17 +212,6 @@ process train {
 
 
 /**
- * Create a single resource prediction query from the params.
- */
-PREDICT_QUERIES = Channel.value([
-    params.pipeline_name,
-    params.predict_process,
-    params.predict_inputs
-])
-
-
-
-/**
  * The predict process queries the predicted resource usage
  * of a process from a trained model, if one is available in
  * the '_models' directory.
@@ -208,10 +220,7 @@ process predict {
     echo true
 
     input:
-        set val(pipeline_name), val(process_name), val(inputs) from PREDICT_QUERIES
-
-    when:
-        params.predict == true
+        tuple val(pipeline_name), val(process_name), val(inputs)
 
     script:
         """
