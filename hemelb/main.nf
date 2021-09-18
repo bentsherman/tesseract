@@ -1,14 +1,19 @@
 #!/usr/bin/env nextflow
 
+nextflow.enable.dsl=2
 
 
-/**
- * Load gmy and xml file for each input dataset.
- */
-GMY_FILES = Channel.fromFilePairs("${params.input_dir}/${params.gmy_files}", size: 1, flat: true)
-XML_FILES = Channel.fromFilePairs("${params.input_dir}/${params.xml_files}", size: 1, flat: true)
 
-INPUTS = GMY_FILES.join(XML_FILES)
+workflow {
+    // load gmy and xml file for each input dataset
+    gmy_files = Channel.fromFilePairs("${params.input_dir}/${params.gmy_files}", size: 1, flat: true)
+    xml_files = Channel.fromFilePairs("${params.input_dir}/${params.xml_files}", size: 1, flat: true)
+
+    datasets = gmy_files.join(xml_files)
+
+    // run hemelb for each dataset
+    hemelb(datasets)
+}
 
 
 
@@ -17,7 +22,7 @@ INPUTS = GMY_FILES.join(XML_FILES)
  */
 process hemelb {
     input:
-        set val(geometry), file(gmy_file), file(xml_file) from INPUTS
+        tuple val(geometry), path(gmy_file), path(xml_file)
 
     script:
         """
