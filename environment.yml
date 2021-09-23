@@ -6,10 +6,12 @@ channels:
 dependencies:
   - dill
   - h5py=2.10.0
+  - ipykernel
   - matplotlib
   - numpy
   - pandas
   - pip:
+    - duecredit
     - forestci
   - python=3.7
   - scikit-learn
