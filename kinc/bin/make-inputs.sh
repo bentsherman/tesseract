@@ -14,7 +14,6 @@ N_COL_ITERS="$3"
 # initialize environment
 module purge
 module load anaconda3/5.1.0-gcc/8.3.1
-module load kinc/v3.4.2
 
 # generate partial datsets
 echo 'generating datasets...'
@@ -36,6 +35,10 @@ for EMX_TXT_FILE in ${DIRNAME}/${BASENAME}.*.emx.txt; do
 
     echo ${EMX_FILE}
 
+    singularity exec \
+        --bind ${TMPDIR} \
+        --bind ${PWD} \
+        "${NXF_SINGULARITY_CACHEDIR}/systemsgenetics-kinc-3.4.2-cpu.img" \
     kinc run import-emx \
         --input ${EMX_TXT_FILE} \
         --output ${EMX_FILE} \

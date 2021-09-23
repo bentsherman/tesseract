@@ -3,7 +3,7 @@
 
     "run_conditions_file": "kinc/input/conditions-chunk.txt",
     "run_pipeline": "systemsgenetics/kinc-nf",
-    "run_profiles": "palmetto,modules",
+    "run_profiles": "palmetto,singularity",
     "run_output_dir": "output",
     "run_trace_file": "output/reports/trace.txt",
     "run_trials": 1,

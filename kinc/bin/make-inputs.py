@@ -12,14 +12,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a range of datasets drawn from an input dataset')
     parser.add_argument('--dataset', help='input dataset (genes x samples)', required=True)
     parser.add_argument('--labels', help='input labels file', required=True)
-    parser.add_argument('--n-row-iters', help='number of row iterations', type=int, default=8)
+    parser.add_argument('--n-row-iters', help='number of row iterations', type=int, default=4)
     parser.add_argument('--n-col-iters', help='number of column iterations', type=int, default=4)
 
     args = parser.parse_args()
 
-    # load input dataset
+    # load dataset and labels
     X = pd.read_csv(args.dataset, index_col=0, sep='\t')
     y = pd.read_csv(args.labels, index_col=0, sep='\t')
+
+    # remove index name from dataset
+    X.index.rename('', inplace=True)
 
     # compute output filename prefix
     prefix = args.dataset.split('.')[0]
