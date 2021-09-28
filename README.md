@@ -104,4 +104,10 @@ nextflow run main.nf \
 
 ## Online Usage
 
-Tesseract is integrated into [Nextflow-API](https://github.com/SciDAS/nextflow-api), a workflow-as-a-service that allows you to run Nextflow pipelines through a browser interface atop any execution environment. Nextflow-API automatically collects execution traces, including any custom trace directives, and provides interfaces for visualizing performance data, training models, and downloading the raw data for manual analysis. Refer to the Nextflow-API repo for more information on these features.
+Tesseract is integrated into [Nextflow-API](https://github.com/SciDAS/nextflow-api), a workflow-as-a-service that allows you to run Nextflow pipelines through a browser interface atop any execution environment. Nextflow-API automatically collects execution traces, including any custom trace directives, and provides interfaces for visualizing performance data, training models, and downloading the raw data for manual analysis. Refer to the Nextflow-API repo for more information.
+
+## Collecting System Metrics
+
+Trace directives allow you to collect features such as input parameters and input data characteristics, which will allow you to predict resource usage for different inputs. However, if you need to predict resource usage across different computing platforms, particularly runtime, you will also need system metrics such as FLOP rate, memory bandwidth, and disk bandwidth.
+
+We have developed a tool called [minibench](https://github.com/bentsherman/minibench) which allows you to collect metrics for a computing platform and incorporate those metrics into your prediction models as input features. Refer to the minibench repo for more information.
