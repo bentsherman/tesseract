@@ -86,6 +86,27 @@ if __name__ == '__main__':
         df_process = df_process.merge(df_conditions, how='left', left_index=True, right_index=True)
         df_process.sort_index(inplace=True)
 
-        # save output trace dataframe
+        # append trace data to output file
         filename = '%s/%s.%s.trace.txt' % (args.output_dir, args.pipeline_name, process_name)
-        df_process.to_csv(filename, sep='\t', index=False)
+
+        if os.path.exists(filename):
+            # load existing trace data
+            df_prev = pd.read_csv(filename, sep='\t')
+
+            # infer hash if necessary
+            if 'hash' not in df_prev.columns:
+                def workdir_hash(w):
+                    tokens = w.split('/')
+                    return '%s/%s' % (tokens[-2], tokens[-1][0:6])
+
+                df_prev['hash'] = df_prev['workdir'].apply(workdir_hash)
+
+            df_prev.set_index('hash', inplace=True)
+
+            # append new trace data to existing data
+            df_process = pd.concat([df_prev, df_process])
+
+            # remove duplicate rows
+            df_process = df_process[~df_process.index.duplicated()]
+
+        df_process.to_csv(filename, sep='\t')
