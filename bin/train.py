@@ -101,8 +101,11 @@ def load_datasets(pipeline_name, process_names, base_dir='.', merge_files=[]):
     dfs = {}
 
     for process_name in process_names:
-        trace_file = '%s/%s.%s.trace.txt' % (base_dir, pipeline_name, process_name)
-        dfs[process_name] = load_dataset(trace_file)
+        try:
+            trace_file = '%s/%s.%s.trace.txt' % (base_dir, pipeline_name, process_name)
+            dfs[process_name] = load_dataset(trace_file)
+        except FileNotFoundError:
+            print('warn: no dataset found for process %s' % (process_name))
 
     # load merge files
     for process_name in dfs:
@@ -278,6 +281,12 @@ def prediction_interval_coverage(y_true, y_lower, y_upper):
 
 
 def evaluate_trials(model, X, y, train_sizes=[0.8], n_trials=5):
+    # use n_jobs=1 for tensorflow models
+    if issubclass(type(model.named_steps['reg']), models.KerasRegressor):
+        n_jobs = 1
+    else:
+        n_jobs = -1
+
     # perform repeated trials
     def evaluate(train_size):
         # create train/test split
@@ -311,10 +320,17 @@ def evaluate_trials(model, X, y, train_sizes=[0.8], n_trials=5):
 
 
 def evaluate_cv(model, X, y, cv=5, ci=0.95):
+    # initialize prediction arrays
+    y_bar = np.empty_like(y)
+    y_std = np.empty_like(y)
+
     # perform k-fold cross validation
     kfold = sklearn.model_selection.KFold(n_splits=cv, shuffle=True)
 
-    def evaluate(train_index, test_index):
+    for train_index, test_index in kfold.split(X):
+        # reset session (for keras models)
+        keras.backend.clear_session()
+
         # extract train/test split
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
@@ -324,17 +340,8 @@ def evaluate_cv(model, X, y, cv=5, ci=0.95):
         model_.fit(X_train, y_train)
 
         # get model predictions
-        y_bar, y_std = utils.check_std(model_.predict(X_test))
+        y_bar_i, y_std_i = utils.check_std(model_.predict(X_test))
 
-        return test_index, y_bar, y_std
-
-    results = Parallel(n_jobs=-1)(delayed(evaluate)(*args) for args in kfold.split(X))
-
-    # collect results
-    y_bar = np.empty_like(y)
-    y_std = np.empty_like(y)
-
-    for test_index, y_bar_i, y_std_i in results:
         y_bar[test_index] = y_bar_i
         y_std[test_index] = y_std_i
 

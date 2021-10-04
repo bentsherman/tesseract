@@ -10,7 +10,7 @@ import sys
 
 
 def select_rows_by_values(df, column, values):
-    return pd.DataFrame().append([df[df[column].astype(str) == v] for v in values], sort=False)
+    return pd.concat([df[df[column].astype(str) == v] for v in values])
 
 
 

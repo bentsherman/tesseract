@@ -78,6 +78,9 @@ class KerasRegressor(tf.keras.wrappers.scikit_learn.KerasRegressor):
     issue using BytesIO and HDF5 in order to enable pickle dumps.
 
     Adapted from: https://github.com/keras-team/keras/issues/4274#issuecomment-519226139
+
+    Also, predict() is overridden to use model(x) instead of model.predict(x)
+    in order to prevent retracing.
     '''
 
     def __getstate__(self):
@@ -100,6 +103,9 @@ class KerasRegressor(tf.keras.wrappers.scikit_learn.KerasRegressor):
             with h5py.File(model_hdf5_bio, mode='r') as file:
                 state['model'] = tf.keras.models.load_model(file)
         self.__dict__ = state
+
+    def predict(self, x):
+        return np.squeeze(self.model(x))
 
 
 

@@ -30,10 +30,10 @@ workflow {
     //
     // Group trace files into a list.
     trace_files = Channel.fromPath("_trace/${params.pipeline_name}.*.txt")
-        .mix ( trace_files )
+        .mix(trace_files)
         .unique { it -> it.name }
         .map { it -> [it.name.split(/\./)[0], it] }
-        .groupTuple ()
+        .groupTuple()
 
     // run aggregate if specified
     if ( params.aggregate == true ) {
@@ -51,7 +51,7 @@ workflow {
     // Remove duplicate files as dataset files from aggregate
     // are saved to the '_datasets' directory.
     datasets = Channel.fromPath("_datasets/${params.pipeline_name}.*.txt")
-        .mix ( datasets )
+        .mix(datasets)
         .unique { it -> it.name }
         .map { it -> [it.name.split(/\./), it] }
         .map { it -> [it[0][0], it[0][1], it[1]] }
@@ -98,7 +98,7 @@ process run_pipeline {
         # initialize environment
         module purge
         module load anaconda3/5.1.0-gcc/8.3.1
-        module load nextflow/21.04.1
+        module load nextflow/21.04
 
         # create params file from conditions
         echo "${c.toString().replace('[': '', ']': '', ', ': '\n', ':': ': ')}" > params.yaml
