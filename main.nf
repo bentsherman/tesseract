@@ -58,6 +58,9 @@ workflow {
 
     // run train if specified
     train_targets = Channel.fromList( params.train_targets )
+    train_merge_args = params.train_merge_args
+        .collect { arg -> "--merge ${arg}" }
+        .join(" ")
 
     if ( params.train == true ) {
         train(datasets, train_targets)
@@ -199,7 +202,7 @@ process train {
         train.py \
             ${dataset} \
             --base-dir ${workflow.launchDir}/_datasets \
-            ${params.train_merge_arg != null ? "--merge ${params.train_merge_arg}" : ""} \
+            ${train_merge_args} \
             --inputs ${params.train_inputs[process_name].join(' ')} \
             --target ${target} \
             --scaler ${params.train_scaler} \

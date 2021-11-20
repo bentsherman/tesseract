@@ -8,7 +8,7 @@
     "run_trace_file": "output/reports/trace.txt",
     "run_trials": 1,
 
-    "train_merge_arg": null,
+    "train_merge_args": [],
     "train_inputs": {
         "phase1_split":  ["chunks", "gmt_lines"],
         "phase1_fg":     ["chunks", "gmt_lines", "gmt_genes", "n_rows", "n_cols"],

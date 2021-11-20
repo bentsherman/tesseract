@@ -8,7 +8,7 @@
     "run_trace_file": "results/pipeline_info/execution_trace.txt",
     "run_trials": 1,
 
-    "train_merge_arg": null,
+    "train_merge_args": [],
     "train_inputs": {
         "download_runs":  ["n_remote_run_ids", "n_spots"],
         "fastq_dump":     ["sra_bytes"],
