@@ -10,7 +10,7 @@ OUTPUT_DIR="$1"
 module purge
 module load anaconda3/5.1.0-gcc/8.3.1
 
-python hemelb/bin/compute-speedup.py \
+python bin/compute-speedup.py \
     ${OUTPUT_DIR}/trace.hemelb.txt \
     ${OUTPUT_DIR}/hemelb-site-counts.txt \
     ${OUTPUT_DIR}/speedup.txt

@@ -73,30 +73,30 @@ Use `predict.py` to predict resource usage for a particular workflow process.
 Here is an end-to-end example usage of Tesseract to predict resource usage for the KINC pipeline.
 ```bash
 # provide input data for kinc
-mkdir kinc/input
+mkdir workflows/kinc/input
 # ...
 
 # generate conditions file
-kinc/bin/make-conditions.sh
+workflows/kinc/bin/make-conditions.sh
 
 # perform several runs of kinc
 nextflow run main.nf \
-    -params-file kinc/params.json \
+    -params-file workflows/kinc/params.json \
     --run
 
 # aggregate trace files into datasets
 nextflow run main.nf \
-    -params-file kinc/params.json \
+    -params-file workflows/kinc/params.json \
     --aggregate
 
 # train models for each kinc process
 nextflow run main.nf \
-    -params-file kinc/params.json \
+    -params-file workflows/kinc/params.json \
     --train
 
 # predict resource usage of kinc/similarity_mpi
 nextflow run main.nf \
-    -params-file kinc/params.json \
+    -params-file workflows/kinc/params.json \
     --predict \
     --predict_process similarity_mpi \
     --predict_inputs 'np=1 n_rows=7050 n_cols=188 hardware_type=cpu'

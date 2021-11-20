@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generate conditions file for some basic gene-oracle experiments.
 
-OUTPUT_DIR="gene-oracle/data"
+OUTPUT_DIR="workflows/gene-oracle/input"
 
 module purge
 module load anaconda3/5.1.0-gcc/8.3.1

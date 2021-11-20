@@ -1,7 +1,7 @@
 {
     "pipeline_name": "gene-oracle",
 
-    "run_conditions_file": "gene-oracle/data/conditions.txt",
+    "run_conditions_file": "workflows/gene-oracle/input/conditions.txt",
     "run_pipeline": "systemsgenetics/gene-oracle",
     "run_profiles": "palmetto",
     "run_output_dir": "output",

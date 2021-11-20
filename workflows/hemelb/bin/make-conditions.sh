@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generate conditions files for hemelb experiments.
 
-OUTPUT_DIR="hemelb/input"
+OUTPUT_DIR="workflows/hemelb/input"
 
 module purge
 module load anaconda3/5.1.0-gcc/8.3.1

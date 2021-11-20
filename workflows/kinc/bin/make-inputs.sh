@@ -21,7 +21,7 @@ echo 'generating datasets...'
 DIRNAME=$(dirname ${INFILE})
 BASENAME=$(basename ${INFILE} .emx.txt)
 
-python kinc/bin/make-inputs.py \
+python bin/make-inputs.py \
     --dataset ${INFILE} \
     --labels ${DIRNAME}/${BASENAME}.labels.txt \
     --n-grid-rows ${N_GRID_ROWS} \

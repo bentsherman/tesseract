@@ -1,7 +1,7 @@
 {
     "pipeline_name": "hemelb",
 
-    "run_conditions_file": "hemelb/input/conditions-small.txt",
+    "run_conditions_file": "workflows/hemelb/input/conditions-small.txt",
     "run_pipeline": "main.nf",
     "run_profiles": "palmetto,modules",
     "run_output_dir": "output",

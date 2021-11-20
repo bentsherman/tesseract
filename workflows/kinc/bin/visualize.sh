@@ -6,7 +6,7 @@ module purge
 module load anaconda3/5.1.0-gcc/8.3.1
 
 # PART 1: strong scaling analysis (np)
-OUTPUT_DIR="kinc/output-02"
+OUTPUT_DIR="workflows/kinc/output-02"
 
 echo "kinc-np-exit"
 python bin/visualize.py \
@@ -75,7 +75,7 @@ python bin/visualize.py \
     --palette muted
 
 # PART 1: weak scaling analysis (dataset)
-OUTPUT_DIR="kinc/output-05"
+OUTPUT_DIR="workflows/kinc/output-05"
 
 echo "kinc-dataset-exit"
 python bin/visualize.py \
@@ -144,7 +144,7 @@ python bin/visualize.py \
     --rotate-xticklabels
 
 # PART 3: strong scaling analysis (dataset, np)
-OUTPUT_DIR="kinc/output-04"
+OUTPUT_DIR="workflows/kinc/output-04"
 
 echo "kinc-np-exit"
 python bin/visualize.py \

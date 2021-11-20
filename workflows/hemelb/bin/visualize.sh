@@ -10,7 +10,7 @@ module load anaconda3/5.1.0-gcc/8.3.1
 
 # PART 1: INPUT DATA, PRELIMINARY EXPERIMENTS
 if [[ ${RUN_PRELIM} == "1" ]]; then
-    OUTPUT_DIR="hemelb/output-prelim"
+    OUTPUT_DIR="workflows/hemelb/output-prelim"
 
     echo "hemelb-site-counts"
     python bin/visualize.py \
@@ -70,7 +70,7 @@ fi
 
 # PART 2: SINGLE-GPU ANALYSIS
 if [[ ${RUN_SMALL} == "1" ]]; then
-    OUTPUT_DIR="hemelb/output-small"
+    OUTPUT_DIR="workflows/hemelb/output-small"
 
     echo "hemelb-blocksize"
     python bin/visualize.py \
@@ -126,7 +126,7 @@ fi
 
 # PART 3: STRONG SCALING ANALYSIS
 if [[ ${RUN_LARGE} == "1" ]]; then
-    OUTPUT_DIR="hemelb/output-large-17"
+    OUTPUT_DIR="workflows/hemelb/output-large-17"
 
     echo "hemelb-exitcode"
     python bin/visualize.py \

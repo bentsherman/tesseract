@@ -1,7 +1,7 @@
 {
     "pipeline_name": "kinc",
 
-    "run_conditions_file": "kinc/input/conditions-chunk.txt",
+    "run_conditions_file": "workflows/kinc/input/conditions-chunk.txt",
     "run_pipeline": "systemsgenetics/kinc-nf",
     "run_profiles": "palmetto,singularity",
     "run_output_dir": "output",

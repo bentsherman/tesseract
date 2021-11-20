@@ -1,7 +1,7 @@
 {
     "pipeline_name": "gemmaker",
 
-    "run_conditions_file": "gemmaker/input/conditions.txt",
+    "run_conditions_file": "workflows/gemmaker/input/conditions.txt",
     "run_pipeline": "systemsgenetics/gemmaker",
     "run_profiles": "singularity",
     "run_output_dir": "results",

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generate conditions file for some basic kinc experiments.
 
-OUTPUT_DIR="kinc/input"
+OUTPUT_DIR="workflows/kinc/input"
 
 module purge
 module load anaconda3/5.1.0-gcc/8.3.1

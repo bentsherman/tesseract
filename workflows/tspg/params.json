@@ -1,7 +1,7 @@
 {
     "pipeline_name": "tspg",
 
-    "run_conditions_file": "tspg/data/conditions.txt",
+    "run_conditions_file": "workflows/tspg/input/conditions.txt",
     "run_pipeline": "ctargon/tspg",
     "run_profiles": "palmetto",
     "run_output_dir": "output",
