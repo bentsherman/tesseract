@@ -1,5 +1,7 @@
 #!/bin/bash
 # Merge GEMs from GTEX / TCGA studies for each tissue type.
+#
+# https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations
 
 # define inputs
 INPUT_DIR="/zfs/lasernode/feltuslab/mrbende/all-gtex-tcga"

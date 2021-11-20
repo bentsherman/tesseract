@@ -3,13 +3,13 @@
 
 # parse command-line arguments
 if [[ $# != 3 ]]; then
-    echo "usage: $0 <infile> <n-row-iters> <n-col-iters>"
+    echo "usage: $0 <infile> <n-grid-rows> <n-grid-cols>"
     exit -1
 fi
 
 INFILE="$1"
-N_ROW_ITERS="$2"
-N_COL_ITERS="$3"
+N_GRID_ROWS="$2"
+N_GRID_COLS="$3"
 
 # initialize environment
 module purge
@@ -24,8 +24,10 @@ BASENAME=$(basename ${INFILE} .emx.txt)
 python kinc/bin/make-inputs.py \
     --dataset ${INFILE} \
     --labels ${DIRNAME}/${BASENAME}.labels.txt \
-    --n-row-iters ${N_ROW_ITERS} \
-    --n-col-iters ${N_COL_ITERS}
+    --n-grid-rows ${N_GRID_ROWS} \
+    --n-grid-cols ${N_GRID_COLS}
+
+exit
 
 # convert emx txt files to emx files
 echo 'converting datasets info emx format...'
