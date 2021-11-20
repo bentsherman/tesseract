@@ -36,3 +36,11 @@ def predict_intervals(y_bar, y_std, ci=0.95):
     y_upper = y_bar + n_stds * y_std
 
     return y_lower, y_upper
+
+
+
+def resample(df, columns, aggregate_func='mean'):
+    df = df.groupby(colummns).aggregate(aggregate_func)
+    df = df.reset_index()
+
+    return df
