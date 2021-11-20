@@ -27,10 +27,15 @@ def load_dataset(trace_file):
     # load trace file
     df = pd.read_csv(trace_file, sep='\t')
 
+    # remove failed jobs
+    if 'exit' in df:
+        df = df[df['exit'] == 0]
+
     # convert each resource metric to hr or GB
-    df['runtime_hr'] = df['realtime'] / 1000 / 3600
-    df['memory_GB'] = df['peak_rss'] / (1024 ** 3)
-    df['disk_GB'] = df['write_bytes'] / (1024 ** 3)
+    if 'realtime' in df:
+        df['runtime_hr'] = df['realtime'] / 1000 / 3600
+        df['memory_GB'] = df['peak_rss'] / (1024 ** 3)
+        df['disk_GB'] = df['write_bytes'] / (1024 ** 3)
 
     # remove unused columns
     drop_columns = [
@@ -40,12 +45,9 @@ def load_dataset(trace_file):
         'tag',
         'name',
         'status',
+        'exit',
         'module',
         'container',
-        'cpus',
-        'time',
-        'disk',
-        'memory',
         'attempt',
         'submit',
         'start',
@@ -67,14 +69,13 @@ def load_dataset(trace_file):
         'syscw',
         'vol_ctxt',
         'inv_ctxt',
+        'env',
+        'script',
         'scratch',
         'error_action'
     ]
 
     df.drop(columns=drop_columns, inplace=True, errors='ignore')
-
-    # remove failed jobs
-    df = df[df['exit'] == 0]
 
     return df
 
@@ -112,8 +113,11 @@ def load_datasets(pipeline_name, process_names, base_dir='.', merge_files=[]):
         df = dfs[process_name]
 
         for key, merge_file in merge_files:
-            merge_file = os.path.join(base_dir, merge_file)
-            df = merge_dataset(df, key, merge_file)
+            try:
+                merge_file = os.path.join(base_dir, merge_file)
+                df = merge_dataset(df, key, merge_file)
+            except FileNotFoundError:
+                print('warn: merge file %s not found' % (merge_file))
 
         dfs[process_name] = df
 
@@ -244,7 +248,7 @@ def create_rf(criterion='mae', intervals=False):
     else:
         RandomForestRegressor = sklearn.ensemble.RandomForestRegressor
 
-    return RandomForestRegressor(n_estimators=100, criterion=criterion)
+    return RandomForestRegressor(n_estimators=100, criterion=criterion, n_jobs=-1)
 
 
 
@@ -280,40 +284,42 @@ def prediction_interval_coverage(y_true, y_lower, y_upper):
 
 
 
-def evaluate_trials(model, X, y, train_sizes=[0.8], n_trials=5):
-    # use n_jobs=1 for tensorflow models
-    if issubclass(type(model.named_steps['reg']), models.KerasRegressor):
-        n_jobs = 1
-    else:
-        n_jobs = -1
+def coverage_error(y_true, y_lower, y_upper):
+    return 100 - 100 * prediction_interval_coverage(y_true, y_lower, y_upper)
 
+
+
+def evaluate_trials(model, X, y, train_sizes=[0.8], n_trials=5, ci=0.95):
     # perform repeated trials
-    def evaluate(train_size):
+    scores_map = {ts: {'mae': [], 'mpe': [], 'cov': []} for ts in train_sizes}
+    iters = [ts for ts in train_sizes for _ in range(n_trials)]
+
+    for train_size in iters:
+        print(train_size)
+
+        # reset session (for keras models)
+        keras.backend.clear_session()
+
         # create train/test split
         X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, test_size=1 - train_size)
 
         # train model
-        model.fit(X_train, y_train)
+        model_ = sklearn.base.clone(model)
+        model_.fit(X_train, y_train)
 
         # get model predictions
-        y_bar, y_std = utils.check_std(model.predict(X_test))
+        y_bar, y_std = utils.check_std(model_.predict(X_test))
+        y_lower, y_upper = utils.predict_intervals(y_bar, y_std, ci=ci)
 
         # evaluate model
         mae = mean_absolute_error(y_test, y_bar)
         mpe = mean_absolute_percentage_error(y_test, y_bar)
+        cov = coverage_error(y_test, y_lower, y_upper)
 
-        return train_size, mae, mpe
-
-    results = Parallel(n_jobs=-1)(delayed(evaluate)(ts) for ts in train_sizes for _ in range(n_trials))
-
-    # collect results
-    scores_map = {}
-
-    for train_size in train_sizes:
-        scores_map[train_size] = {
-            'mae': [mae for (ts, mae, mpe) in results if ts == train_size],
-            'mpe': [mpe for (ts, mae, mpe) in results if ts == train_size]
-        }
+        # save results
+        scores_map[train_size]['mae'].append(mae)
+        scores_map[train_size]['mpe'].append(mpe)
+        scores_map[train_size]['cov'].append(cov)
 
     return scores_map
 
@@ -354,7 +360,7 @@ def evaluate_cv(model, X, y, cv=5, ci=0.95):
         'mpe': mean_absolute_percentage_error(y, y_bar),
         'rae': relative_absolute_error(y, y_bar),
         'hpc': hpc_cost(y, y_bar),
-        'cov': prediction_interval_coverage(y, y_lower, y_upper)
+        'cov': coverage_error(y, y_lower, y_upper)
     }
 
     return scores, y_bar, y_std
