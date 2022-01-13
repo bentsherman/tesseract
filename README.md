@@ -9,7 +9,7 @@ This repository contains the code for Tesseract as well as some additional scrip
 - [KINC-nf](https://github.com/SystemsGenetics/KINC-nf)
 - [TSPG](https://github.com/ctargon/TSPG)
 
-The workshop paper based on this work can be found [here](https://ieeexplore.ieee.org/document/9652627).
+For more details about this project, please refer to the associated [workshop paper](https://ieeexplore.ieee.org/document/9652627) and [dissertation](https://tigerprints.clemson.edu/all_dissertations/2956/).
 
 _Note: Not to be confused with the [Tesseract OCR Engine](https://github.com/tesseract-ocr)._
 
