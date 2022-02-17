@@ -1,0 +1,49 @@
+task_id	status	hash	name	exit	submit	start	process	tag	module	container	attempt	script	scratch	workdir	queue	cpus	memory	disk	time	env	error_action	complete	duration	realtime	%cpu	rchar	wchar	syscr	syscw	read_bytes	write_bytes	%mem	vmem	rss	peak_vmem	peak_rss	vol_ctxt	inv_ctxt	native_id	dataset	chunks	abd_bytes	node_type
+17	COMPLETED	11/100394	similarity_merge (breast.001.001)	0	1635264958164	1635264958000	similarity_merge	breast.001.001	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.001""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input breast.001.001.emx             --ccm breast.001.001.ccm             --cmx breast.001.001.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/11/100394b49db338ac883eb98e4484b6		1	15032385536					1635265193000	234836	235008	95.3	3367340359	2139532243	1370	25167770	118784	2139627520	0.0	2188599296	96256000	2197553152	104833024	772	1323	nf-11100394b49db338ac883eb98e4484b6	breast.001.001	4	3.36689e+09	k8s-igrok-07.calit2.optiputer.net
+18	COMPLETED	5b/43170d	similarity_merge (breast.001.002)	0	1635266328080	1635266328000	similarity_merge	breast.001.002	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.002""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input breast.001.002.emx             --ccm breast.001.002.ccm             --cmx breast.001.002.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/5b/43170d024fe0af8cc96b81c622580f		1	15032385536					1635266785000	456920	456839	89.6	6767384065	4278591431	1371	26992447	86016	4278767616	0.0	2216685568	123678720	2236022784	142913536	1221	1792	nf-5b43170d024fe0af8cc96b81c622580f	breast.001.002	4	6.76693e+09	k8s-igrok-07.calit2.optiputer.net
+19	COMPLETED	99/c3e88a	similarity_merge (breast.001.003)	0	1635267668445	1635267669000	similarity_merge	breast.001.003	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.003""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input breast.001.003.emx             --ccm breast.001.003.ccm             --cmx breast.001.003.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/99/c3e88a8ad2f17ca9477b6823199f95		1	15032385536					1635268323000	654555	653805	89.5	10121205780	6481425494	1371	27875785	86016	6481678336	0.1	2273333248	180838400	2273550336	181092352	1517	1950	nf-99c3e88a8ad2f17ca9477b6823199f95	breast.001.003	4	1.01207e+10	k8s-igrok-07.calit2.optiputer.net
+20	COMPLETED	bc/010ae4	similarity_merge (breast.001.004)	0	1635269013153	1635269013000	similarity_merge	breast.001.004	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.004""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input breast.001.004.emx             --ccm breast.001.004.ccm             --cmx breast.001.004.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/bc/010ae4a4908f0ad481509f5b2c3e0c		1	15032385536					1635269973000	959847	951734	87.5	13679526449	8805637927	1372	28728602	86016	8805978112	0.1	2274041856	181600256	2274095104	181600256	1648	3665	nf-bc010ae4a4908f0ad481509f5b2c3e0c	breast.001.004	4	1.3679e+10	k8s-igrok-07.calit2.optiputer.net

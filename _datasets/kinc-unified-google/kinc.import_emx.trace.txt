@@ -1,0 +1,193 @@
+task_id	status	hash	name	exit	submit	start	process	tag	module	container	attempt	script	scratch	workdir	queue	cpus	memory	disk	time	env	error_action	complete	duration	realtime	%cpu	rchar	wchar	syscr	syscw	read_bytes	write_bytes	%mem	vmem	rss	peak_vmem	peak_rss	vol_ctxt	inv_ctxt	native_id	dataset	n_rows	n_cols	node_type
+3	COMPLETED	28/756ec7	import_emx (salivary)	0	1633464131191	1633464134000	import_emx	salivary	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=salivary""
+        echo ""#TRACE n_rows=`tail -n +1 salivary.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 salivary.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input salivary.emx.txt             --output salivary.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/28/756ec71e3eb6890a667842a3801def		1	17179869184					1633464145000	13809	4812	45.2	45068394	15576796	6223	22029	0	4464640	0.0	18821120	3362816	18874368	3362816	11	3	nf-28756ec71e3eb6890a667842a3801def	salivary	19133	55	nrp-c15.nysernet.org
+5	COMPLETED	39/23d2ea	import_emx (rectum)	0	1633464132129	1633464135000	import_emx	rectum	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=rectum""
+        echo ""#TRACE n_rows=`tail -n +1 rectum.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 rectum.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input rectum.emx.txt             --output rectum.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/39/23d2ead932da623861e9fc25a0de0a		1	17179869184					1633464146000	13871	5677	51.8	77969822	27004894	10239	24003	0	7667712	0.0	3175731200	73170944	3510833152	73170944	636	228	nf-3923d2ead932da623861e9fc25a0de0a	rectum	19097	97	nrp-c15.nysernet.org
+7	COMPLETED	c3/9da8af	import_emx (cervix)	0	1633464133081	1633464135000	import_emx	cervix	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=cervix""
+        echo ""#TRACE n_rows=`tail -n +1 cervix.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 cervix.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input cervix.emx.txt             --output cervix.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/c3/9da8af09ad028411b491f7425802fa		1	17179869184					1633464146000	12919	10142	48.9	217567522	75523909	27280	32743	0	21282816	0.0	3211345920	108650496	3443724288	108650496	18123	263	nf-c39da8af09ad028411b491f7425802fa	cervix	19317	272	nrp-c16.nysernet.org
+10	COMPLETED	f4/b16b69	import_emx (uterus)	0	1633464134473	1633464142000	import_emx	uterus	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=uterus""
+        echo ""#TRACE n_rows=`tail -n +1 uterus.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 uterus.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input uterus.emx.txt             --output uterus.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/f4/b16b69101f8df1e5b6d8c1bb1cea86		1	17179869184					1633464160000	25527	13704	40.7	235714139	81683582	21961	33852	108433408	22904832	0.0	3194802176	91750400	3443724288	91750400	5883	238	nf-f4b16b69101f8df1e5b6d8c1bb1cea86	uterus	19317	293	nrp-c14.nysernet.org
+14	COMPLETED	e7/1f3afa	import_emx (bile-duct)	0	1633464136318	1633464139000	import_emx	bile-duct	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=bile-duct""
+        echo ""#TRACE n_rows=`tail -n +1 bile-duct.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 bile-duct.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input bile-duct.emx.txt             --output bile-duct.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/e7/1f3afa20f35f3b6b275ce722801d7d		1	17179869184					1633464150000	13682	4513	39.5	32306093	11173982	4666	20884	0	3252224	0.0	2532839424	36421632	3038638080	57368576	1662	13	nf-e71f3afa20f35f3b6b275ce722801d7d	bile-duct	18765	40	nrp-c13.nysernet.org
+15	COMPLETED	ce/d13ef6	import_emx (head-neck)	0	1633464136779	1633464141000	import_emx	head-neck	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=head-neck""
+        echo ""#TRACE n_rows=`tail -n +1 head-neck.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 head-neck.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input head-neck.emx.txt             --output head-neck.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/ce/d13ef6c9f0261f98e1c0458f11b6b1		1	17179869184					1633464165000	28221	19810	41.6	400101446	138567112	38008	43700	3313664	38694912	0.0	3213586432	110362624	3443724288	110362624	9188	292	nf-ced13ef6c9f0261f98e1c0458f11b6b1	head-neck	19133	502	nrp-c14.nysernet.org
+16	COMPLETED	ff/fcaf5f	import_emx (prostate)	0	1633464137253	1633464141000	import_emx	prostate	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=prostate""
+        echo ""#TRACE n_rows=`tail -n +1 prostate.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 prostate.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input prostate.emx.txt             --output prostate.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/ff/fcaf5f67a0973b57dad8718c56e9c8		1	17179869184					1633464159000	21747	13531	72.5	465223293	160619715	57513	47590	0	44457984	0.0	3253633024	150794240	3443724288	150794240	662	296	nf-fffcaf5f67a0973b57dad8718c56e9c8	prostate	19047	580	nrp-c15.nysernet.org
+2	COMPLETED	ad/8fa47d	import_emx (esophagus)	0	1633464130252	1633464132000	import_emx	esophagus	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=esophagus""
+        echo ""#TRACE n_rows=`tail -n +1 esophagus.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 esophagus.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input esophagus.emx.txt             --output esophagus.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/ad/8fa47df171845996589cb444d74ed7		1	17179869184					1633464161000	30748	27049	47.7	684939671	238353364	84334	61585	0	67264512	0.0	3261255680	158171136	3510833152	158171136	59641	294	nf-ad8fa47df171845996589cb444d74ed7	esophagus	19630	853	nrp-c16.nysernet.org
+1	COMPLETED	0a/510e07	import_emx (colon)	0	1633464130729	1633464133000	import_emx	colon	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=colon""
+        echo ""#TRACE n_rows=`tail -n +1 colon.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 colon.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input colon.emx.txt             --output colon.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/0a/510e072abf35421e029b8ded80a864		1	17179869184					1633464158000	27271	22293	46.4	528255487	182988298	65205	51487	0	51073024	0.0	3253383168	150700032	3443724288	150700032	46161	264	nf-0a510e072abf35421e029b8ded80a864	colon	19097	665	nrp-c16.nysernet.org
+4	COMPLETED	4a/ffae41	import_emx (kidney)	0	1633464131654	1633464134000	import_emx	kidney	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=kidney""
+        echo ""#TRACE n_rows=`tail -n +1 kidney.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 kidney.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input kidney.emx.txt             --output kidney.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/4a/ffae416cfe363645b7f2067f033fa9		1	17179869184					1633464159000	27346	18899	73.0	742195291	257101380	91327	64668	0	71692288	0.0	3257430016	154193920	3443724288	154193920	656	325	nf-4affae416cfe363645b7f2067f033fa9	kidney	19217	929	nrp-c15.nysernet.org
+6	COMPLETED	8e/9a1aa8	import_emx (bladder)	0	1633464132615	1633464137000	import_emx	bladder	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=bladder""
+        echo ""#TRACE n_rows=`tail -n +1 bladder.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 bladder.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input bladder.emx.txt             --output bladder.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/8e/9a1aa86c6bf57aa46fdb8c83feda56		1	17179869184					1633464159000	26385	17889	37.6	311327631	108260313	38726	38576	114688	30576640	0.0	3216322560	113459200	3510833152	113459200	20584	240	nf-8e9a1aa86c6bf57aa46fdb8c83feda56	bladder	19428	390	nrp-c13.nysernet.org
+8	COMPLETED	dc/83ed03	import_emx (liver)	0	1633464133546	1633464137000	import_emx	liver	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=liver""
+        echo ""#TRACE n_rows=`tail -n +1 liver.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 liver.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input liver.emx.txt             --output liver.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/dc/83ed038220a60916b3841db4f5227c		1	17179869184					1633464159000	25454	17331	40.5	353741594	122927318	43905	40504	0	34639872	0.0	3187691520	84922368	3510833152	84922368	27787	220	nf-dc83ed038220a60916b3841db4f5227c	liver	18765	458	nrp-c13.nysernet.org
+9	COMPLETED	e3/176ad9	import_emx (thyroid)	0	1633464134011	1633464140000	import_emx	thyroid	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=thyroid""
+        echo ""#TRACE n_rows=`tail -n +1 thyroid.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 thyroid.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input thyroid.emx.txt             --output thyroid.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/e3/176ad9a22b39df62e77ecd516859a4		1	17179869184					1633464172000	37989	25744	49.4	647721653	224558073	60475	58924	0	62775296	0.0	3237588992	136966144	3443724288	136966144	15931	316	nf-e3176ad9a22b39df62e77ecd516859a4	thyroid	19240	812	nrp-c14.nysernet.org
+11	COMPLETED	6b/31c652	import_emx (stomach)	0	1633464134934	1633464141000	import_emx	stomach	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=stomach""
+        echo ""#TRACE n_rows=`tail -n +1 stomach.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 stomach.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input stomach.emx.txt             --output stomach.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/6b/31c652691645f612b98694ace8ca17		1	17179869184					1633464170000	35066	22625	43.8	493913356	171941786	45713	50265	438272	48615424	0.0	3242188800	139644928	3443724288	139644928	11693	262	nf-6b31c652691645f612b98694ace8ca17	stomach	19970	605	nrp-c14.nysernet.org
+13	COMPLETED	2c/dcc575	import_emx (breast)	0	1633464135858	1633464139000	import_emx	breast	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast""
+        echo ""#TRACE n_rows=`tail -n +1 breast.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 breast.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input breast.emx.txt             --output breast.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/2c/dcc57591cdce8aaea863097d21bf40		1	17179869184					1633464167000	31142	21595	80.8	955971756	332400139	117420	78239	0	93544448	0.0	3325767680	222863360	3510833152	222863360	72014	312	nf-2cdcc57591cdce8aaea863097d21bf40	breast	19739	1181	nrp-c15.nysernet.org
+12	COMPLETED	af/a924fa	import_emx (lung)	0	1633464135394	1633464138000	import_emx	lung	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=lung""
+        echo ""#TRACE n_rows=`tail -n +1 lung.emx.txt | wc -l`""
+        echo ""#TRACE n_cols=`head -n +1 lung.emx.txt | wc -w`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc run import-emx             --input lung.emx.txt             --output lung.emx
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/af/a924fa2165ec4659110c799f09f58e		1	17179869184					1633464207000	71606	68790	30.8	1146402648	397983601	140669	89775	0	111525888	0.0	3352240128	248975360	3443724288	248975360	85592	2299	nf-afa924fa2165ec4659110c799f09f58e	lung	19649	1415	nrp-c16.nysernet.org

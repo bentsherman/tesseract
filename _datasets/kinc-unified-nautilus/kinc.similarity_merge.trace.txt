@@ -1,0 +1,216 @@
+task_id	status	hash	name	exit	submit	start	process	tag	module	container	attempt	script	scratch	workdir	queue	cpus	memory	disk	time	env	error_action	complete	duration	realtime	%cpu	rchar	wchar	syscr	syscw	read_bytes	write_bytes	%mem	vmem	rss	peak_vmem	peak_rss	vol_ctxt	inv_ctxt	native_id	dataset	chunks	abd_bytes	node_type
+6	COMPLETED	c2/7840ef	similarity_merge (PRJNA301554.slim)	0	1633384148699	1633384151000	similarity_merge	PRJNA301554.slim	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE dataset=PRJNA301554.slim""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input PRJNA301554.slim.emx             --ccm PRJNA301554.slim.ccm             --cmx PRJNA301554.slim.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615b73e1b327bc20ef76811b/work/c2/7840efabb637daef4e6f07e0f7b3b2		1	17179869184					1633384161000	12301	9541	40.2	28447074	17460678	825	667593	81920	17469440	0.0	3175690240	73469952	3443933184	73469952	704	291	nf-c27840efabb637daef4e6f07e0f7b3b2	PRJNA301554.slim	4	27819412	
+6	COMPLETED	d3/eef6eb	similarity_merge (PRJNA301554.slim)	0	1633397619686	1633397622000	similarity_merge	PRJNA301554.slim	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=PRJNA301554.slim""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input PRJNA301554.slim.emx             --ccm PRJNA301554.slim.ccm             --cmx PRJNA301554.slim.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615ba9d7b327bc20ef768139/work/d3/eef6eb2700283366a037e23b4280c0		1	17179869184					1633397628000	8314	5466	65.8	28446275	17460701	825	667594	81920	17469440	0.0	3174699008	72519680	3511042048	80576512	686	258	nf-d3eef6eb2700283366a037e23b4280c0	PRJNA301554.slim	4	27819412	nrp-c16.nysernet.org
+81	COMPLETED	6c/aaa02a	similarity_merge (salivary)	0	1633962246482	1633962321000	similarity_merge	salivary	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=salivary""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input salivary.emx             --ccm salivary.ccm             --cmx salivary.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/6c/aaa02a59fded520e52c5c393343f0e		1	17179869184					1633963318000	1071518	994163	96.5	11195387223	7077579387	11661	283064050	2416640	7077851136	0.1	1297510400	72216576	1303711744	72216576	843	77703	nf-6caaa02a59fded520e52c5c393343f0e	salivary	4	1.11949e+10	k8-1.gpn.onenet.net
+83	COMPLETED	ad/cfac45	similarity_merge (rectum)	0	1633965236687	1633965240000	similarity_merge	rectum	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=rectum""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input rectum.emx             --ccm rectum.ccm             --cmx rectum.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/ad/cfac45e40f14cdf6a003a5c469262c		1	17179869184					1633966600000	1363313	1357614	95.8	18236370312	10925793333	11628	307741236	2428928	10925969408	0.1	1301983232	77135872	1305849856	80793600	1019	156217	nf-adcfac45e40f14cdf6a003a5c469262c	rectum	4	1.82358e+10	k8-1.gpn.onenet.net
+88	COMPLETED	a1/1ddee6	similarity_merge (bladder)	0	1633985128183	1633985208000	similarity_merge	bladder	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=bladder""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input bladder.emx             --ccm bladder.ccm             --cmx bladder.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/a1/1ddee6fd47ab1388b910f54ca45e4d		1	17179869184					1633990212000	5083817	5002681	94.8	70525336184	42431055315	12150	391060320	0	42432540672	0.0	2199486464	106713088	2199633920	106713088	4061	410444	nf-a11ddee6fd47ab1388b910f54ca45e4d	bladder	4	7.05247e+10	k8s-igrok-07.calit2.optiputer.net
+87	COMPLETED	4a/f04696	similarity_merge (esophagus)	0	1633978752848	1633978833000	similarity_merge	esophagus	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=esophagus""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input esophagus.emx             --ccm esophagus.ccm             --cmx esophagus.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/4a/f0469601cabe80dfc86bb5f6e0cc4a		1	17179869184					1633991789000	13036152	12955471	93.2	162865220713	121609741254	12396	541686892	0	121613631488	0.0	2245120000	152219648	2245173248	152219648	14361	1060938	nf-4af0469601cabe80dfc86bb5f6e0cc4a	esophagus	4	1.62865e+11	k8s-igrok-06.calit2.optiputer.net
+92	COMPLETED	d2/463b7e	similarity_merge (colon)	0	1634006758621	1634006759000	similarity_merge	colon	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=colon""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input colon.emx             --ccm colon.ccm             --cmx colon.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/d2/463b7ef07217a4f6a7caacce5cbd9a		1	17179869184					1634016071000	9312379	9310624	92.4	121382413131	83340850121	11765	469520274	0	83343609856	0.0	2227994624	134557696	2228047872	135102464	12062	755040	nf-d2463b7ef07217a4f6a7caacce5cbd9a	colon	4	1.21382e+11	k8s-igrok-07.calit2.optiputer.net
+95	COMPLETED	0b/c11e1f	similarity_merge (kidney)	0	1634023889166	1634023892000	similarity_merge	kidney	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=kidney""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input kidney.emx             --ccm kidney.ccm             --cmx kidney.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/0b/c11e1f0a5cd0e50baac076a23a3b66		1	17179869184					1634050453000	26563834	26557884	85.2	168320341422	111846214777	11849	459323165	532480	111854235648	0.0	2754224128	187047936	2773155840	190283776	16504	239143	nf-0bc11e1f0a5cd0e50baac076a23a3b66	kidney	4	1.6832e+11	nrp-c10.nysernet.org
+99	COMPLETED	99/be979d	similarity_merge (bile-duct)	0	1634246077872	1634246170000	similarity_merge	bile-duct	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=bile-duct""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input bile-duct.emx             --ccm bile-duct.ccm             --cmx bile-duct.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/99/be979d88c766c713fc625ee18d5329		1	15032385536					1634246980000	902128	799935	96.3	7901194020	5159586281	11321	245648966	0	5159809024	0.0	1633558528	72294400	1641197568	73093120	778	5457	nf-99be979d88c766c713fc625ee18d5329	bile-duct	4	7.90061e+09	suncave-7
+100	COMPLETED	6e/00b46e	similarity_merge (uterus)	0	1634247000972	1634247063000	similarity_merge	uterus	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=uterus""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input uterus.emx             --ccm uterus.ccm             --cmx uterus.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/6e/00b46e167b1d6be34cfc6454c63db3		1	15032385536					1634250437000	3436028	3373346	94.8	55136184745	33715855001	11982	398992378	0	33716559872	0.1	1659117568	97488896	1669226496	107761664	2009	45948	nf-6e00b46e167b1d6be34cfc6454c63db3	uterus	4	5.51356e+10	suncave-7
+102	COMPLETED	5d/a47dca	similarity_merge (cervix)	0	1634248779030	1634248785000	similarity_merge	cervix	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=cervix""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input cervix.emx             --ccm cervix.ccm             --cmx cervix.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/5d/a47dcaaa5f7979bd55a339c7f901a3		1	15032385536					1634252919000	4139970	4128484	84.9	48694350631	29255840853	12041	370314453	0	29257089024	0.0	2197364736	104280064	2197557248	104546304	2531	51467	nf-5da47dcaaa5f7979bd55a339c7f901a3	cervix	4	4.86937e+10	sdsmt-fiona.sdsmt.edu
+107	COMPLETED	04/ae0e71	similarity_merge (liver)	0	1634260155091	1634260156000	similarity_merge	liver	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=liver""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input liver.emx             --ccm liver.ccm             --cmx liver.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/04/ae0e71b2528ef467e16193c1056036		1	15032385536					1634270223000	10067909	10056855	87.0	80573628882	51063747241	11347	406874667	16384	51066568704	0.0	2685816832	113037312	2778095616	128716800	8664	305619	nf-04ae0e71b2528ef467e16193c1056036	liver	4	8.0573e+10	k8s-chase-ci-03.calit2.optiputer.net
+108	COMPLETED	40/50a38a	similarity_merge (head-neck)	0	1634264505925	1634264599000	similarity_merge	head-neck	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=head-neck""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input head-neck.emx             --ccm head-neck.ccm             --cmx head-neck.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/40/50a38a1b88a002587e546ec506ae65		1	15032385536					1634271688000	7182075	7085133	68.5	91149949077	55820519248	11768	408934207	0	55822180352	0.1	1696362496	126722048	1696411648	134979584	6728	80714	nf-4050a38a1b88a002587e546ec506ae65	head-neck	4	9.11493e+10	suncave-3
+106	COMPLETED	5f/ab9416	similarity_merge (stomach)	0	1634260149870	1634260151000	similarity_merge	stomach	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=stomach""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input stomach.emx             --ccm stomach.ccm             --cmx stomach.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/5f/ab941625d7db175c337249bdc5d886		1	15032385536					1634274308000	14158130	14154103	86.3	119314810034	74222220477	12772	456745677	49152	74226438144	0.1	2720243712	147349504	2778308608	148107264	12954	470653	nf-5fab941625d7db175c337249bdc5d886	stomach	4	1.19314e+11	k8s-chase-ci-03.calit2.optiputer.net
+111	COMPLETED	7f/d84379	similarity_merge (prostate)	0	1634270375422	1634270379000	similarity_merge	prostate	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=prostate""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input prostate.emx             --ccm prostate.ccm             --cmx prostate.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/7f/d8437960175a61f16c3a81762a0923		1	15032385536					1634277850000	7474578	7467938	70.3	104606711427	62673431569	11584	401746371	142090240	62675197952	0.2	1349672960	124723200	1349959680	124907520	9376	1013917	nf-7fd8437960175a61f16c3a81762a0923	prostate	4	1.04606e+11	k8-1.gpn.onenet.net
+116	COMPLETED	04/65200d	similarity_merge (thyroid)	0	1634283311787	1634283405000	similarity_merge	thyroid	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=thyroid""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input thyroid.emx             --ccm thyroid.ccm             --cmx thyroid.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/04/65200db42596ddc2358fe28a5e8c35		1	15032385536					1634291831000	8519213	8424785	85.5	145240936131	89631007137	11895	418831732	0	89633193984	0.1	1708580864	146657280	1735565312	173801472	13047	94602	nf-0465200db42596ddc2358fe28a5e8c35	thyroid	4	1.4524e+11	suncave-28
+122	COMPLETED	e8/68c21d	similarity_merge (lung)	0	1634299579896	1634299634000	similarity_merge	lung	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=lung""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input lung.emx             --ccm lung.ccm             --cmx lung.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/e8/68c21dd2066a963f2fde5f0f1a979e		1	15032385536					1634313875000	14295104	14241080	91.8	268573187029	173693430235	12382	475869497	0	173697146880	0.1	1767718912	205971456	1767870464	206041088	17942	151967	nf-e868c21dd2066a963f2fde5f0f1a979e	lung	4	2.68573e+11	suncave-4
+125	COMPLETED	e1/201d6c	similarity_merge (breast)	0	1634314990669	1634314991000	similarity_merge	breast	[]	systemsgenetics/kinc:3.4.2-cpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE abd_bytes=`stat -Lc '%s' *.abd | awk '{sum += $1} END {print sum}'`""
+
+        kinc settings set cuda none
+        kinc settings set opencl none
+        kinc settings set logging off
+
+        kinc merge 4 similarity             --input breast.emx             --ccm breast.ccm             --cmx breast.cmx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/615bb58bb327bc20ef768157/work/e1/201d6c96e9ee253b7a9b32aee58daa		1	15032385536					1634327572000	12581331	12580078	88.9	218470817618	141417686547	12490	461391922	0	141420752896	0.1	1744019456	176758784	1744068608	182202368	15668	187709	nf-e1201d6c96e9ee253b7a9b32aee58daa	breast	4	2.1847e+11	suncave-4

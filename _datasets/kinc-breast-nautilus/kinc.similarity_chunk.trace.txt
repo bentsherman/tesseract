@@ -1,0 +1,225 @@
+task_id	status	hash	name	exit	submit	start	process	tag	module	container	attempt	script	scratch	workdir	queue	cpus	memory	disk	time	env	error_action	complete	duration	realtime	%cpu	rchar	wchar	syscr	syscw	read_bytes	write_bytes	%mem	vmem	rss	peak_vmem	peak_rss	vol_ctxt	inv_ctxt	native_id	dataset	hardware_type	chunks	threads	hostname	node_type
+16	COMPLETED	05/03ae92	similarity_chunk (breast.001.001/3)	0	1635263659983	1635263719000	similarity_chunk	breast.001.001/3	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.001""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 3 4 similarity             --input breast.001.001.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/05/03ae92916b29b463f9bfee7f3c9722		1	15032385536					1635264497000.0	837017.0	777214.0	99.1	6460636.0	830312997.0	1254.0	474.0	196608.0	830509056.0	0.1	16911478784.0	301993984.0	16911532032.0	301993984.0	810.0	9192.0	nf-0503ae92916b29b463f9bfee7f3c9722	breast.001.001	gpu	4	1	k8s-chase-ci-01.calit2.optiputer.net	1080Ti
+10	COMPLETED	63/b51334	similarity_chunk (breast.001.002/1)	0	1635263659340	1635263733000	similarity_chunk	breast.001.002/1	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.002""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 1 4 similarity             --input breast.001.002.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/63/b51334a1f7becfa6ea3d0c99f8ff13		1	15032385536					1635264554000.0	894660.0	820374.0	97.8	12220755.0	1701449485.0	1583.0	473.0	12034048.0	1701621760.0	0.3	11741765632.0	303620096.0	11876032512.0	322809856.0	684.0	11749.0	nf-63b51334a1f7becfa6ea3d0c99f8ff13	breast.001.002	gpu	4	1	suncave-0	2080Ti
+13	COMPLETED	11/4746cf	similarity_chunk (breast.001.001/0)	0	1635263659665	1635263749000	similarity_chunk	breast.001.001/0	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.001""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 0 4 similarity             --input breast.001.001.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/11/4746cf4d772bf91290b24bcab4cd81		1	15032385536					1635264946000.0	1286335.0	1196079.0	98.6	6394146.0	848490161.0	1225.0	472.0	5734400.0	848793600.0	0.4	15847419904.0	282542080.0	15931359232.0	282542080.0	847.0	14014.0	nf-114746cf4d772bf91290b24bcab4cd81	breast.001.001	gpu	4	1	suncave-19	1080
+14	COMPLETED	e4/247106	similarity_chunk (breast.001.001/1)	0	1635263659770	1635263752000	similarity_chunk	breast.001.001/1	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.001""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 1 4 similarity             --input breast.001.001.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/e4/24710610452c8f60cebc23de3d8452		1	15032385536					1635264951000.0	1291230.0	1198437.0	98.4	6394390.0	845773994.0	1225.0	471.0	466944.0	846053376.0	0.4	15856971776.0	285003776.0	15907356672.0	285003776.0	773.0	14869.0	nf-e424710610452c8f60cebc23de3d8452	breast.001.001	gpu	4	1	suncave-12	1080
+15	COMPLETED	69/e7092c	similarity_chunk (breast.001.001/2)	0	1635263659877	1635263733000	similarity_chunk	breast.001.001/2	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.001""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 2 4 similarity             --input breast.001.001.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/69/e7092c2bbe2ffbf733aa20280a757f		1	15032385536					1635264955000.0	1295123.0	1222204.0	98.5	6394180.0	844719129.0	1226.0	471.0	0.0	845000704.0	0.2	15867125760.0	300654592.0	16001392640.0	308908032.0	768.0	16034.0	nf-69e7092c2bbe2ffbf733aa20280a757f	breast.001.001	gpu	4	1	suncave-5	1080
+11	COMPLETED	a2/4cfcba	similarity_chunk (breast.001.002/2)	0	1635263659443	1635263788000	similarity_chunk	breast.001.002/2	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.002""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 2 4 similarity             --input breast.001.002.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/a2/4cfcbaee3e112096e300b0463d5f82		1	15032385536					1635265206000.0	1546557.0	1416356.0	96.5	12328448.0	1700458357.0	1645.0	474.0	221184.0	1700859904.0	0.1	13231738880.0	309231616.0	13282115584.0	323592192.0	694.0	30593.0	nf-a24cfcbaee3e112096e300b0463d5f82	breast.001.002	gpu	4	1	swosu-brandy.offn.onenet.net	T4
+9	COMPLETED	8c/375574	similarity_chunk (breast.001.002/0)	0	1635263659237	1635263775000	similarity_chunk	breast.001.002/0	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.002""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 0 4 similarity             --input breast.001.002.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/8c/375574fbfdc61db70d682d5abe747b		1	15032385536					1635265456000.0	1796763.0	1680239.0	99.3	12300297.0	1685915614.0	1635.0	472.0	8749056.0	1686134784.0	0.1	17549565952.0	326012928.0	17683836928.0	345182208.0	969.0	19313.0	nf-8c375574fbfdc61db70d682d5abe747b	breast.001.002	gpu	4	1	k8s-chase-ci-06.calit2.optiputer.net	1080Ti
+5	COMPLETED	fb/aae5be	similarity_chunk (breast.001.003/0)	0	1635263658820	1635263790000	similarity_chunk	breast.001.003/0	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.003""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 0 4 similarity             --input breast.001.003.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/fb/aae5be742221bed5ad313c3434ab06		1	15032385536					1635266295000.0	2636180.0	2504895.0	99.4	18149881.0	2531136981.0	2028.0	471.0	0.0	2531536896.0	0.2	16908345344.0	365764608.0	17009057792.0	373035008.0	1227.0	68868.0	nf-fbaae5be742221bed5ad313c3434ab06	breast.001.003	gpu	4	1	prp-gpu-2.t2.ucsd.edu	1080Ti
+12	COMPLETED	4e/a87e22	similarity_chunk (breast.001.002/3)	0	1635263659560	1635263742000	similarity_chunk	breast.001.002/3	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.002""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 3 4 similarity             --input breast.001.002.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/4e/a87e225a3eb19c8ad60d16af51bfb9		1	15032385536					1635266322000.0	2662440.0	2575348.0	98.5	12218691.0	1681559263.0	1579.0	472.0	2973696.0	1681965056.0	0.4	15964934144.0	298283008.0	16085680128.0	317472768.0	930.0	31896.0	nf-4ea87e225a3eb19c8ad60d16af51bfb9	breast.001.002	gpu	4	1	suncave-23	1080
+8	COMPLETED	6b/c28983	similarity_chunk (breast.001.003/3)	0	1635263659132	1635263864000	similarity_chunk	breast.001.003/3	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.003""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 3 4 similarity             --input breast.001.003.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/6b/c2898324d3ed8ceb69d562ec9ad929		1	15032385536					1635266339000.0	2679868.0	2473812.0	99.7	18157031.0	2504637100.0	2000.0	475.0	15712256.0	2505039872.0	0.1	17650352128.0	371376128.0	17683955712.0	371929088.0	733.0	54635.0	nf-6bc2898324d3ed8ceb69d562ec9ad929	breast.001.003	gpu	4	1	k8s-bharadia-04.sdsc.optiputer.net	1080Ti
+6	COMPLETED	a6/0b72d5	similarity_chunk (breast.001.003/1)	0	1635263659028	1635263839000	similarity_chunk	breast.001.003/1	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.003""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 1 4 similarity             --input breast.001.003.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/a6/0b72d549522babf2dc86ad75e4d429		1	15032385536					1635266357000.0	2697972.0	2516439.0	99.4	18139474.0	2513258777.0	1988.0	471.0	323584.0	2513567744.0	0.1	17650294784.0	354308096.0	17717456896.0	355741696.0	904.0	57051.0	nf-a60b72d549522babf2dc86ad75e4d429	breast.001.003	gpu	4	1	k8s-gpu-1.ucr.edu	1080Ti
+1	COMPLETED	34/28e117	similarity_chunk (breast.001.004/0)	0	1635263658339	1635263780000	similarity_chunk	breast.001.004/0	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.004""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 0 4 similarity             --input breast.001.004.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/34/28e117ea5718eb91e4d92d9ae34d21		1	15032385536					1635267251000.0	3592661.0	3468130.0	99.3	23995966.0	3412248279.0	2355.0	475.0	307200.0	3412652032.0	0.1	17751048192.0	395624448.0	17818210304.0	398495744.0	1323.0	42045.0	nf-3428e117ea5718eb91e4d92d9ae34d21	breast.001.004	gpu	4	1	k8s-chase-ci-01.noc.ucsb.edu	1080Ti
+4	COMPLETED	e3/d3a626	similarity_chunk (breast.001.004/3)	0	1635263658662	1635263789000	similarity_chunk	breast.001.004/3	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.004""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 3 4 similarity             --input breast.001.004.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/e3/d3a626b038cce974a192766a2dbd8a		1	15032385536					1635267290000.0	3631338.0	3501596.0	99.5	23951098.0	3411539393.0	2307.0	471.0	5758976.0	3411943424.0	0.2	16921292800.0	383766528.0	17022009344.0	397709312.0	1102.0	124376.0	nf-e3d3a626b038cce974a192766a2dbd8a	breast.001.004	gpu	4	1	prp-gpu-3.t2.ucsd.edu	1080Ti
+2	COMPLETED	3e/4b7538	similarity_chunk (breast.001.004/1)	0	1635263658453	1635263889000	similarity_chunk	breast.001.004/1	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.004""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 1 4 similarity             --input breast.001.004.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/3e/4b7538168a1711fdea68d041bbb3cc		1	15032385536					1635267397000.0	3738547.0	3507347.0	99.0	23975482.0	3400089408.0	2333.0	475.0	1777664.0	3400491008.0	0.1	17717592064.0	396029952.0	17751199744.0	403369984.0	802.0	103999.0	nf-3e4b7538168a1711fdea68d041bbb3cc	breast.001.004	gpu	4	1	fiona8.ucsc.edu	1080Ti
+7	COMPLETED	42/702e95	similarity_chunk (breast.001.003/2)	0	1635263658925	1635263779000	similarity_chunk	breast.001.003/2	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.003""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 2 4 similarity             --input breast.001.003.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/42/702e95eff435af853980741328a9d0		1	15032385536					1635267664000.0	4005075.0	3884583.0	98.9	18058841.0	2574108622.0	1933.0	471.0	1413120.0	2574512128.0	0.2	16058335232.0	359862272.0	16142266368.0	362405888.0	955.0	97717.0	nf-42702e95eff435af853980741328a9d0	breast.001.003	gpu	4	1	suncave-7	1080
+3	COMPLETED	6e/c696ac	similarity_chunk (breast.001.004/2)	0	1635263658557	1635263723000	similarity_chunk	breast.001.004/2	[]	systemsgenetics/kinc:3.4.2-gpu	1	"
+        echo ""#TRACE node_type=${NODE_TYPE}""
+        echo ""#TRACE dataset=breast.001.004""
+        echo ""#TRACE hardware_type=gpu""
+        echo ""#TRACE chunks=4""
+        echo ""#TRACE threads=1""
+
+        kinc settings set cuda 0
+        kinc settings set opencl none
+        kinc settings set threads 1
+        kinc settings set logging off
+
+        kinc chunkrun 2 4 similarity             --input breast.001.004.emx             --clusmethod gmm             --corrmethod spearman             --minexpr 0             --minsamp 25             --minclus 1             --maxclus 5             --crit ICL             --preout true             --postout true             --mincorr 0             --maxcorr 1             --bsize 0             --gsize 4096             --lsize 32
+        "		/workspace/_workflows/617822196fcd68947a3109b0/work/6e/c696aca19e133b3b631aaa96a61eed		1	15032385536					1635269007000.0	5348443.0	5283668.0	99.9	23946417.0	3457576705.0	2299.0	474.0	536576.0	3457982464.0	0.1	16874901504.0	373366784.0	16908509184.0	387223552.0	1846.0	66400.0	nf-6ec696aca19e133b3b631aaa96a61eed	breast.001.004	gpu	4	1	k8s-gpu-01.calit2.optiputer.net	1080
