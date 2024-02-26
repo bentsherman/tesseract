@@ -99,9 +99,10 @@ process run_pipeline {
     script:
         """
         # initialize environment
-        module purge
-        module load anaconda3/5.1.0-gcc/8.3.1
-        module load nextflow/21.04
+        module load miniconda3/4.12.0 gcc/8.3.0
+        module load nextflow singularity
+
+        source activate tesseract
 
         # create params file from conditions
         echo "${c.toString().replace('[': '', ']': '', ', ': '\n', ':': ': ')}" > params.yaml
@@ -109,11 +110,12 @@ process run_pipeline {
         make-params.py params.yaml
 
         # change to launch directory
-        cd ${workflow.launchDir}/${params.pipeline_name}
+        cd ~/ikmb_pipelines/${params.pipeline_name}
 
         # run nextflow pipeline
         nextflow run \
             ${params.run_pipeline} \
+            -c ~/minibench/conf/medcluster.config \
             -ansi-log false \
             -latest \
             -params-file \${OLDPWD}/params.yaml \
@@ -153,7 +155,9 @@ process aggregate {
         """
         # initialize environment
         module purge
-        module load anaconda3/5.1.0-gcc/8.3.1
+        module load miniconda3/4.12.0 gcc/8.3.0
+
+        source activate tesseract
 
         # run aggregate script
         aggregate.py \
@@ -188,12 +192,14 @@ process train {
         """
         # initialize environment
         module purge
-        module load anaconda3/5.1.0-gcc/8.3.1
+        module load miniconda3/4.12.0 gcc/8.3.0
 
         source activate ${params.conda_env}
 
         # train model
         export TF_CPP_MIN_LOG_LEVEL="3"
+
+        # Run load_dataset from bin/train.py
 
         echo
         echo ${pipeline_name} ${process_name} ${target}
@@ -202,7 +208,6 @@ process train {
         train.py \
             ${dataset} \
             --base-dir ${workflow.launchDir}/_datasets \
-            ${train_merge_args} \
             --inputs ${params.train_inputs[process_name].join(' ')} \
             --target ${target} \
             --scaler ${params.train_scaler} \
@@ -229,7 +234,7 @@ process predict {
         """
         # initialize environment
         module purge
-        module load anaconda3/5.1.0-gcc/8.3.1
+        module load miniconda3/4.12.0 gcc/8.3.0
 
         source activate ${params.conda_env}
 
