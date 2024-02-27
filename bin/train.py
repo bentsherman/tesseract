@@ -17,7 +17,6 @@ import sklearn.preprocessing
 import sys
 import tensorflow as tf
 from tensorflow import keras
-import re
 
 import models
 import utils
@@ -79,6 +78,7 @@ def load_dataset(trace_file):
     df.drop(columns=drop_columns, inplace=True, errors='ignore')
 
     return df
+
 
 
 def merge_dataset(df, key, merge_file):
@@ -242,7 +242,7 @@ def create_mlp(
 
 
 
-def create_rf(criterion='absolute_error', intervals=False):
+def create_rf(criterion='mae', intervals=False):
     if intervals:
         RandomForestRegressor = models.RandomForestRegressorWithIntervals
     else:
